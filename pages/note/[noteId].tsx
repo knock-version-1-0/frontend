@@ -1,7 +1,7 @@
-import {useState, useEffect, useCallback, useRef} from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { NextPage } from "next"
 import { useRouter } from "next/router"
-import { COR_NUM, ROW_NUM } from "@/constants/note.constant"
+import { DEFAULT_COR_NUM, DEFAULT_ROW_NUM } from "@/constants/note.constant"
 
 import { nextIndex, prevIndex } from "@/utils/array"
 
@@ -13,7 +13,7 @@ const Note: NextPage = () => {
   const [cursor, setCursor] = useState<number|null>(null)
 
   const [keywords, setKeywords] = useState<string[]>(
-    [...Array(COR_NUM * ROW_NUM)].map(() => '')
+    [...Array(DEFAULT_COR_NUM * DEFAULT_ROW_NUM)].map(() => '')
   )
 
   useEffect(() => {
@@ -60,7 +60,10 @@ interface KeywordProps {
 const Keyword = (props: KeywordProps) => {
   const {index, cursor} = props;
 
+  const cellSize = DEFAULT_COR_NUM * DEFAULT_ROW_NUM
+
   const [text, setText] = useState<string>('')
+  const [isComposing, setIsComposing] = useState(false)
 
   const inputRef = useRef<null|HTMLInputElement>(null)
 
@@ -74,7 +77,11 @@ const Keyword = (props: KeywordProps) => {
   return (
     <input className={`w-32 h-8 px-1.5 bg-zinc-50 border border-gray-${text ? 500 : 300} text-center`}
       type="text" value={text}
+      onCompositionStart={() => setIsComposing(true)}
+      onCompositionEnd={() => setIsComposing(false)}
       onKeyDown={(e: React.KeyboardEvent) => {
+        if (isComposing) return
+
         if (e.key === 'Enter') {
           props.onSubmit(index, text)
           props.setCursor(null)
@@ -83,14 +90,14 @@ const Keyword = (props: KeywordProps) => {
           e.preventDefault()
 
           props.onSubmit(index, text)
-          const next = nextIndex(index, COR_NUM * ROW_NUM)
+          const next = nextIndex(index, cellSize)
           props.setCursor(next)
         }
         else if (e.shiftKey && e.key === 'Tab') {
           e.preventDefault()
 
           props.onSubmit(index, text)
-          const prev = prevIndex(index, COR_NUM * ROW_NUM)
+          const prev = prevIndex(index, cellSize)
           props.setCursor(prev)
         }
       }}
