@@ -3,6 +3,8 @@ import { NextPage } from "next"
 import { useRouter } from "next/router"
 import { COR_NUM, ROW_NUM } from "@/constants/note.constant"
 
+import { nextIndex, prevIndex } from "@/utils/array"
+
 const Note: NextPage = () => {
 
   const router = useRouter()
@@ -13,6 +15,10 @@ const Note: NextPage = () => {
   const [keywords, setKeywords] = useState<string[]>(
     [...Array(COR_NUM * ROW_NUM)].map(() => '')
   )
+
+  useEffect(() => {
+    setCursor(0)
+  }, [])
 
   const handleSubmit = useCallback((index: number, text: string) => {
     if (index >= 0) {
@@ -34,6 +40,7 @@ const Note: NextPage = () => {
                 index={index}
                 onSubmit={handleSubmit}
                 cursor={cursor}
+                setCursor={(idx: number|null) => setCursor(idx)}
               ></Keyword>
             ))
           }
@@ -47,33 +54,44 @@ interface KeywordProps {
   index: number;
   cursor: number|null;
   onSubmit: (index: number, text: string) => void;
+  setCursor: (idx: number|null) => void;
 }
 
 const Keyword = (props: KeywordProps) => {
   const {index, cursor} = props;
-  const [text, setText] = useState<string>('')
-  const [focused, setFocused] = useState<Boolean>(index===cursor)
 
-  const inputRef = useRef<null|HTMLInputElement>(null);
+  const [text, setText] = useState<string>('')
+
+  const inputRef = useRef<null|HTMLInputElement>(null)
 
   useEffect(() => {
     if (inputRef.current !== null) {
-      if (focused) {
-        inputRef.current.focus();
-      }
-      else {
-        inputRef.current.blur();
-      }
+      if (index===cursor) {inputRef.current.focus()}
+      else {inputRef.current.blur()}
     }
-  })
+  }, [cursor])
 
   return (
     <input className={`w-32 h-8 px-1.5 bg-zinc-50 border border-gray-${text ? 500 : 300} text-center`}
       type="text" value={text}
       onKeyDown={(e: React.KeyboardEvent) => {
-        if (e.key === 'Enter'){
+        if (e.key === 'Enter') {
           props.onSubmit(index, text)
-          setFocused(false)
+          props.setCursor(null)
+        }
+        else if (!e.shiftKey && e.key === 'Tab') {
+          e.preventDefault()
+
+          props.onSubmit(index, text)
+          const next = nextIndex(index, COR_NUM * ROW_NUM)
+          props.setCursor(next)
+        }
+        else if (e.shiftKey && e.key === 'Tab') {
+          e.preventDefault()
+
+          props.onSubmit(index, text)
+          const prev = prevIndex(index, COR_NUM * ROW_NUM)
+          props.setCursor(prev)
         }
       }}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,7 +99,7 @@ const Keyword = (props: KeywordProps) => {
         setText(text)
       }}
       ref={inputRef}
-      onClick={() => {setFocused(true)}}
+      onFocus={() => {props.setCursor(index)}}
     ></input>
   )
 }
