@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react"
 import { DEFAULT_COR_NUM, DEFAULT_ROW_NUM } from "@/constants/note.constant"
 import Matrix from "@/utils/matrix.util"
 
-import Keyword from "./Keyword"
+import Keyword from "./cell"
 
 const Note = ({noteId}: {noteId: string}): JSX.Element => {
   const matrix: Matrix<string> = new Matrix(DEFAULT_COR_NUM, DEFAULT_ROW_NUM)
@@ -25,7 +25,7 @@ const Note = ({noteId}: {noteId: string}): JSX.Element => {
   useEffect(() => {
     const keyHandler = (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        if (document.activeElement?.tagName === 'BODY')
+        if (document.activeElement?.tagName !== 'INPUT')
           plusCount()
       }
     }
@@ -43,6 +43,10 @@ const Note = ({noteId}: {noteId: string}): JSX.Element => {
       if (target.nodeName !== 'INPUT') {
         setCursor(null)
         setEnterCount(1)
+      } else {
+        if (cursor !== null) {
+          setEnterCount(0)
+        }
       }
     }
     document.addEventListener('click', clickHandler)
@@ -50,7 +54,7 @@ const Note = ({noteId}: {noteId: string}): JSX.Element => {
   }, [cursor, enterCount])
 
   useEffect(() => {
-    if (enterCount === 2) {
+    if (enterCount >= 2) {
       setInit(true)
     }
   }, [enterCount])
