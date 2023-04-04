@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react"
 
 import { DEFAULT_COR_NUM, DEFAULT_ROW_NUM } from "@/constants/note.constant"
+import Matrix from "@/utils/matrix.util"
+
 import Keyword from "./Keyword"
 
 const Note = ({noteId}: {noteId: string}): JSX.Element => {
+  const matrix: Matrix<string> = new Matrix(DEFAULT_COR_NUM, DEFAULT_ROW_NUM)
+
   const [init, setInit] = useState<boolean>(true)
   const [enterCount, setEnterCount] = useState<number>(0)
   const [cursor, setCursor] = useState<number|null>(null)
 
-  const [keywords, setKeywords] = useState<string[]>(
-    [...Array(DEFAULT_COR_NUM * DEFAULT_ROW_NUM)].map(() => '')
-  )
+  const [keywords, setKeywords] = useState<(string|null)[]>(matrix.table)
 
   useEffect(() => {
     if (init) {
@@ -74,6 +76,7 @@ const Note = ({noteId}: {noteId: string}): JSX.Element => {
                 onSubmit={handleSubmit}
                 cursor={cursor}
                 setCursor={(idx: number|null) => setCursor(idx)}
+                matrix={matrix}
               ></Keyword>
             ))
           }

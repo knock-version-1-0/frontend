@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useRef, useCallback } from "react"
 
-import { DEFAULT_COR_NUM, DEFAULT_ROW_NUM } from "@/constants/note.constant"
-
-import Matrix, { nextIndex, prevIndex } from "@/utils/Matrix"
+import Matrix, { nextIndex, prevIndex } from "@/utils/matrix.util"
+import clsx from "@/utils/clsx.util"
 
 interface KeywordProps {
   index: number
   cursor: number | null
   onSubmit: (index: number, text: string) => void
   setCursor: (idx: number|null) => void
+  matrix: Matrix<string>
 }
 
 const Keyword = (props: KeywordProps): JSX.Element => {
-  const {index, cursor} = props;
+  const { index, cursor, matrix } = props
 
-  const cellSize = DEFAULT_COR_NUM * DEFAULT_ROW_NUM
+  const cellSize = matrix.cellSize
 
   const [text, setText] = useState<string>('')
   const [isComposing, setIsComposing] = useState<boolean>(false)
@@ -57,31 +57,35 @@ const Keyword = (props: KeywordProps): JSX.Element => {
     else if (e.key === 'ArrowRight') {
       if (!isEditable) {
         e.preventDefault()
-        props.setCursor(Matrix.right(index))
+        props.setCursor(matrix.rightIndex(index))
       }
     }
     else if (e.key === 'ArrowLeft') {
       if (!isEditable) {
         e.preventDefault()
-        props.setCursor(Matrix.left(index))
+        props.setCursor(matrix.leftIndex(index))
       }
     }
     else if (e.key === 'ArrowUp') {
       if (!isEditable) {
         e.preventDefault()
-        props.setCursor(Matrix.up(index))
+        props.setCursor(matrix.upIndex(index))
       }
     }
     else if (e.key === 'ArrowDown') {
       if (!isEditable) {
         e.preventDefault()
-        props.setCursor(Matrix.down(index))
+        props.setCursor(matrix.downIndex(index))
       }
     }
   }, [isComposing, isEditable])
 
   return (
-    <input className={`w-32 h-8 px-1.5 bg-zinc-50 border border-gray-${text ? 500 : 300} text-center focus:border-blue cursor-${isEditable ? 'text' : 'default'}`}
+    <input className={clsx(
+      'w-32 h-8 px-1.5 bg-zinc-50',
+      `border border-gray-${text ? 500 : 300} focus:border-blue`,
+      `text-center cursor-${isEditable ? 'text' : 'default'}`
+    )}
       type="text" value={text}
       onCompositionStart={() => setIsComposing(true)}
       onCompositionEnd={() => setIsComposing(false)}

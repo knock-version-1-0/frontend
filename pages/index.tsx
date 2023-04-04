@@ -1,7 +1,11 @@
-export default function Home() {
+import { NextPage } from "next"
+
+import Note from "@/components/note"
+
+const Home: NextPage = () => {
   return (
-    <div className='bg-gray-300 w-96 h-96'>
-      <span>Hi</span>
-    </div>
+    <Note noteId="Tutorial"></Note>
   )
 }
+
+export default Home
