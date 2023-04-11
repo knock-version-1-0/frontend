@@ -1,7 +1,8 @@
 import React from "react"
-import { NextPage } from "next"
+import { NextPage, GetStaticPaths, GetStaticProps } from "next"
 import { useRouter } from "next/router"
 
+import { getNoteByName } from "@/api/notes.api"
 import Note from "@/components/note"
 
 const NoteDetail: NextPage = () => {
