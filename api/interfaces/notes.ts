@@ -6,4 +6,5 @@ export interface NoteRequestBody {
 
 export interface KeywordRequestBody {
     posId?: number
+    text?: string
 }
