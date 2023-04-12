@@ -6,9 +6,9 @@ import { TRAILING_SLASH } from "@/constants/common.constant"
 
 const APP_NAME = 'notes'
 
-export const getNoteByName = (name: string, token: string) =>
+export const getNoteByName = (displayId: string, token: string) =>
   AxiosWithJwt(token)
-    .get<NoteModel>(`${APP_NAME}/${name}${TRAILING_SLASH}`)
+    .get<NoteModel>(`${APP_NAME}/${displayId}${TRAILING_SLASH}`)
     .then(res => res)
     .catch(err => err.response)
 

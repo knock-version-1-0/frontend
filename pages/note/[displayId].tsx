@@ -8,10 +8,10 @@ import Note from "@/components/note"
 const NoteDetail: NextPage = () => {
 
   const router = useRouter()
-  const noteId = router.query.noteId as string
+  const displayId = router.query.displayId as string
 
   return (
-    <Note noteId={noteId}/>
+    <Note noteId={displayId}/>
   )
 }
 
