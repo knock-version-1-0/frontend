@@ -12,4 +12,5 @@ export interface NoteModel {
 export interface KeywordModel {
   noteId: number
   posId: number
+  text?: string
 }
