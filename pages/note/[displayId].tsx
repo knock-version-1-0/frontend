@@ -5,7 +5,7 @@ import {
   InferGetServerSidePropsType
 } from "next"
 
-import { getNoteByDisplayId } from "@/api/notes.api"
+import { ApiGetNoteByDisplayId } from "@/api/notes.api"
 import { NoteModel } from "@/models/notes.model"
 
 import Note from "@/components/note"
@@ -23,7 +23,7 @@ const NoteDetail: NextPage = ({ displayId }: InferGetServerSidePropsType<typeof 
 
 export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
   const token = getAuthTokenFromCookie({req, res}) ?? ''
-  const note: NoteModel = await getNoteByDisplayId(params!.displayId as string, token)
+  const note: NoteModel = await ApiGetNoteByDisplayId(params!.displayId as string, token)
 
   return {
     props: {

@@ -4,10 +4,9 @@ import type { AppProps, AppContext } from 'next/app'
 import Head from 'next/head'
 
 import { AppContextApi } from "@/contexts"
-import { getNotes } from "@/api/notes.api"
-import { NoteSummaryModel } from "@/models/notes.model"
+import { ApiGetNotes } from "@/api/notes.api"
 import { setAuthTokenFromCookie } from '@/cookies/auth.cookie'
-import { setNoteItemsFromCookie } from '@/cookies/note.cookie'
+import { getNoteItemsFromCookie, setNoteItemsFromCookie } from '@/cookies/note.cookie'
 
 export default function App({ Component, pageProps }: AppProps) {
   const {
@@ -38,8 +37,12 @@ App.getInitialProps = async ({ Component, ctx }: AppContext) => {
 
   const token = process.env.NEXT_PUBLIC_TEST_TOKEN as string
   setAuthTokenFromCookie(token, {req, res})
-  const noteItems: NoteSummaryModel[] = await getNotes('', 0, token)
-  setNoteItemsFromCookie(noteItems, {req, res})
+
+  const noteItems = await ApiGetNotes({
+    name: '',
+    offset: 0
+  }, token)
+  setNoteItemsFromCookie(noteItems!, {req, res})
 
   pageProps = {...pageProps, token, noteItems}
 
