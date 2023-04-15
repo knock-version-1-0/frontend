@@ -4,6 +4,7 @@ import { useRouter } from "next/router"
 
 import { getNoteByName } from "@/api/notes.api"
 import Note from "@/components/note"
+import Layout from "@/components/Layout"
 
 const NoteDetail: NextPage = () => {
 
@@ -11,7 +12,9 @@ const NoteDetail: NextPage = () => {
   const displayId = router.query.displayId as string
 
   return (
-    <Note noteId={displayId}/>
+    <Layout>
+      <Note noteId={displayId}/>
+    </Layout>
   )
 }
 

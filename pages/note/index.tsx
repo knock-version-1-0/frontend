@@ -2,6 +2,8 @@ import React from "react"
 import { NextPage } from "next"
 import { useRouter } from "next/router"
 
+import Layout from "@/components/Layout"
+
 const NoteHome: NextPage = () => {
   const [noteId, setNoteId] = React.useState('')
   const router = useRouter()
@@ -15,9 +17,9 @@ const NoteHome: NextPage = () => {
   }
 
   return (
-    <div className="flex flex-col justify-center h-screen">
-      <div className="flex flex-col items-center space-y-10 w-screen">
-        <h1 className="text-2xl py-10">What note would you like to enter?</h1>
+    <Layout>
+      <div className="relative h-full flex flex-col justify-center items-center space-y-10 bg-zinc-50">
+        <h1 className="text-2xl mb-10">What note would you like to enter?</h1>
         <div className="flex flex-row space-x-3">
           <input type="text" className="w-96 border-2 border-gray-300"
             value={noteId} onChange={handleChange}
@@ -27,7 +29,7 @@ const NoteHome: NextPage = () => {
           >Enter</button>
         </div>
       </div>
-    </div>
+    </Layout>
   )
 }
 

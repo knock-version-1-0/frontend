@@ -1,10 +1,13 @@
 import { NextPage } from "next"
 
 import Note from "@/components/note"
+import Layout from "@/components/Layout"
 
 const Home: NextPage = () => {
   return (
-    <Note noteId="Tutorial"></Note>
+    <Layout>
+      <Note noteId="Tutorial"></Note>
+    </Layout>
   )
 }
 
