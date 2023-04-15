@@ -1,52 +1,33 @@
 import React from "react"
 import { 
   NextPage,
-  GetStaticProps,
-  InferGetStaticPropsType,
-  GetStaticPaths,
+  GetServerSideProps,
+  InferGetServerSidePropsType
 } from "next"
 
-import { getNoteByDisplayId, getNotes } from "@/api/notes.api"
-import { NoteModel, NoteSummaryModel } from "@/models/notes.model"
-import { NoteItemsContext } from "@/contexts"
+import { getNoteByDisplayId } from "@/api/notes.api"
+import { NoteModel } from "@/models/notes.model"
+
 import Note from "@/components/note"
 import Layout from "@/components/Layout"
+import { getAuthTokenFromCookie } from "@/cookies/auth.cookie"
 
-const NoteDetail: NextPage = ({ note, noteItems }: InferGetStaticPropsType<typeof getStaticProps>) => {
+const NoteDetail: NextPage = ({ displayId }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
 
   return (
-    <NoteItemsContext.Provider value={noteItems}>
-      <Layout>
-        <Note noteId={note.displayId}/>
-      </Layout>
-    </NoteItemsContext.Provider>
+    <Layout>
+      <Note noteId={displayId}/>
+    </Layout>
   )
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZXhwIjoxNjgxNjQ2MjUzfQ.TPgMlBxtyuWsnoip9dQm1Rt5k0IsLwUNqWeSvxbfaMk'
-  const response = await getNotes('', 0, token)
-  const noteItems: NoteSummaryModel[] = response.data
-
-  return {
-    paths: noteItems.map((value) => {
-      return {
-        params: {displayId: value.displayId}
-      }
-    }),
-    fallback: 'blocking'
-  }
-}
-
-export const getStaticProps: GetStaticProps = async (ctx) => {
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZXhwIjoxNjgxNjQ2MjUzfQ.TPgMlBxtyuWsnoip9dQm1Rt5k0IsLwUNqWeSvxbfaMk'
-  const note: NoteModel = (await getNoteByDisplayId(ctx.params!.displayId as string, token)).data
-  const noteItems: NoteSummaryModel[] = (await getNotes('', 0, token)).data
+export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
+  const token = getAuthTokenFromCookie({req, res}) ?? ''
+  const note: NoteModel = await getNoteByDisplayId(params!.displayId as string, token)
 
   return {
     props: {
-      note,
-      noteItems
+      displayId: note.displayId
     }
   }
 }

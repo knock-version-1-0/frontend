@@ -2,7 +2,7 @@ import React, { useContext } from "react"
 import { useRouter } from "next/router"
 import Image from "next/image"
 
-import { NoteItemsContext } from "@/contexts";
+import { AppContextApi } from "@/contexts";
 
 import KnockLogo from '@/public/knock-logo-40.svg';
 import clsx from "@/utils/clsx.util";
@@ -14,7 +14,7 @@ import HomeIcon from '@mui/icons-material/Home'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
 export const SideScreen = (): JSX.Element => {
-  const noteItems = useContext(NoteItemsContext)
+  const { noteItems } = useContext(AppContextApi)
   const router = useRouter()
 
   return (

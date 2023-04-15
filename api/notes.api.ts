@@ -11,17 +11,17 @@ const APP_NAME = 'notes'
 export const getNoteByDisplayId = (displayId: string, token: string) =>
   AxiosWithJwt(token)
     .get<NoteModel>(`${APP_NAME}/${displayId}${TRAILING_SLASH}`)
-    .then(res => res)
+    .then(res => res.data)
     .catch(err => err.response)
 
 export const postNotes = (data: NoteRequestBody, token: string) =>
   AxiosWithJwt(token)
     .post<NoteModel>(`${APP_NAME}${TRAILING_SLASH}`, data=data)
-    .then(res => res)
+    .then(res => res.data)
     .catch(err => err.response)
 
 export const getNotes = (name: string, offset: number, token: string) =>
   AxiosWithJwt(token)
     .get<NoteSummaryModel[]>(`${APP_NAME}${TRAILING_SLASH}?name=${name}&offset=${offset}`)
-    .then(res => res)
+    .then(res => res.data)
     .catch(err => err.response)
