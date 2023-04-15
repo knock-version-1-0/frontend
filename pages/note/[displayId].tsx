@@ -1,18 +1,35 @@
 import React from "react"
-import { NextPage, GetStaticPaths, GetStaticProps } from "next"
-import { useRouter } from "next/router"
+import { 
+  NextPage,
+  GetServerSideProps,
+  InferGetServerSidePropsType
+} from "next"
 
-import { getNoteByName } from "@/api/notes.api"
+import { getNoteByDisplayId } from "@/api/notes.api"
+import { NoteModel } from "@/models/notes.model"
+
 import Note from "@/components/note"
+import Layout from "@/components/Layout"
+import { getAuthTokenFromCookie } from "@/cookies/auth.cookie"
 
-const NoteDetail: NextPage = () => {
-
-  const router = useRouter()
-  const displayId = router.query.displayId as string
+const NoteDetail: NextPage = ({ displayId }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
 
   return (
-    <Note noteId={displayId}/>
+    <Layout>
+      <Note noteId={displayId}/>
+    </Layout>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
+  const token = getAuthTokenFromCookie({req, res}) ?? ''
+  const note: NoteModel = await getNoteByDisplayId(params!.displayId as string, token)
+
+  return {
+    props: {
+      displayId: note.displayId
+    }
+  }
 }
 
 export default NoteDetail
