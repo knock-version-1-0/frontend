@@ -1,6 +1,8 @@
 import { SideScreen } from "./side-screen";
 
-const Layout = (props: React.PropsWithChildren): JSX.Element => {
+interface LayoutProps extends React.PropsWithChildren {}
+
+const Layout = (props: LayoutProps): JSX.Element => {
   return (
     <div className="flex flex-row h-screen">
       <SideScreen></SideScreen>

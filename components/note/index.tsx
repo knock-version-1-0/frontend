@@ -70,7 +70,7 @@ const Note = ({noteId}: {noteId: string}): JSX.Element => {
   return (
     <div className="h-full flex flex-col justify-center items-center mb-24">
       <div className="mx-auto">
-        <h1 className="text-xl font-bold text-knock-main py-1">Note. {noteId}</h1>
+        <h1 className="text-xl py-1">Note. {noteId}</h1>
         <div className={`grid grid-cols-4 grid-rows-8 my-4`}>
           {
             keywords.map((_, index: number) => (

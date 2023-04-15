@@ -1,10 +1,11 @@
-import React from "react"
+import React, { useContext } from "react"
 import { useRouter } from "next/router"
 import Image from "next/image"
 
+import { NoteItemsContext } from "@/contexts";
+
 import KnockLogo from '@/public/knock-logo-40.svg';
 import clsx from "@/utils/clsx.util";
-
 import MenuIcon from '@mui/icons-material/Menu'
 import CancelIcon from '@mui/icons-material/Cancel'
 import CircleIcon from '@mui/icons-material/Circle'
@@ -13,6 +14,9 @@ import HomeIcon from '@mui/icons-material/Home'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
 export const SideScreen = (): JSX.Element => {
+  const noteItems = useContext(NoteItemsContext)
+  const router = useRouter()
+
   return (
     <div className="w-[375px] h-screen">
       <div className="relative h-full mx-4">
@@ -25,6 +29,16 @@ export const SideScreen = (): JSX.Element => {
               <CircleIcon className="absolute w-4 h-4 top-0 left-0 z-10"></CircleIcon>
             </div>
           </div>
+          {
+            noteItems?.map((value, index) => (
+              <div key={index}
+                onClick={() => router.push(`/note/${value.displayId}`)}
+                className="cursor-pointer my-2 py-1 w-full border-b"
+              >
+                {value.name}
+              </div>
+            ))
+          }
         </div>
         <Navigator></Navigator>
       </div>

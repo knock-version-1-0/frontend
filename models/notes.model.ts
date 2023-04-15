@@ -14,3 +14,8 @@ export interface KeywordModel {
   posId: number
   text?: string
 }
+
+export interface NoteSummaryModel {
+  displayId: string
+  name: string
+}
