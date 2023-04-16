@@ -3,6 +3,7 @@ import { NextPage } from "next"
 import { useRouter } from "next/router"
 
 import Layout from "@/components/Layout"
+import NoteSideScreenBody from "@/components/note/SideScreenBody"
 
 const NoteHome: NextPage = () => {
   const [noteId, setNoteId] = React.useState('')
@@ -17,7 +18,9 @@ const NoteHome: NextPage = () => {
   }
 
   return (
-    <Layout>
+    <Layout sideScreenBody={(
+      <NoteSideScreenBody></NoteSideScreenBody>
+    )}>
       <div className="relative h-full flex flex-col justify-center items-center space-y-10 bg-zinc-50">
         <h1 className="text-2xl mb-10">What note would you like to enter?</h1>
         <div className="flex flex-row space-x-3">

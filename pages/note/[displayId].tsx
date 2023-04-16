@@ -10,12 +10,15 @@ import { NoteModel } from "@/models/notes.model"
 
 import Note from "@/components/note"
 import Layout from "@/components/Layout"
+import NoteSideScreenBody from "@/components/note/SideScreenBody"
 import { getAuthTokenFromCookie } from "@/cookies/auth.cookie"
 
 const NoteDetail: NextPage = ({ displayId }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
 
   return (
-    <Layout>
+    <Layout sideScreenBody={(
+      <NoteSideScreenBody></NoteSideScreenBody>
+    )}>
       <Note noteId={displayId}/>
     </Layout>
   )

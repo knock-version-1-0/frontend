@@ -5,7 +5,9 @@ import Layout from "@/components/Layout"
 
 const Home: NextPage = () => {
   return (
-    <Layout>
+    <Layout sideScreenBody={(
+      <></>
+    )}>
       <Note noteId="Tutorial"></Note>
     </Layout>
   )

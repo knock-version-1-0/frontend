@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react"
 import { DEFAULT_COR_NUM, DEFAULT_ROW_NUM } from "@/constants/note.constant"
 import Matrix from "@/utils/matrix.util"
 
-import Keyword from "./cell"
+import Keyword from "./keyword"
 
 const Note = ({noteId}: {noteId: string}): JSX.Element => {
   const matrix: Matrix<string> = new Matrix(DEFAULT_COR_NUM, DEFAULT_ROW_NUM)
