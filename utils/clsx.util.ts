@@ -1,4 +1,4 @@
-const clsx = (...args: (string | {[key: string]: boolean | undefined})[]): string => {
+const clsx = (...args: (string | {[key: string]: boolean | undefined} | undefined)[]): string => {
   const classes: string[] = []
 
   // 문자열로 된 클래스 추가

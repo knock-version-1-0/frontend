@@ -1,4 +1,4 @@
-import { SideScreen } from "./side-screen";
+import SideScreen from "./SideScreen";
 
 interface LayoutProps extends React.PropsWithChildren {
   sideScreenBody: JSX.Element

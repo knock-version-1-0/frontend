@@ -13,13 +13,13 @@ import Layout from "@/components/Layout"
 import NoteSideScreenBody from "@/components/note/SideScreenBody"
 import { getAuthTokenFromCookie } from "@/cookies/auth.cookie"
 
-const NoteDetail: NextPage = ({ displayId }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const NoteDetail: NextPage = ({ note }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
 
   return (
     <Layout sideScreenBody={(
       <NoteSideScreenBody></NoteSideScreenBody>
     )}>
-      <Note noteId={displayId}/>
+      <Note note={note}/>
     </Layout>
   )
 }
@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
 
   return {
     props: {
-      displayId: note.displayId
+      note
     }
   }
 }

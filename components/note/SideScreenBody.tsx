@@ -58,7 +58,7 @@ const NoteSideScreenBody = () => {
                 className={
                   clsx(
                     displayId === value.displayId ?
-                      "outline outline-2 outline-blue-500" : "",
+                      "outline outline-2 outline-knock-sub" : "",
                     "cursor-pointer py-3 px-2 w-full border-b",
                     "hover:bg-zinc-50 hover:shadow-sm"
                   )}
@@ -68,14 +68,14 @@ const NoteSideScreenBody = () => {
             </div>
           ))
         }
-        <div className={`w-full py-1 text-center cursor-pointer hover:bg-zinc-50 hover:shadow-sm`}
+        <div className={`w-full py-3 text-center cursor-pointer hover:bg-zinc-50 hover:shadow-sm`}
           onClick={() => {
             if (!isLast)
               handleNextClick()
           }}
         >
           {
-            !isLast && '다음'
+            !isLast && <p className="text-sm text-knock-sub">Next</p>
           }
         </div>
       </div>

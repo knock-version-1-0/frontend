@@ -83,7 +83,7 @@ const Keyword = (props: KeywordProps): JSX.Element => {
   return (
     <input className={clsx(
       'w-32 h-8 px-1.5 bg-zinc-50',
-      'border border-etc',
+      'border border-etc focus:outline-knock-sub',
       `text-center cursor-${isEditable ? 'text' : 'default'}`
     )}
       type="text" value={text}

@@ -9,8 +9,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'knock-main': '#B2700D',
-        'knock-sub': '#464657',
+        'knock-main': '#A33DF3',
+        'knock-sub': '#2983D6',
         'etc': '#BFBFBF'
       }
     }

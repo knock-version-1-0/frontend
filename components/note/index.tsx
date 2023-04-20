@@ -2,10 +2,13 @@ import React, { useState, useEffect, useCallback } from "react"
 
 import { DEFAULT_COR_NUM, DEFAULT_ROW_NUM } from "@/constants/note.constant"
 import Matrix from "@/utils/matrix.util"
+import { NoteModel } from "@/models/notes.model"
 
-import Keyword from "./keyword"
+import Keyword from "./Keyword"
+import Toolbar from "./Toolbar"
+import ModeEditIcon from '@mui/icons-material/ModeEdit'
 
-const Note = ({noteId}: {noteId: string}): JSX.Element => {
+const Note = ({note}: {note: NoteModel}): JSX.Element => {
   const matrix: Matrix<string> = new Matrix(DEFAULT_COR_NUM, DEFAULT_ROW_NUM)
 
   const [init, setInit] = useState<boolean>(true)
@@ -68,23 +71,32 @@ const Note = ({noteId}: {noteId: string}): JSX.Element => {
   }, [keywords])
 
   return (
-    <div className="h-full flex flex-col justify-center items-center mb-24">
-      <div className="mx-auto">
-        <h1 className="text-xl py-1">Note. {noteId}</h1>
-        <div className={`grid grid-cols-4 grid-rows-8 my-4`}>
-          {
-            keywords.map((_, index: number) => (
-              <Keyword
-                key={index}
-                index={index}
-                onSubmit={handleSubmit}
-                cursor={cursor}
-                setCursor={(idx: number|null) => setCursor(idx)}
-                matrix={matrix}
-              ></Keyword>
-            ))
-          }
+    <div className="mx-10">
+      <nav className="text-md mt-4 py-1 text-knock-sub underline cursor-pointer hover:opacity-70">{note.name}</nav>
+      <div className="flex flex-row items-end mt-4">
+        <div className="border-b border-black w-[240px] cursor-text">
+          <h1 className="text-2xl">{note.name}</h1>
         </div>
+        <ModeEditIcon></ModeEditIcon>
+      </div>
+      <div className="relative flex flex-row items-center">
+        <div className="h-full flex flex-row justify-center items-center mt-10">
+          <div className={`grid grid-cols-4 grid-rows-8 my-4`}>
+            {
+              keywords.map((_, index: number) => (
+                <Keyword
+                  key={index}
+                  index={index}
+                  onSubmit={handleSubmit}
+                  cursor={cursor}
+                  setCursor={(idx: number|null) => setCursor(idx)}
+                  matrix={matrix}
+                ></Keyword>
+              ))
+            }
+          </div>
+        </div>
+        <Toolbar></Toolbar>
       </div>
     </div>
   )
