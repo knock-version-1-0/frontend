@@ -10,7 +10,7 @@ import clsx from "@/utils/clsx.util"
 const Toolbar = (): JSX.Element => {
   
   return (
-    <div className="absolute right-0 flex flex-col items-center space-y-4 w-[30px]">
+    <div className="absolute top-0 right-10 flex flex-col items-center justify-center space-y-4 w-[30px] h-full">
       <Button
         onHoverChildClassName="fill-knock-main"
         leaveChildClassName="fill-black"

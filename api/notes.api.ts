@@ -1,6 +1,6 @@
 import { Axios, AxiosWithJwt } from "@/utils/http.util"
 
-import { NoteRequestBody } from "./interfaces/notes"
+import { NoteData } from "./data/notes"
 import { NoteModel } from "@/models/notes.model"
 import { NoteSummaryModel } from "@/models/notes.model"
 import { TRAILING_SLASH } from "@/constants/common.constant"
@@ -15,7 +15,7 @@ export const ApiGetNoteByDisplayId = (displayId: string, token: string) =>
     .then(res => res.data)
     .catch(err => err.response)
 
-export const ApiPostNotes = (data: NoteRequestBody, token: string) =>
+export const ApiPostNotes = (data: NoteData, token: string) =>
   AxiosWithJwt(token)
     .post<NoteModel>(`${APP_NAME}${TRAILING_SLASH}`, data=data)
     .then(res => res.data)
