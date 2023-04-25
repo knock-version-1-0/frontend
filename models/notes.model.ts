@@ -1,21 +1,21 @@
 import { StatusChoice } from "@/utils/enums.util"
 
-export interface NoteModel {
+export interface NoteEntity {
   id: number
   displayId: string
   authorId: number
   name: string
   status: StatusChoice
-  keywords: KeywordModel[]
+  keywords: KeywordEntity[]
 }
 
-export interface KeywordModel {
+export interface KeywordEntity {
   noteId: number
   posId: number
   text?: string
 }
 
-export interface NoteSummaryModel {
+export interface NoteSummaryEntity {
   displayId: string
   name: string
 }

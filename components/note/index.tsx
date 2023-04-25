@@ -1,52 +1,91 @@
-import React, { useState, useEffect, useCallback, useRef } from "react"
+import React, { useCallback, useRef, useState, useEffect } from "react"
 
-import { NoteModel } from "@/models/notes.model"
+import { NoteEntity } from "@/models/notes.model"
+import { NoteContext } from "@/contexts/note.context"
+import { useExitState } from "@/hooks/note/keycontrol.hook"
+import { useNoteScreenPosition, usePhantomState } from "@/hooks/note/note.hook"
 
-import Block from "./Block"
+import Block, { KeywordModel, KeywordData } from "./Block"
 import Toolbar from "./Toolbar"
 import ModeEditIcon from '@mui/icons-material/ModeEdit'
 
-const Note = ({note}: {note: NoteModel}): JSX.Element => {
+const Note = ({note}: {note: NoteEntity}): JSX.Element => {
   const noteElementRef = useRef<HTMLDivElement>(null)
 
-  const [screenX, setScreenX] = useState<number|undefined>()
-  const [screenY, setScreenY] = useState<number|undefined>()
+  const { screenX, screenY } = useNoteScreenPosition(noteElementRef)
 
-  const getPosition = () => {
-    const x = noteElementRef.current?.offsetLeft
-    const y = noteElementRef.current?.offsetTop
+  const { exit, setExit } = useExitState()
+  const { hasPhantom, setHasPhantom } = usePhantomState()
 
-    setScreenX(x); setScreenY(y)
-  }
-  
   useEffect(() => {
-    getPosition()
+
   }, [])
 
-  useEffect(() => {
-    window.addEventListener("resize", getPosition);
-  }, []);
+  const handleCreateKeyword = useCallback((data: KeywordData) => {
+    setExit(true)
+    setHasPhantom(false)
+  }, [])
+
+  const InitKeywordModel: KeywordModel = {
+    noteId: note.id,
+    posX: 0,
+    posY: 0,
+    text: '',
+    children: [],
+    status: null
+  }
+
+  const [PhantomKeywordModel, setPhantomKeywordModel] = useState<KeywordModel>(InitKeywordModel)
 
   return (
-    <div className="w-full h-full bg-zinc-50" ref={noteElementRef}>
-      <div className="ml-10">
-        <nav className="text-md mt-4 py-1 text-knock-sub underline cursor-pointer hover:opacity-70">{note.name}</nav>
-        <div className="flex flex-row items-end mt-4">
-          <div className="border-b border-black w-[240px] cursor-text">
-            <h1 className="text-2xl">{note.name}</h1>
+    <NoteContext.Provider value={{
+      keycontrol: {
+        exit, setExit
+      }
+    }}>
+      <div className="w-full h-full bg-zinc-50" ref={noteElementRef}
+        onMouseMove={(e) => {
+          PhantomKeywordModel && setPhantomKeywordModel({
+            ...PhantomKeywordModel,
+            posX: e.clientX as number,
+            posY: e.clientY as number
+          })
+        }}
+      >
+        <div className="ml-10">
+          <nav className="text-md mt-4 py-1 text-knock-sub underline cursor-pointer hover:opacity-70">{note.name}</nav>
+          <div className="flex flex-row items-end mt-4">
+            <div className="border-b border-black w-[240px] cursor-text">
+              <h1 className="text-2xl">{note.name}</h1>
+            </div>
+            <ModeEditIcon></ModeEditIcon>
           </div>
-          <ModeEditIcon></ModeEditIcon>
+          <Block
+            keyword={ InitKeywordModel }
+            config={{
+              screenX,
+              screenY,
+              phantom: false,
+            }}
+            onUpdate={(data: KeywordData) => {}}
+          ></Block>
+          {
+            hasPhantom &&
+            <Block
+              keyword={ PhantomKeywordModel }
+              config={{
+                screenX,
+                screenY,
+                phantom: hasPhantom,
+              }}
+              onUpdate={(data: KeywordData) => {}}
+              onCreate={(data: KeywordData) => handleCreateKeyword(data)}
+            ></Block>
+          }
+          <Toolbar></Toolbar>
         </div>
-        <Block
-          config={{
-            screenX,
-            screenY
-          }}
-          onSubmit={() => {}}
-        ></Block>
-        <Toolbar></Toolbar>
       </div>
-    </div>
+    </NoteContext.Provider>
   )
 }
 

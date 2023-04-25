@@ -1,52 +1,99 @@
-import React, { useState, useEffect, useRef, useCallback } from "react"
+import React, { useState, useEffect, useRef, useCallback, useContext, MouseEventHandler } from "react"
+
+import { NoteContext } from "@/contexts/note.context"
 
 import clsx from "@/utils/clsx.util"
 
-interface KeywordModel {
-  id: number
+export interface KeywordModel {
+  id?: number
   noteId: number
   posX: number
   posY: number
   text: string
   children: KeywordModel[]
   parent?: KeywordModel
+  status: null | 'EDIT' | 'READ'
 }
 
-interface KeywordData {
+export interface KeywordData {
   noteId: number
   posX: number
   posY: number
   text: string
   parentId?: number
+  status: null | 'EDIT' | 'READ'
 }
 
 interface BlockProps {
-  keyword?: KeywordModel
+  keyword: KeywordModel
   config: {
-    screenX?: number
-    screenY?: number
+    screenX: number
+    screenY: number
+    phantom: boolean
   }
-  onSubmit: () => void
+  onUpdate: (data: KeywordData) => void
+  onCreate?: (data: KeywordData) => void
 }
 
-const Block = ({ config, keyword, onSubmit }: BlockProps): JSX.Element => {
+const Block = ({ 
+  config,
+  keyword,
+  onUpdate,
+  onCreate}: BlockProps): JSX.Element => {
+  const elementRef = useRef<HTMLInputElement>(null)
+
   const { screenX, screenY } = config
 
-  const [posX, setPosX] = useState<number>(40)
-  const [posY, setPosY] = useState<number>(120)
+  const [x, setX] = useState<number>(0)
+  const [y, setY] = useState<number>(0)
+
+  const [center, setCenter] = useState<Array<number>>([0, 0])
 
   useEffect(() => {
-    if (keyword) {
-      setPosX(keyword.posX)
-      setPosY(keyword.posY)
+    if (keyword && screenX !== undefined && screenY !== undefined) {
+      setX(screenX + keyword.posX)
+      setY(screenY + keyword.posY)
     }
-  }, [])
+  }, [screenX, screenY, keyword])
+
+  useEffect(() => {
+    const height = elementRef.current?.offsetHeight ?? 0
+    const width = elementRef.current?.offsetWidth ?? 0
+    keyword && setCenter(
+      [keyword.posX - (width / 2), keyword.posY - (height / 2)]
+    )
+  }, [elementRef, keyword])
+
+  const { keycontrol } = useContext(NoteContext)
 
   return (
-    <input type="text" className="absolute w-48 h-[30px] text-center focus:outline-knock-sub" style={{
-      left: (screenX ?? 0) + posX,
-      top: (screenY ?? 0) + posY
-    }} />
+    <input type="text" className="absolute w-48 h-[30px] text-center focus:outline-knock-sub border" style={config.phantom ? {
+        left: center[0],
+        top: center[1]
+      } : {
+        left: x,
+        top: y
+      }}
+      onFocus={() => {
+        if (keycontrol?.exit) {
+          keycontrol?.setExit(false)
+        }
+      }}
+      onClick={(e) => {
+        if (config.phantom) {
+          e.preventDefault()
+          onCreate && onCreate({
+            noteId: keyword.noteId,
+            posX: keyword.posX,
+            posY: keyword.posY,
+            text: keyword.text,
+            parentId: keyword.parent?.id,
+            status: 'EDIT'
+          })
+        }
+      }}
+      ref={elementRef}
+    />
   )
 }
 
