@@ -2,10 +2,11 @@ import React, { useCallback, useRef, useState, useEffect } from "react"
 
 import { NoteEntity } from "@/models/notes.model"
 import { NoteContext } from "@/contexts/note.context"
-import { useExitState } from "@/hooks/note/keycontrol.hook"
+import { useNoteStatus, NoteStatus } from "@/hooks/note/keycontrol.hook"
+import { NoteStatusChoice } from "@/constants/note.constant"
 import { useNoteScreenPosition, usePhantomState } from "@/hooks/note/note.hook"
 
-import Block, { KeywordModel, KeywordData } from "./Block"
+import Block, { KeywordEntity, KeywordData } from "./Block"
 import Toolbar from "./Toolbar"
 import ModeEditIcon from '@mui/icons-material/ModeEdit'
 
@@ -14,7 +15,8 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
 
   const { screenX, screenY } = useNoteScreenPosition(noteElementRef)
 
-  const { exit, setExit } = useExitState()
+  const { noteStatus, setNoteStatus } = useNoteStatus()
+
   const { hasPhantom, setHasPhantom } = usePhantomState()
 
   useEffect(() => {
@@ -22,11 +24,11 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
   }, [])
 
   const handleCreateKeyword = useCallback((data: KeywordData) => {
-    setExit(true)
+    setNoteStatus(NoteStatusChoice.EXIT)
     setHasPhantom(false)
   }, [])
 
-  const InitKeywordModel: KeywordModel = {
+  const InitKeywordModel: KeywordEntity = {
     noteId: note.id,
     posX: 0,
     posY: 0,
@@ -35,13 +37,12 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
     status: null
   }
 
-  const [PhantomKeywordModel, setPhantomKeywordModel] = useState<KeywordModel>(InitKeywordModel)
+  const [PhantomKeywordModel, setPhantomKeywordModel] = useState<KeywordEntity>(InitKeywordModel)
 
   return (
     <NoteContext.Provider value={{
-      keycontrol: {
-        exit, setExit
-      }
+      noteStatus: noteStatus,
+      setNoteStatus: setNoteStatus
     }}>
       <div className="w-full h-full bg-zinc-50" ref={noteElementRef}
         onMouseMove={(e) => {

@@ -1,6 +1,6 @@
+import { NoteStatusChoice } from "@/constants/note.constant"
+
 export interface NoteStore {
-  keycontrol?: {
-    exit: boolean
-    setExit: React.Dispatch<React.SetStateAction<boolean>>
-  }
+  noteStatus: NoteStatusChoice
+  setNoteStatus: React.Dispatch<React.SetStateAction<NoteStatusChoice>> | null
 }

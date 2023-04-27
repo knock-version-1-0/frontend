@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react'
 
-export interface ExitState {
-  exit: boolean
-  setExit: React.Dispatch<React.SetStateAction<boolean>>
+import { NoteStatusChoice } from '@/constants/note.constant'
+
+export interface NoteStatus {
+  noteStatus: NoteStatusChoice
+  setNoteStatus: React.Dispatch<React.SetStateAction<NoteStatusChoice>>
 }
 
-export const useExitState = (): ExitState => {
-  const [exit, setExit] = useState<boolean>(true)
+export const useNoteStatus = (): NoteStatus => {
+  const [noteStatus, setNoteStatus] = useState<NoteStatusChoice>(NoteStatusChoice.EXIT)
   
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setExit(false)
+        setNoteStatus(NoteStatusChoice.EXIT)
       }
     }
 
@@ -22,5 +24,5 @@ export const useExitState = (): ExitState => {
     }
   }, [])
 
-  return { exit, setExit }
+  return { noteStatus, setNoteStatus }
 }

@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useRef, useCallback, useContext, MouseEventHandler } from "react"
 
 import { NoteContext } from "@/contexts/note.context"
+import { NoteStatusChoice } from "@/constants/note.constant"
 
 import clsx from "@/utils/clsx.util"
 
-export interface KeywordModel {
+export interface KeywordEntity {
   id?: number
   noteId: number
   posX: number
   posY: number
   text: string
-  children: KeywordModel[]
-  parent?: KeywordModel
+  children: KeywordEntity[]
+  parent?: KeywordEntity
   status: null | 'EDIT' | 'READ'
 }
 
@@ -25,7 +26,7 @@ export interface KeywordData {
 }
 
 interface BlockProps {
-  keyword: KeywordModel
+  keyword: KeywordEntity
   config: {
     screenX: number
     screenY: number
@@ -64,7 +65,7 @@ const Block = ({
     )
   }, [elementRef, keyword])
 
-  const { keycontrol } = useContext(NoteContext)
+  const { noteStatus: noteState, setNoteStatus: setNoteState } = useContext(NoteContext)
 
   return (
     <input type="text" className="absolute w-48 h-[30px] text-center focus:outline-knock-sub border" style={config.phantom ? {
@@ -75,8 +76,8 @@ const Block = ({
         top: y
       }}
       onFocus={() => {
-        if (keycontrol?.exit) {
-          keycontrol?.setExit(false)
+        if (noteState === NoteStatusChoice.EXIT) {
+          setNoteState!(NoteStatusChoice.MOD)
         }
       }}
       onClick={(e) => {
