@@ -35,6 +35,6 @@ interface PhantomState {
 }
 
 export const usePhantomState = (): PhantomState => {
-  const [hasPhantom, setHasPhantom] = useState(true)
+  const [hasPhantom, setHasPhantom] = useState(false)
   return { hasPhantom, setHasPhantom }
 }

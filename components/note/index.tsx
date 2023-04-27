@@ -2,8 +2,8 @@ import React, { useCallback, useRef, useState, useEffect } from "react"
 
 import { NoteEntity } from "@/models/notes.model"
 import { NoteContext } from "@/contexts/note.context"
-import { useNoteStatus, NoteStatus } from "@/hooks/note/keycontrol.hook"
-import { NoteStatusChoice } from "@/constants/note.constant"
+import { useNoteStatus } from "@/hooks/note/keycontrol.hook"
+import { NoteStatusChoice, KeywordStatusChoice } from "@/constants/note.constant"
 import { useNoteScreenPosition, usePhantomState } from "@/hooks/note/note.hook"
 
 import Block, { KeywordEntity, KeywordData } from "./Block"
@@ -19,10 +19,6 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
 
   const { hasPhantom, setHasPhantom } = usePhantomState()
 
-  useEffect(() => {
-
-  }, [])
-
   const handleCreateKeyword = useCallback((data: KeywordData) => {
     setNoteStatus(NoteStatusChoice.EXIT)
     setHasPhantom(false)
@@ -34,15 +30,15 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
     posY: 0,
     text: '',
     children: [],
-    status: null
+    status: KeywordStatusChoice.UNSELECT
   }
 
   const [PhantomKeywordModel, setPhantomKeywordModel] = useState<KeywordEntity>(InitKeywordModel)
 
   return (
     <NoteContext.Provider value={{
-      noteStatus: noteStatus,
-      setNoteStatus: setNoteStatus
+      noteStatus,
+      setNoteStatus
     }}>
       <div className="w-full h-full bg-zinc-50" ref={noteElementRef}
         onMouseMove={(e) => {
@@ -61,6 +57,7 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
             </div>
             <ModeEditIcon></ModeEditIcon>
           </div>
+          {/** note.keywords.map */}
           <Block
             keyword={ InitKeywordModel }
             config={{
@@ -70,6 +67,7 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
             }}
             onUpdate={(data: KeywordData) => {}}
           ></Block>
+          {/** --------------------------------- */}
           {
             hasPhantom &&
             <Block
@@ -83,7 +81,9 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
               onCreate={(data: KeywordData) => handleCreateKeyword(data)}
             ></Block>
           }
-          <Toolbar></Toolbar>
+          <Toolbar
+            onCreateKeyword={() => setHasPhantom(true)}
+          ></Toolbar>
         </div>
       </div>
     </NoteContext.Provider>

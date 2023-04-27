@@ -1,4 +1,7 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
+
+import { NoteContext } from "@/contexts/note.context"
+import { NoteStatusChoice } from "@/constants/note.constant"
 
 import ArrowCursorIcon from '@/components/svg/ArrowCursorIcon'
 import KeywordInitialIcon from '@/components/svg/KeywordInitialIcon'
@@ -7,7 +10,21 @@ import RelationLineIcon from '@/components/svg/RelationLineIcon'
 import FragmentLineIcon from '@/components/svg/FragmentLineIcon'
 import clsx from "@/utils/clsx.util"
 
-const Toolbar = (): JSX.Element => {
+interface ToolbarProps {
+  onCreateKeyword: () => void
+}
+
+enum Label {
+  ArrowCursor = 1,
+  KeywordInitial,
+  Arrow,
+  Line,
+  FragmentLine
+}
+
+const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
+  const { setNoteStatus } = useContext(NoteContext)
+
   const [cursor, setCursor] = useState<number>(0)
   
   return (
@@ -16,40 +33,56 @@ const Toolbar = (): JSX.Element => {
         activeChildClassName="fill-knock-main"
         inActiveChildClassName="fill-black"
         icon={ArrowCursorIcon}
-        onClick={() => setCursor(1)}
-        label={1}
+        setFocus={() => {
+          setCursor(Label.ArrowCursor)
+          setNoteStatus!(NoteStatusChoice.EXIT)
+        }}
+        label={Label.ArrowCursor}
         cursor={cursor}
       ></Button>
       <Button
         activeChildClassName="fill-knock-main"
         inActiveChildClassName="fill-black"
         icon={KeywordInitialIcon}
-        onClick={() => setCursor(2)}
-        label={2}
+        setFocus={() => {
+          setCursor(Label.KeywordInitial)
+          setNoteStatus!(NoteStatusChoice.MOD)
+        }}
+        label={Label.KeywordInitial}
         cursor={cursor}
+        onCreateKeyword={onCreateKeyword}
       ></Button>
       <Button
         activeChildClassName="text-knock-main"
         childClassName=""
         icon={CallMadeIcon}
-        onClick={() => setCursor(3)}
-        label={3}
+        setFocus={() => {
+          setCursor(Label.Arrow)
+          setNoteStatus!(NoteStatusChoice.REL)
+        }}
+        label={Label.Arrow}
         cursor={cursor}
       ></Button>
       <Button
         activeChildClassName="stroke-knock-main"
         childClassName="stroke-2 stroke-black"
         icon={RelationLineIcon}
-        onClick={() => setCursor(4)}
-        label={4}
+        setFocus={() => {
+          setCursor(Label.Line)
+          setNoteStatus!(NoteStatusChoice.REL)
+        }}
+        label={Label.Line}
         cursor={cursor}
       ></Button>
       <Button
         activeChildClassName="stroke-knock-main"
         childClassName="stroke-1 stroke-black"
         icon={FragmentLineIcon}
-        onClick={() => setCursor(5)}
-        label={5}
+        setFocus={() => {
+          setCursor(Label.FragmentLine)
+          setNoteStatus!(NoteStatusChoice.REL)
+        }}
+        label={Label.FragmentLine}
         cursor={cursor}
       ></Button>
     </div>
@@ -61,14 +94,16 @@ interface ButtonProps extends React.PropsWithChildren {
   inActiveChildClassName?: string
   childClassName?: string
   icon: any
-  label: number
-  onClick: () => void
+  label: Label
+  setFocus: () => void
   cursor: number
+  onCreateKeyword?: () => void
 }
 
 const Button = (props: ButtonProps): JSX.Element => {
+  const { noteStatus } = useContext(NoteContext)
 
-  const { onClick, cursor, label } = props
+  const { setFocus, cursor, label } = props
 
   const [hover, setHover] = useState(false)
   const [isActive, setIsActive] = useState(false)
@@ -76,6 +111,15 @@ const Button = (props: ButtonProps): JSX.Element => {
   useEffect(() => {
     setIsActive(cursor === label || (cursor !== label && hover))
   }, [cursor, label, hover])
+
+  useEffect(() => {
+    if (noteStatus === NoteStatusChoice.EXIT && label === Label.ArrowCursor) {
+      setFocus()
+    }
+    else if (noteStatus === NoteStatusChoice.MOD && label === Label.KeywordInitial) {
+      setFocus()
+    }
+  }, [noteStatus, label])
 
   return (
     <div className={
@@ -86,7 +130,12 @@ const Button = (props: ButtonProps): JSX.Element => {
     }
       onMouseEnter={() => { setHover(true) }}
       onMouseLeave={() => { setHover(false) }}
-      onClick={() => onClick()}
+      onClick={() => {
+        setFocus()
+        if (label === Label.KeywordInitial) {
+          props.onCreateKeyword!()
+        }
+      }}
     >
       <Icon
         statusClassName={isActive ? props.activeChildClassName : props.inActiveChildClassName}

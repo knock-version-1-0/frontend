@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useContext, MouseEventHandler } from "react"
 
 import { NoteContext } from "@/contexts/note.context"
-import { NoteStatusChoice } from "@/constants/note.constant"
+import { NoteStatusChoice, KeywordStatusChoice } from "@/constants/note.constant"
 
 import clsx from "@/utils/clsx.util"
 
@@ -13,7 +13,7 @@ export interface KeywordEntity {
   text: string
   children: KeywordEntity[]
   parent?: KeywordEntity
-  status: null | 'EDIT' | 'READ'
+  status: KeywordStatusChoice
 }
 
 export interface KeywordData {
@@ -22,7 +22,7 @@ export interface KeywordData {
   posY: number
   text: string
   parentId?: number
-  status: null | 'EDIT' | 'READ'
+  status: KeywordStatusChoice
 }
 
 interface BlockProps {
@@ -40,7 +40,11 @@ const Block = ({
   config,
   keyword,
   onUpdate,
-  onCreate}: BlockProps): JSX.Element => {
+  onCreate
+}: BlockProps): JSX.Element => {
+
+  const { noteStatus, setNoteStatus } = useContext(NoteContext)
+
   const elementRef = useRef<HTMLInputElement>(null)
 
   const { screenX, screenY } = config
@@ -65,8 +69,6 @@ const Block = ({
     )
   }, [elementRef, keyword])
 
-  const { noteStatus: noteState, setNoteStatus: setNoteState } = useContext(NoteContext)
-
   return (
     <input type="text" className="absolute w-48 h-[30px] text-center focus:outline-knock-sub border" style={config.phantom ? {
         left: center[0],
@@ -76,8 +78,18 @@ const Block = ({
         top: y
       }}
       onFocus={() => {
-        if (noteState === NoteStatusChoice.EXIT) {
-          setNoteState!(NoteStatusChoice.MOD)
+        if (noteStatus !== NoteStatusChoice.MOD) {
+          setNoteStatus!(NoteStatusChoice.MOD)
+        }
+      }}
+      onBlur={() => {
+        if (noteStatus !== NoteStatusChoice.EXIT) {
+          setNoteStatus!(NoteStatusChoice.EXIT)
+        }
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' && elementRef.current) {
+          elementRef.current.blur()
         }
       }}
       onClick={(e) => {
@@ -89,7 +101,7 @@ const Block = ({
             posY: keyword.posY,
             text: keyword.text,
             parentId: keyword.parent?.id,
-            status: 'EDIT'
+            status: KeywordStatusChoice.EDIT
           })
         }
       }}
