@@ -18,6 +18,15 @@ const NoteSideScreenBody = () => {
   const [offset, setOffset] = useState(0)
   const [items, setItems] = useState<NoteSummaryEntity[]>(noteItems)
   const [isLast, setIsLast] = useState<boolean>(false)
+  const [showScrollbar, setShowScrollbar] = useState(false);
+
+  const handleMouseEnter = () => {
+    setShowScrollbar(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowScrollbar(false);
+  }
 
   const handleNextClick = useCallback(async () => {
     const nextOffset = offset + MAX_NOTE_LIST_SIZE
@@ -49,7 +58,15 @@ const NoteSideScreenBody = () => {
           <CircleIcon className="absolute top-0 left-0 w-4 h-4 z-10"></CircleIcon>
         </div>
       </div>
-      <div className="h-full overflow-auto pt-2 pl-2 pr-3">
+      <div 
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className={clsx(
+          "list",
+          showScrollbar ? "scrollbar-visible" : "",
+          "h-full pt-2 pl-2 pr-3"
+        )}
+      >
         {
           items.map((value, index) => (
             <div key={value.displayId}>
@@ -57,8 +74,7 @@ const NoteSideScreenBody = () => {
                 onClick={() => router.push(`/note/${value.displayId}`)}
                 className={
                   clsx(
-                    displayId === value.displayId ?
-                      "outline outline-2 outline-knock-sub" : "",
+                    displayId === value.displayId ? "outline outline-2 outline-knock-sub" : "",
                     "cursor-pointer py-3 px-2 w-full border-b",
                     "hover:bg-zinc-50 hover:shadow-sm"
                   )}
