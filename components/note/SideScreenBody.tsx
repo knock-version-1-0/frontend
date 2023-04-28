@@ -1,9 +1,9 @@
 import React, { useCallback, useContext, useState } from "react"
 import { useRouter } from "next/router"
 
-import { AppContextApi } from "@/contexts"
+import { AppContext } from "@/contexts"
 import { ApiGetNotes } from "@/api/notes.api"
-import { NoteSummaryModel } from "@/models/notes.model"
+import { NoteSummaryEntity } from "@/models/notes.model"
 import clsx from "@/utils/clsx.util"
 import CancelIcon from '@mui/icons-material/Cancel'
 import CircleIcon from '@mui/icons-material/Circle'
@@ -11,12 +11,12 @@ import { MAX_NOTE_LIST_SIZE } from "@/constants/note.constant"
 import { setNoteOffsetFromCookie } from "@/cookies/note.cookie"
 
 const NoteSideScreenBody = () => {
-  const { noteItems, token } = useContext(AppContextApi)
+  const { noteItems, token } = useContext(AppContext)
   const router = useRouter()
   const { displayId } = router.query
 
   const [offset, setOffset] = useState(0)
-  const [items, setItems] = useState<NoteSummaryModel[]>(noteItems)
+  const [items, setItems] = useState<NoteSummaryEntity[]>(noteItems)
   const [isLast, setIsLast] = useState<boolean>(false)
 
   const handleNextClick = useCallback(async () => {

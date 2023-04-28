@@ -37,7 +37,7 @@ const Header = (props: {
       )
     }>
       <Image alt='logo' src={KnockLogo} />
-      <MenuIcon className="cursor-pointer" />
+      <MenuIcon className="cursor-pointer hover:text-etc" />
     </div>
   )
 }
@@ -85,7 +85,7 @@ const Navigator = (props: {
       </button>
       <button onClick={()=>router.push(navPath.my.path)}>
         <AccountCircleIcon
-          className={`${navPath.my.re.exec(pathname) ? '' : 'text-etc'}`}
+          className={`${navPath.my.re.exec(pathname) ? '' : 'text-etc'} hover:text-black`}
         ></AccountCircleIcon>
       </button>
     </div>

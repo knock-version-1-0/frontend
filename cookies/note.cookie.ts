@@ -1,17 +1,17 @@
 import { getCookie, setCookie, deleteCookie } from "cookies-next"
 import { NOTE_ITEMS_KEY, NOTE_OFFSET_KEY } from "@/constants/note.constant"
 
-import { NoteSummaryModel } from "@/models/notes.model"
+import { NoteSummaryEntity } from "@/models/notes.model"
 
 import { ServerSideOpt } from "@/utils/cookie.util"
 
-export const getNoteItemsFromCookie = ({ req, res }: ServerSideOpt): NoteSummaryModel[] | null => {
+export const getNoteItemsFromCookie = ({ req, res }: ServerSideOpt): NoteSummaryEntity[] | null => {
   const cookie = getCookie(NOTE_ITEMS_KEY, { req, res })
-  if (cookie) return JSON.parse(cookie as string) as NoteSummaryModel[]
+  if (cookie) return JSON.parse(cookie as string) as NoteSummaryEntity[]
   else return null
 }
 
-export const setNoteItemsFromCookie = (data: NoteSummaryModel[], { req, res }: ServerSideOpt): void => {
+export const setNoteItemsFromCookie = (data: NoteSummaryEntity[], { req, res }: ServerSideOpt): void => {
   setCookie(NOTE_ITEMS_KEY, data, { req, res })
 }
 

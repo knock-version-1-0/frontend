@@ -6,7 +6,7 @@ import {
 } from "next"
 
 import { ApiGetNoteByDisplayId } from "@/api/notes.api"
-import { NoteModel } from "@/models/notes.model"
+import { NoteEntity } from "@/models/notes.model"
 
 import Note from "@/components/note"
 import Layout from "@/components/Layout"
@@ -26,7 +26,7 @@ const NoteDetail: NextPage = ({ note }: InferGetServerSidePropsType<typeof getSe
 
 export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
   const token = getAuthTokenFromCookie({req, res}) ?? ''
-  const note: NoteModel = await ApiGetNoteByDisplayId(params!.displayId as string, token)
+  const note: NoteEntity = await ApiGetNoteByDisplayId(params!.displayId as string, token)
 
   return {
     props: {

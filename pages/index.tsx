@@ -1,14 +1,20 @@
+import { useEffect } from "react"
 import { NextPage } from "next"
+import { useRouter } from "next/router"
 
-import Note from "@/components/note"
 import Layout from "@/components/Layout"
 
 const Home: NextPage = () => {
+  const router = useRouter()
+  useEffect(() => {
+    router.push('/note')
+  }, [])
+
   return (
     <Layout sideScreenBody={(
       <></>
     )}>
-      <Note noteId="Tutorial"></Note>
+      <></>
     </Layout>
   )
 }

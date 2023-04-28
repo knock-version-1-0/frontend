@@ -1,16 +1,16 @@
 import { createContext } from "react"
 
-import { NoteSummaryModel } from "@/models/notes.model"
+import { NoteSummaryEntity } from "@/models/notes.model"
 import { UserModel } from "@/models/users.model"
 
-export interface ContextValue {
-    noteItems: NoteSummaryModel[]
+export interface AppStore {
+    noteItems: NoteSummaryEntity[]
     token?: string
 }
 
-export const InitContextValue: ContextValue = {
+export const InitAppStore: AppStore = {
     noteItems: [],
     token: undefined
 }
 
-export const AppContextApi = createContext<ContextValue>(InitContextValue)
+export const AppContext = createContext<AppStore>(InitAppStore)

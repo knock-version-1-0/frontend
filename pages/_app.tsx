@@ -1,9 +1,9 @@
 import '@/styles/globals.css'
 
-import type { AppProps, AppContext } from 'next/app'
+import type { AppProps, AppContext as ReactAppContext } from 'next/app'
 import Head from 'next/head'
 
-import { AppContextApi } from "@/contexts"
+import { AppContext } from "@/contexts"
 import { ApiGetNotes } from "@/api/notes.api"
 import { setAuthTokenFromCookie } from '@/cookies/auth.cookie'
 import { getNoteItemsFromCookie, setNoteItemsFromCookie } from '@/cookies/note.cookie'
@@ -15,7 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
   } = pageProps
 
   return (
-    <AppContextApi.Provider value={{
+    <AppContext.Provider value={{
       token,
       noteItems
     }}>
@@ -23,11 +23,11 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>KnocK</title>
       </Head>
       <Component {...pageProps} />
-    </AppContextApi.Provider>
+    </AppContext.Provider>
   )
 }
 
-App.getInitialProps = async ({ Component, ctx }: AppContext) => {
+App.getInitialProps = async ({ Component, ctx }: ReactAppContext) => {
   const { req, res } = ctx
 
   let pageProps = {}

@@ -10,9 +10,7 @@ const Layout = (props: LayoutProps): JSX.Element => {
       <SideScreen>
         {props.sideScreenBody}
       </SideScreen>
-      <div className="w-full h-full bg-zinc-50">
-        {props.children}
-      </div>
+      {props.children}
     </div>
   )
 }
