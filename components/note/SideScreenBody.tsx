@@ -64,7 +64,7 @@ const NoteSideScreenBody = () => {
         className={clsx(
           "list",
           showScrollbar ? "scrollbar-visible" : "",
-          "h-full pt-2 pl-2 pr-3"
+          "h-full pt-2 pl-2 pr-1"
         )}
       >
         {

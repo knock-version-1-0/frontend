@@ -1,12 +1,14 @@
-import React, { useCallback, useRef, useState, useEffect } from "react"
+import React, { useCallback, useRef, useState } from "react"
 
 import { NoteEntity } from "@/models/notes.model"
 import { NoteContext } from "@/contexts/note.context"
 import { useNoteStatus } from "@/hooks/note/keycontrol.hook"
 import { NoteStatusChoice, KeywordStatusChoice } from "@/constants/note.constant"
 import { useNoteScreenPosition, usePhantomState } from "@/hooks/note/note.hook"
+import { KeywordEntity } from "@/models/notes.model"
+import { KeywordData } from "@/api/data/notes"
 
-import Block, { KeywordEntity, KeywordData } from "./Block"
+import Block from "./Block"
 import Toolbar from "./Toolbar"
 import ModeEditIcon from '@mui/icons-material/ModeEdit'
 
@@ -29,7 +31,6 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
     posX: 0,
     posY: 0,
     text: '',
-    children: [],
     status: KeywordStatusChoice.UNSELECT
   }
 
@@ -50,7 +51,9 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
         }}
       >
         <div className="ml-10">
-          <nav className="text-md mt-4 py-1 text-knock-sub underline cursor-pointer hover:opacity-70">{note.name}</nav>
+          <nav className="mt-5">
+            <span className="text-md text-knock-sub underline cursor-pointer hover:opacity-70">{note.name}</span>
+          </nav>
           <div className="flex flex-row items-end mt-4">
             <div className="border-b border-black w-[240px] cursor-text">
               <h1 className="text-2xl">{note.name}</h1>

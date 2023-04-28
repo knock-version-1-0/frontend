@@ -10,9 +10,14 @@ export interface NoteEntity {
 }
 
 export interface KeywordEntity {
+  id?: number
   noteId: number
-  posId: number
-  text?: string
+  posX: number
+  posY: number
+  text: string
+  parentId?: number
+  status: number
+  timestamp?: number
 }
 
 export interface NoteSummaryEntity {

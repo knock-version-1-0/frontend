@@ -1,29 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback, useContext, MouseEventHandler } from "react"
+import React, { useState, useEffect, useRef, useContext } from "react"
 
 import { NoteContext } from "@/contexts/note.context"
 import { NoteStatusChoice, KeywordStatusChoice } from "@/constants/note.constant"
 
+import { KeywordEntity } from "@/models/notes.model"
+import { KeywordData } from "@/api/data/notes"
+
 import clsx from "@/utils/clsx.util"
-
-export interface KeywordEntity {
-  id?: number
-  noteId: number
-  posX: number
-  posY: number
-  text: string
-  children: KeywordEntity[]
-  parent?: KeywordEntity
-  status: KeywordStatusChoice
-}
-
-export interface KeywordData {
-  noteId: number
-  posX: number
-  posY: number
-  text: string
-  parentId?: number
-  status: KeywordStatusChoice
-}
 
 interface BlockProps {
   keyword: KeywordEntity
@@ -61,6 +44,9 @@ const Block = ({
     }
   }, [screenX, screenY, keyword])
 
+  /**
+   * Keyword가 phantom 상태일 때, 마우스 cursor의 가운데 지점을 중심으로 phantom Keyword를 움직일 수 있게 하기 위해 center값의 좌표를 계산.
+   */
   useEffect(() => {
     const height = elementRef.current?.offsetHeight ?? 0
     const width = elementRef.current?.offsetWidth ?? 0
@@ -100,8 +86,9 @@ const Block = ({
             posX: keyword.posX,
             posY: keyword.posY,
             text: keyword.text,
-            parentId: keyword.parent?.id,
-            status: KeywordStatusChoice.EDIT
+            parentId: keyword.parentId,
+            status: KeywordStatusChoice.EDIT,
+            timestamp: Date.now()
           })
         }
       }}
