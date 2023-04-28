@@ -12,7 +12,8 @@ const NoteHome: NextPage = () => {
   const { noteItems } = useContext(AppContext)
 
   useEffect(() => {
-    router.push(`/note/${noteItems[0].displayId}`)
+    if (noteItems.length !== 0)
+      router.push(`/note/${noteItems[0].displayId}`)
   }, [])
 
   return (
