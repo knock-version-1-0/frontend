@@ -1,53 +1,29 @@
-import React, { useCallback, useContext, useState } from "react"
+import React, { useContext, useState } from "react"
 import { useRouter } from "next/router"
 
-import { AppContext } from "@/contexts"
-import { ApiGetNotes } from "@/api/notes.api"
+import { NoteAppContext } from "@/contexts/apps.context"
 import { NoteSummaryEntity } from "@/models/notes.model"
+
 import clsx from "@/utils/clsx.util"
 import CancelIcon from '@mui/icons-material/Cancel'
 import CircleIcon from '@mui/icons-material/Circle'
-import { MAX_NOTE_LIST_SIZE } from "@/constants/note.constant"
-import { setNoteOffsetFromCookie } from "@/cookies/note.cookie"
+import DeleteIcon from '@mui/icons-material/Delete'
 
 const NoteSideScreenBody = () => {
-  const { noteItems, token } = useContext(AppContext)
+  const { items, isLast, next: showNextList, addNote, modifyNote, removeNote } = useContext(NoteAppContext)
+
   const router = useRouter()
   const { displayId } = router.query
 
-  const [offset, setOffset] = useState(0)
-  const [items, setItems] = useState<NoteSummaryEntity[]>(noteItems)
-  const [isLast, setIsLast] = useState<boolean>(false)
-  const [showScrollbar, setShowScrollbar] = useState(false);
+  const [showScrollbar, setShowScrollbar] = useState(false)
 
   const handleMouseEnter = () => {
-    setShowScrollbar(true);
-  };
-
-  const handleMouseLeave = () => {
-    setShowScrollbar(false);
+    setShowScrollbar(true)
   }
 
-  const handleNextClick = useCallback(async () => {
-    const nextOffset = offset + MAX_NOTE_LIST_SIZE
-    setOffset(nextOffset)
-    setNoteOffsetFromCookie(nextOffset)
-
-    const data = await ApiGetNotes({
-      offset: nextOffset
-    }, token ?? '')
-    if (data) {
-      if (data.length === 0) {
-        setIsLast(true)
-      }
-      else if (data.length >= 0 && data.length < MAX_NOTE_LIST_SIZE) {
-        setItems([...items, ...data])
-        setIsLast(true)
-      } else {
-        setItems([...items, ...data])
-      }
-    }
-  }, [offset, items])
+  const handleMouseLeave = () => {
+    setShowScrollbar(false)
+  }
 
   return (
     <>
@@ -69,25 +45,13 @@ const NoteSideScreenBody = () => {
       >
         {
           items.map((value, index) => (
-            <div key={value.displayId}>
-              <div
-                onClick={() => router.push(`/note/${value.displayId}`)}
-                className={
-                  clsx(
-                    displayId === value.displayId ? "outline outline-2 outline-knock-sub" : "",
-                    "cursor-pointer py-3 px-2 w-full border-b",
-                    "hover:bg-zinc-50 hover:shadow-sm"
-                  )}
-              >
-                {value.name}
-              </div>
-            </div>
+            <Item value={value} displayId={displayId as string} />
           ))
         }
         <div className={`w-full py-3 text-center cursor-pointer hover:bg-zinc-50 hover:shadow-sm`}
           onClick={() => {
             if (!isLast)
-              handleNextClick()
+              showNextList()
           }}
         >
           {
@@ -96,6 +60,38 @@ const NoteSideScreenBody = () => {
         </div>
       </div>
     </>
+  )
+}
+
+interface ItemProps {
+  value: NoteSummaryEntity
+  displayId: string
+}
+
+const Item = ({ value, displayId }: ItemProps): JSX.Element => {
+  const router = useRouter()
+
+  return (
+    <div key={value.displayId}>
+      <div
+        onClick={() => router.push(`/note/${value.displayId}`)}
+        className={
+          clsx(
+            displayId === value.displayId ? "outline outline-2 outline-knock-sub" : "",
+            "flex flex-row justify-between items-center cursor-pointer py-3 px-2 w-full border-b",
+            "hover:bg-zinc-50 hover:shadow-sm"
+          )}
+      >
+        <p className="text-lg font-light">{value.name}</p>
+        {
+          displayId === value.displayId && (
+            <DeleteIcon className="w-5 h-5 hover:text-etc"
+              onClick={() => {}}
+            ></DeleteIcon>
+          )
+        }
+      </div>
+    </div>
   )
 }
 
