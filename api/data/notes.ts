@@ -9,7 +9,7 @@ export interface KeywordData {
   posX: number
   posY: number
   text: string
-  parentId?: number
+  parentId: number | null
   status: number
   timestamp: number
 }

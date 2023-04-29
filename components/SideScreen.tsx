@@ -12,8 +12,8 @@ interface SideScreenProps extends React.PropsWithChildren {}
 
 const SideScreen = (props: SideScreenProps): JSX.Element => {
   return (
-    <div className="w-[400px] h-screen">
-      <div className="relative h-full">
+    <div className="h-screen">
+      <div className="relative w-[320px] h-full">
         <Header className="pl-4 pr-6 border-b"></Header>
         <div className="w-full h-full pt-20 pb-28">
           {props.children}

@@ -15,9 +15,9 @@ export interface KeywordEntity {
   posX: number
   posY: number
   text: string
-  parentId?: number
+  parentId: number | null
   status: number
-  timestamp?: number
+  timestamp: number
 }
 
 export interface NoteSummaryEntity {

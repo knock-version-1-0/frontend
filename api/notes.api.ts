@@ -31,3 +31,9 @@ export const ApiGetNotes = async ({ name, offset }: {name?: string; offset?: num
     .then(res => res.data)
     .catch(err => err.response)
 }
+
+export const ApiDeleteNote = (displayId: string, token: string) =>
+  AxiosWithJwt(token)
+    .delete<NoteEntity>(`${APP_NAME}/${displayId}${TRAILING_SLASH}`)
+    .then(res => null)
+    .catch(err => err.response)

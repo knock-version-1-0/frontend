@@ -31,7 +31,9 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
     posX: 0,
     posY: 0,
     text: '',
-    status: KeywordStatusChoice.UNSELECT
+    parentId: null,
+    status: KeywordStatusChoice.UNSELECT,
+    timestamp: Date.now()
   }
 
   const [PhantomKeywordModel, setPhantomKeywordModel] = useState<KeywordEntity>(InitKeywordModel)
