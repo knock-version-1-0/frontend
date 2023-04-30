@@ -41,7 +41,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
   if (noteItemsPayload.status !== 'OK') { throw Error(noteItemsPayload.status) }
   const noteItems: NoteSummaryEntity[] = noteItemsPayload.data!
 
-  var notePayload: ApiPayload<NoteEntity> = await fetchGetNoteByDisplayIdApi(params!.displayId as string, token)
+  const notePayload: ApiPayload<NoteEntity> = await fetchGetNoteByDisplayIdApi(params!.displayId as string, token)
   if (notePayload.status === NoteDoesNotExist) {
     res.statusCode = 404
     return {
