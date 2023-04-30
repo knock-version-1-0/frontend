@@ -9,7 +9,9 @@ import {
   NoteDoesNotExist,
   NoteNameDuplicate,
   UserInvalid,
-  UserPermissionDenied
+  UserPermissionDenied,
+  NoteNameLengthOver,
+  DatabaseError
 } from "./status"
 import { ApiPayload, ErrorDetail } from "@/utils/types.util"
 
@@ -21,7 +23,7 @@ export const fetchGetNoteByDisplayIdApi = async (displayId: string, token: strin
       .get<NoteEntity | ErrorDetail>(`${APP_NAME}/${displayId}${TRAILING_SLASH}`)
     const resData = res.data as NoteEntity
     return {
-      status: 'OK',
+      status: res.statusText,
       data: resData
     }
   } catch (err: unknown) {
@@ -49,7 +51,7 @@ export const fetchPostNotesApi = async (data: NoteData, token: string): Promise<
     const resData = res.data as NoteEntity
 
     return {
-      status: 'OK',
+      status: res.statusText,
       data: resData
     }
   } catch (err: unknown) {
@@ -80,7 +82,7 @@ export const fetchGetNotesApi = async ({ name, offset }: {name?: string; offset?
       .get<NoteSummaryEntity[] | ErrorDetail>(`${APP_NAME}${TRAILING_SLASH}?${query}`)
     const resData = res.data as NoteSummaryEntity[]
     return {
-      status: 'OK',
+      status: res.statusText,
       data: resData
     }
   } catch (err: unknown) {
@@ -97,4 +99,39 @@ export const fetchDeleteNoteApi = async (displayId: string, token: string): Prom
   const res = await AxiosWithJwt(token).delete<null | ErrorDetail>(`${APP_NAME}/${displayId}${TRAILING_SLASH}`)
   if (res.status === 204) return null
   throw Error(JSON.stringify(res))
+}
+
+export const fetchPatchNoteApi = async (data: NoteData, displayId: string, token: string): Promise<ApiPayload<NoteEntity>> => {
+  try {
+    const res = await AxiosWithJwt(token)
+      .patch<NoteEntity | ErrorDetail>(`${APP_NAME}/${displayId}${TRAILING_SLASH}`, data)
+    const resData = res.data as NoteEntity
+    return {
+      status: res.statusText,
+      data: resData
+    }
+  } catch (err: unknown) {
+    return getApiStatus<NoteEntity>(err, [
+      {
+        statusCode: 400,
+        types: [NoteNameLengthOver]
+      },
+      {
+        statusCode: 401,
+        types: [UserInvalid]
+      },
+      {
+        statusCode: 403,
+        types: [UserPermissionDenied]
+      },
+      {
+        statusCode: 404,
+        types: [NoteDoesNotExist]
+      },
+      {
+        statusCode: 500,
+        types: [DatabaseError]
+      }
+    ])
+  }
 }
