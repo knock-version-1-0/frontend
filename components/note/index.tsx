@@ -3,7 +3,7 @@ import React, { useCallback, useRef, useState } from "react"
 import { NoteEntity } from "@/models/notes.model"
 import { NoteContext } from "@/contexts/note.context"
 import { useNoteStatus } from "@/hooks/note/keycontrol.hook"
-import { NoteStatusChoice, KeywordStatusChoice } from "@/constants/note.constant"
+import { NoteStatusEnum, KeywordStatusEnum } from "@/constants/note.constant"
 import { useNoteScreenPosition, usePhantomState } from "@/hooks/note/note.hook"
 import { KeywordEntity } from "@/models/notes.model"
 import { KeywordData } from "@/api/data/notes"
@@ -22,7 +22,7 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
   const { hasPhantom, setHasPhantom } = usePhantomState()
 
   const handleCreateKeyword = useCallback((data: KeywordData) => {
-    setNoteStatus(NoteStatusChoice.EXIT)
+    setNoteStatus(NoteStatusEnum.EXIT)
     setHasPhantom(false)
   }, [])
 
@@ -32,7 +32,7 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
     posY: 0,
     text: '',
     parentId: null,
-    status: KeywordStatusChoice.UNSELECT,
+    status: KeywordStatusEnum.UNSELECT,
     timestamp: Date.now()
   }
 
@@ -53,12 +53,16 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
         }}
       >
         <div className="ml-10">
-          <nav className="mt-5">
-            <span className="text-md text-knock-sub underline cursor-pointer hover:opacity-70">{note.name}</span>
+          <nav className="mt-5 text-md">
+            <span className="text-knock-sub underline cursor-pointer hover:opacity-70">{note.name === '' ? '_' : note.name}</span>
+            <span className="mx-2">/</span>
           </nav>
           <div className="flex flex-row items-end mt-4">
             <div className="border-b border-black w-[240px] cursor-text">
-              <h1 className="text-2xl">{note.name}</h1>
+              <input className="text-2xl outline-none bg-transparent note-title-input-style"
+                value={note.name}
+                onChange={() => {}}
+              />
             </div>
             <ModeEditIcon></ModeEditIcon>
           </div>

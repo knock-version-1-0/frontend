@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react"
 
 import { NoteContext } from "@/contexts/note.context"
-import { NoteStatusChoice, KeywordStatusChoice } from "@/constants/note.constant"
+import { NoteStatusEnum, KeywordStatusEnum } from "@/constants/note.constant"
 
 import { KeywordEntity } from "@/models/notes.model"
 import { KeywordData } from "@/api/data/notes"
@@ -64,13 +64,13 @@ const Block = ({
         top: y
       }}
       onFocus={() => {
-        if (noteStatus !== NoteStatusChoice.MOD) {
-          setNoteStatus!(NoteStatusChoice.MOD)
+        if (noteStatus !== NoteStatusEnum.MOD) {
+          setNoteStatus!(NoteStatusEnum.MOD)
         }
       }}
       onBlur={() => {
-        if (noteStatus !== NoteStatusChoice.EXIT) {
-          setNoteStatus!(NoteStatusChoice.EXIT)
+        if (noteStatus !== NoteStatusEnum.EXIT) {
+          setNoteStatus!(NoteStatusEnum.EXIT)
         }
       }}
       onKeyDown={(e) => {
@@ -87,7 +87,7 @@ const Block = ({
             posY: keyword.posY,
             text: keyword.text,
             parentId: keyword.parentId,
-            status: KeywordStatusChoice.EDIT,
+            status: KeywordStatusEnum.EDIT,
             timestamp: Date.now()
           })
         }

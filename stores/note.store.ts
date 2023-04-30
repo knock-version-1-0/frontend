@@ -1,6 +1,6 @@
-import { NoteStatusChoice } from "@/constants/note.constant"
+import { NoteStatusEnum } from "@/constants/note.constant"
 
 export interface NoteStore {
-  noteStatus: NoteStatusChoice
-  setNoteStatus: React.Dispatch<React.SetStateAction<NoteStatusChoice>> | null
+  noteStatus: NoteStatusEnum
+  setNoteStatus: React.Dispatch<React.SetStateAction<NoteStatusEnum>> | null
 }

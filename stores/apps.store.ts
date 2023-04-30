@@ -9,20 +9,27 @@ export const InitAppStore: AppStore = {
   token: undefined
 }
 
-export interface NoteListAppStore {
+export interface ItemStore {
+  items: any
+  addItem: (data: any) => void
+  modifyItem: (data: any) => void
+  removeItem: (key: any) => void
+}
+
+export interface NoteListAppStore extends ItemStore {
   items: NoteSummaryEntity[]
   next: () => void
   isLast: boolean
-  addNote: (data: NoteData) => void
-  modifyNote: (data: NoteData) => void
-  removeNote: (displayId: string) => void
+  addItem: (data: NoteData) => void
+  modifyItem: (data: NoteData) => void
+  removeItem: (displayId: string) => void
 }
 
 export const InitNoteListAppStore: NoteListAppStore = {
   items: [],
   next: () => {},
   isLast: false,
-  addNote: (data: NoteData) => {},
-  modifyNote: (data: NoteData) => {},
-  removeNote: (displayId: string) => {}
+  addItem: (data: NoteData) => {},
+  modifyItem: (data: NoteData) => {},
+  removeItem: (displayId: string) => {}
 }

@@ -1,5 +1,10 @@
+import { useContext } from "react"
 import { useRouter } from "next/router"
 import Image from "next/image"
+
+import { NoteAppContext } from "@/contexts/apps.context"
+import { NoteData } from "@/api/data/notes"
+import { StatusChoice } from "@/utils/enums.util"
 
 import KnockLogo from '@/public/knock-logo-40.svg'
 import clsx from "@/utils/clsx.util"
@@ -47,6 +52,8 @@ const Navigator = (props: {
   const router = useRouter()
   const pathname = router.pathname
 
+  const { addItem } = useContext(NoteAppContext)
+
   const navPath = {
     note: {
       re: new RegExp('^/note'),
@@ -63,7 +70,13 @@ const Navigator = (props: {
   }
 
   const handleClick = (path: string) => {
-    console.log(path)
+    if (path === navPath.home.path) {
+      const InitData: NoteData = {
+        name: '',
+        status: StatusChoice.SAVE
+      }
+      addItem(InitData)
+    }
   }
 
   return (

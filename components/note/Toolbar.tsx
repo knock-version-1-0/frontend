@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react"
 
 import { NoteContext } from "@/contexts/note.context"
-import { NoteStatusChoice } from "@/constants/note.constant"
+import { NoteStatusEnum } from "@/constants/note.constant"
 
 import ArrowCursorIcon from '@/components/svg/ArrowCursorIcon'
 import KeywordInitialIcon from '@/components/svg/KeywordInitialIcon'
@@ -35,7 +35,7 @@ const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
         icon={ArrowCursorIcon}
         setFocus={() => {
           setCursor(Label.ArrowCursor)
-          setNoteStatus!(NoteStatusChoice.EXIT)
+          setNoteStatus!(NoteStatusEnum.EXIT)
         }}
         label={Label.ArrowCursor}
         cursor={cursor}
@@ -46,7 +46,7 @@ const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
         icon={KeywordInitialIcon}
         setFocus={() => {
           setCursor(Label.KeywordInitial)
-          setNoteStatus!(NoteStatusChoice.MOD)
+          setNoteStatus!(NoteStatusEnum.MOD)
         }}
         label={Label.KeywordInitial}
         cursor={cursor}
@@ -58,7 +58,7 @@ const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
         icon={CallMadeIcon}
         setFocus={() => {
           setCursor(Label.Arrow)
-          setNoteStatus!(NoteStatusChoice.REL)
+          setNoteStatus!(NoteStatusEnum.REL)
         }}
         label={Label.Arrow}
         cursor={cursor}
@@ -69,7 +69,7 @@ const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
         icon={RelationLineIcon}
         setFocus={() => {
           setCursor(Label.Line)
-          setNoteStatus!(NoteStatusChoice.REL)
+          setNoteStatus!(NoteStatusEnum.REL)
         }}
         label={Label.Line}
         cursor={cursor}
@@ -80,7 +80,7 @@ const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
         icon={FragmentLineIcon}
         setFocus={() => {
           setCursor(Label.FragmentLine)
-          setNoteStatus!(NoteStatusChoice.REL)
+          setNoteStatus!(NoteStatusEnum.REL)
         }}
         label={Label.FragmentLine}
         cursor={cursor}
@@ -113,10 +113,10 @@ const Button = (props: ButtonProps): JSX.Element => {
   }, [cursor, label, hover])
 
   useEffect(() => {
-    if (noteStatus === NoteStatusChoice.EXIT && label === Label.ArrowCursor) {
+    if (noteStatus === NoteStatusEnum.EXIT && label === Label.ArrowCursor) {
       setFocus()
     }
-    else if (noteStatus === NoteStatusChoice.MOD && label === Label.KeywordInitial) {
+    else if (noteStatus === NoteStatusEnum.MOD && label === Label.KeywordInitial) {
       setFocus()
     }
   }, [noteStatus, label])

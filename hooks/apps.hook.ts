@@ -1,13 +1,17 @@
-import { useState, useCallback, useContext } from "react"
+import { useState, useCallback, useContext, useEffect } from "react"
+import { useRouter } from "next/router"
 
 import { AppContext } from "@/contexts/apps.context"
-import { NoteSummaryEntity } from "@/models/notes.model"
-import { ApiPostNotes, ApiGetNotes } from "@/api/notes.api"
+import { NoteSummaryEntity, NoteEntity } from "@/models/notes.model"
+import { ApiPostNotes, ApiGetNotes, ApiDeleteNote } from "@/api/notes.api"
 import { NoteData } from "@/api/data/notes"
 import { NoteListAppStore } from "@/stores/apps.store"
 import { MAX_NOTE_LIST_SIZE } from "@/constants/note.constant"
+import { NoteNameDuplicate } from "@/utils/status.util"
+import { ApiPayload } from "@/utils/types.util"
 
 export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
+  const router = useRouter()
   const { token } = useContext(AppContext)
 
   const [items, setItems] = useState<NoteSummaryEntity[]>(init)
@@ -18,41 +22,56 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
     const nextOffset = offset + MAX_NOTE_LIST_SIZE
     setOffset(nextOffset)
 
-    const data = await ApiGetNotes({
+    const payload: ApiPayload = await ApiGetNotes({
       offset: nextOffset
     }, token ?? '')
-
-    if (data) {
-      if (data.length === 0) {
-        setIsLast(true)
-      }
-      else if (data.length >= 0 && data.length < MAX_NOTE_LIST_SIZE) {
-        setItems([...items, ...data])
-        setIsLast(true)
-      } else {
-        setItems([...items, ...data])
+    if (payload.status === 'OK') {
+      const data = payload.data
+      if (data) {
+        if (data.length === 0) {
+          setIsLast(true)
+        }
+        else if (data.length >= 0 && data.length < MAX_NOTE_LIST_SIZE) {
+          setItems([...items, ...data])
+          setIsLast(true)
+        } else {
+          setItems([...items, ...data])
+        }
       }
     }
   }, [offset, items])
   
-  const addNote = useCallback(async (data: NoteData) => {
-    const note = await ApiPostNotes(data, token as string)
+  const addItem = useCallback(async (data: NoteData) => {
+    const payload: ApiPayload = await ApiPostNotes(data, token as string)
+    if (payload.status === NoteNameDuplicate) {
+      return
+    }
+
+    const note: NoteEntity = payload.data
+    router.replace(`/note/${note.displayId}`)
     setItems([{
       displayId: note.displayId,
       name: note.name
     }, ...items])
   }, [items])
 
-  const modifyNote = useCallback(async (data: NoteData) => {}, [])
+  const modifyItem = useCallback(async (data: NoteData) => {}, [])
 
-  const removeNote = useCallback(async () => {}, [])
+  const removeItem = useCallback(async (displayId: string) => {
+    const newItems = items.filter((value) => value.displayId !== displayId)
+    if (newItems.length !== 0) {
+      router.replace(`/note/${newItems[0].displayId}`)
+    } else { router.replace(`/note`) }
+    ApiDeleteNote(displayId, token as string)
+    setItems(newItems)
+  }, [items])
 
   return {
     items,
     isLast,
     next,
-    addNote,
-    modifyNote,
-    removeNote
+    addItem,
+    modifyItem,
+    removeItem
   }
 }
