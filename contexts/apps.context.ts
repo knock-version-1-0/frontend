@@ -5,7 +5,7 @@ import {
   InitAppStore,
   NoteListAppStore,
   InitNoteListAppStore  
-} from "@/stores/apps.store"
+} from "@/stores/apps"
 
 export const AppContext = createContext<AppStore>(InitAppStore)
 export const NoteAppContext = createContext<NoteListAppStore>(InitNoteListAppStore)

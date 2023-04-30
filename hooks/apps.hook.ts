@@ -3,12 +3,11 @@ import { useRouter } from "next/router"
 
 import { AppContext } from "@/contexts/apps.context"
 import { NoteSummaryEntity, NoteEntity } from "@/models/notes.model"
-import { ApiPostNotes, ApiGetNotes, ApiDeleteNote } from "@/api/notes.api"
+import { fetchPostNotesApi, fetchGetNotesApi, fetchDeleteNoteApi } from "@/api/notes.api"
 import { NoteData } from "@/api/data/notes"
-import { NoteListAppStore } from "@/stores/apps.store"
+import { NoteListAppStore } from "@/stores/apps"
 import { MAX_NOTE_LIST_SIZE } from "@/constants/note.constant"
-import { NoteNameDuplicate } from "@/utils/status.util"
-import { ApiPayload } from "@/utils/types.util"
+import { NoteNameDuplicate } from "@/api/status"
 
 export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
   const router = useRouter()
@@ -22,7 +21,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
     const nextOffset = offset + MAX_NOTE_LIST_SIZE
     setOffset(nextOffset)
 
-    const payload: ApiPayload = await ApiGetNotes({
+    const payload = await fetchGetNotesApi({
       offset: nextOffset
     }, token ?? '')
     if (payload.status === 'OK') {
@@ -42,12 +41,12 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
   }, [offset, items])
   
   const addItem = useCallback(async (data: NoteData) => {
-    const payload: ApiPayload = await ApiPostNotes(data, token as string)
+    const payload = await fetchPostNotesApi(data, token as string)
     if (payload.status === NoteNameDuplicate) {
       return
     }
 
-    const note: NoteEntity = payload.data
+    const note: NoteEntity = payload.data!
     router.replace(`/note/${note.displayId}`)
     setItems([{
       displayId: note.displayId,
@@ -57,12 +56,14 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
 
   const modifyItem = useCallback(async (data: NoteData) => {}, [])
 
-  const removeItem = useCallback(async (displayId: string) => {
-    const newItems = items.filter((value) => value.displayId !== displayId)
+  const removeItem = useCallback(async (key: string) => {
+    const newItems = items.filter((value) => value.displayId !== key)
     if (newItems.length !== 0) {
       router.replace(`/note/${newItems[0].displayId}`)
     } else { router.replace(`/note`) }
-    ApiDeleteNote(displayId, token as string)
+
+    await fetchDeleteNoteApi(key, token as string)
+
     setItems(newItems)
   }, [items])
 

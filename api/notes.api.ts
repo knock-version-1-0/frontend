@@ -1,4 +1,5 @@
-import { Axios, AxiosWithJwt } from "@/utils/http.util"
+import { Axios, AxiosWithJwt, getApiStatus } from "@/utils/http.util"
+import qs from "qs"
 
 import { NoteData } from "./data/notes"
 import { NoteEntity } from "@/models/notes.model"
@@ -6,101 +7,70 @@ import { NoteSummaryEntity } from "@/models/notes.model"
 import { TRAILING_SLASH } from "@/constants/common.constant"
 import {
   NoteDoesNotExist,
+  NoteNameDuplicate,
   UserInvalid,
-  UserPermissionDenied,
-  NoteNameDuplicate
-} from "@/utils/status.util"
-import { ErrorDetail } from "@/utils/types.util"
-
-import qs from "qs"
-import { AxiosError } from "axios"
+  UserPermissionDenied
+} from "./status"
+import { ApiPayload, ErrorDetail } from "@/utils/types.util"
 
 const APP_NAME = 'notes'
 
-export const ApiGetNoteByDisplayId = async (displayId: string, token: string) => {
+export const fetchGetNoteByDisplayIdApi = async (displayId: string, token: string): Promise<ApiPayload<NoteEntity>> => {
   try {
     const res = await AxiosWithJwt(token)
       .get<NoteEntity | ErrorDetail>(`${APP_NAME}/${displayId}${TRAILING_SLASH}`)
-    const resData = res.data
+    const resData = res.data as NoteEntity
     return {
       status: 'OK',
       data: resData
     }
   } catch (err: unknown) {
-    if (err instanceof AxiosError) {
-      const res = err.response!
-      const detail = res.data as ErrorDetail
-
-      if (res.status === 401) {
-        if (detail.type === UserInvalid) {
-          return {
-            status: UserInvalid,
-            data: null
-          }
-        }
-      } else if (res.status === 403) {
-        if (detail.type === UserPermissionDenied) {
-          return {
-            status: UserPermissionDenied,
-            data: null
-          }
-        }
-      } else if (res.status === 404) {
-        if (detail.type === NoteDoesNotExist) {
-          return {
-            status: NoteDoesNotExist,
-            data: null
-          }
-        }
+    return getApiStatus<NoteEntity>(err, [
+      {
+        statusCode: 401,
+        types: [UserInvalid]
+      },
+      {
+        statusCode: 403,
+        types: [UserPermissionDenied]
+      },
+      {
+        statusCode: 404,
+        types: [NoteDoesNotExist]
       }
-    }
-    throw err
+    ])
   }
 }
 
-export const ApiPostNotes = async (data: NoteData, token: string) => {
+export const fetchPostNotesApi = async (data: NoteData, token: string): Promise<ApiPayload<NoteEntity>> => {
   try {
     const res = await AxiosWithJwt(token)
       .post<NoteEntity | ErrorDetail>(`${APP_NAME}${TRAILING_SLASH}`, data=data)
-    const resData = res.data
+    const resData = res.data as NoteEntity
 
     return {
       status: 'OK',
       data: resData
     }
   } catch (err: unknown) {
-    if (err instanceof AxiosError) {
-      const res = err.response!
-      const detail = res.data as ErrorDetail
-
-      if (res.status === 400) {
-        if (detail.type === NoteNameDuplicate) {
-          return {
-            status: NoteNameDuplicate,
-            data: null
-          }
-        }
-      } else if (res.status === 401) {
-        if (detail.type === UserInvalid) {
-          return {
-            status: UserInvalid,
-            data: null
-          }
-        }
-      } else if (res.status === 403) {
-        if (detail.type === UserPermissionDenied) {
-          return {
-            status: UserPermissionDenied,
-            data: null
-          }
-        }
+    return getApiStatus<NoteEntity>(err, [
+      {
+        statusCode: 400,
+        types: [NoteNameDuplicate]
+      },
+      {
+        statusCode: 401,
+        types: [UserInvalid]
+      },
+      {
+        statusCode: 403,
+        types: [UserPermissionDenied]
       }
-    }
-    throw err
+    ])
   }
 }
 
-export const ApiGetNotes = async ({ name, offset }: {name?: string; offset?: number}, token: string) => {
+export const fetchGetNotesApi = async ({ name, offset }: {name?: string; offset?: number}, token: string): Promise<ApiPayload<NoteSummaryEntity[]>> => {
   const query = qs.stringify({
     name,
     offset
@@ -108,29 +78,22 @@ export const ApiGetNotes = async ({ name, offset }: {name?: string; offset?: num
   try {
     const res = await AxiosWithJwt(token)
       .get<NoteSummaryEntity[] | ErrorDetail>(`${APP_NAME}${TRAILING_SLASH}?${query}`)
-    const resData = res.data
+    const resData = res.data as NoteSummaryEntity[]
     return {
       status: 'OK',
       data: resData
     }
   } catch (err: unknown) {
-    if (err instanceof AxiosError) {
-      const res = err.response!
-      const detail = res.data as ErrorDetail
-      if (res.status === 401) {
-        if (detail.type === UserInvalid) {
-          return {
-            status: UserInvalid,
-            data: null
-          }
-        }
+    return getApiStatus<NoteSummaryEntity[]>(err, [
+      {
+        statusCode: 401,
+        types: [UserInvalid]
       }
-    }
-    throw err
+    ])
   }
 }
 
-export const ApiDeleteNote = async (displayId: string, token: string) => {
+export const fetchDeleteNoteApi = async (displayId: string, token: string): Promise<null> => {
   const res = await AxiosWithJwt(token).delete<null | ErrorDetail>(`${APP_NAME}/${displayId}${TRAILING_SLASH}`)
   if (res.status === 204) return null
   throw Error(JSON.stringify(res))

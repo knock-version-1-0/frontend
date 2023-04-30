@@ -7,7 +7,7 @@ import {
 import { useRouter } from "next/router"
 
 import { getAuthTokenFromCookie } from "@/cookies/auth.cookie"
-import { ApiGetNotes } from "@/api/notes.api"
+import { fetchGetNotesApi } from "@/api/notes.api"
 import { NoteSummaryEntity } from "@/models/notes.model"
 import { ApiPayload } from "@/utils/types.util"
 
@@ -34,7 +34,7 @@ const NoteHome: NextPage = ({ noteItems }: InferGetServerSidePropsType<typeof ge
 export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
   const token = getAuthTokenFromCookie({req, res}) ?? ''
 
-  const payload: ApiPayload = await ApiGetNotes({
+  const payload: ApiPayload = await fetchGetNotesApi({
     name: '',
     offset: 0
   }, token)
