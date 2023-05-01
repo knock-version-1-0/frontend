@@ -3,11 +3,16 @@ import { useRouter } from "next/router"
 
 import { AppContext } from "@/contexts/apps.context"
 import { NoteSummaryEntity, NoteEntity } from "@/models/notes.model"
-import { fetchPostNotesApi, fetchGetNotesApi, fetchDeleteNoteApi } from "@/api/notes.api"
+import {
+  fetchPostNotesApi,
+  fetchGetNotesApi,
+  fetchDeleteNoteApi,
+  fetchPatchNoteApi
+} from "@/api/notes.api"
 import { NoteData } from "@/api/data/notes"
 import { NoteListAppStore } from "@/stores/apps"
 import { MAX_NOTE_LIST_SIZE } from "@/constants/note.constant"
-import { NoteNameDuplicate } from "@/api/status"
+import { NoteDoesNotExist, NoteNameDuplicate } from "@/api/status"
 
 export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
   const router = useRouter()
@@ -24,6 +29,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
     const payload = await fetchGetNotesApi({
       offset: nextOffset
     }, token ?? '')
+
     if (payload.status === 'OK') {
       const data = payload.data
       if (data) {
@@ -42,8 +48,12 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
   
   const addItem = useCallback(async (data: NoteData) => {
     const payload = await fetchPostNotesApi(data, token as string)
+
     if (payload.status === NoteNameDuplicate) {
-      return
+      return {
+        isSuccess: false,
+        status: NoteNameDuplicate
+      }
     }
 
     const note: NoteEntity = payload.data!
@@ -52,9 +62,39 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
       displayId: note.displayId,
       name: note.name
     }, ...items])
+
+    return {
+      isSuccess: true,
+      status: payload.status
+    }
   }, [items])
 
-  const modifyItem = useCallback(async (data: NoteData) => {}, [])
+  const modifyItem = useCallback(async (key: string, data: NoteData) => {
+    const payload = await fetchPatchNoteApi(data, key, token as string)
+
+    if (payload.status === NoteNameDuplicate) {
+      return {
+        isSuccess: false,
+        status: NoteNameDuplicate
+      }
+    } else if (payload.status === NoteDoesNotExist) {
+      return {
+        isSuccess: false,
+        status: NoteDoesNotExist
+      }
+    }
+    const note: NoteEntity = payload.data!
+    setItems(items.map((value) => {
+      if (value.displayId === note.displayId) {
+        return note
+      } else return value
+    }))
+
+    return {
+      isSuccess: true,
+      status: payload.status
+    }
+  }, [items])
 
   const removeItem = useCallback(async (key: string) => {
     const newItems = items.filter((value) => value.displayId !== key)
@@ -65,6 +105,11 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
     await fetchDeleteNoteApi(key, token as string)
 
     setItems(newItems)
+
+    return {
+      isSuccess: true,
+      status: 'OK'
+    }
   }, [items])
 
   return {

@@ -114,7 +114,7 @@ export const fetchPatchNoteApi = async (data: NoteData, displayId: string, token
     return getApiStatus<NoteEntity>(err, [
       {
         statusCode: 400,
-        types: [NoteNameLengthOver]
+        types: [NoteNameLengthOver, NoteNameDuplicate]
       },
       {
         statusCode: 401,

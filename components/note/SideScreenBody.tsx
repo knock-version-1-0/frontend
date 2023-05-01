@@ -44,7 +44,7 @@ const NoteSideScreenBody = () => {
       >
         {
           items.map((value, index) => (
-            <Item value={value} displayId={displayId as string} key={value.displayId} />
+            <Item value={value} displayId={displayId as string} key={index} />
           ))
         }
         <div className={`w-full py-3 text-center cursor-pointer hover:bg-zinc-50 hover:shadow-sm`}

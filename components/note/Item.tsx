@@ -36,7 +36,10 @@ const Item = ({ value, displayId }: ItemProps): JSX.Element => {
           !deleteSession ?
             <p className="text-lg font-light">{value.name}</p> :
             <div className="flex items-center bg-red-200 px-2 text-center rounded-sm hover:opacity-70"
-              onClick={() => { removeItem(value.displayId) }}
+              onClick={() => {
+                removeItem(value.displayId)
+                setDeleteSession(false)
+              }}
             >
               <p className="text-red-500">Delete</p>
             </div>
