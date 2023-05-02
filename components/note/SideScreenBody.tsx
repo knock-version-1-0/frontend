@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react"
 import { useRouter } from "next/router"
 
 import { NoteAppContext } from "@/contexts/apps.context"
+import { MAX_NOTE_LIST_SIZE } from "@/constants/note.constant"
 
 import clsx from "@/utils/clsx.util"
 import CancelIcon from '@mui/icons-material/Cancel'
@@ -54,7 +55,9 @@ const NoteSideScreenBody = () => {
           }}
         >
           {
-            !isLast && <p className="text-sm text-knock-sub">Next</p>
+            !isLast && items.length === MAX_NOTE_LIST_SIZE && (
+              <p className="text-sm text-knock-sub">Next</p>
+            )
           }
         </div>
       </div>

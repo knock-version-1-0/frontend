@@ -111,20 +111,15 @@ const Title = ({ note }: {note: NoteEntity}): JSX.Element => {
     setItem(note)
   }, [note])
 
+  useEffect(() => {
+    setIsDuplicate(false)
+  }, [isDuplicate])
+
   const isSubmit = useRef<boolean>(false)
   const titleElementRef = useRef<HTMLInputElement>(null)
 
-  const handleKeyDown = useCallback(async (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && titleElementRef.current) {
-      const hookReturn = await modifyItem(item.displayId, {
-        name: value
-      })
-      if (hookReturn.isSuccess) {
-        isSubmit.current = true
-        setItem({...item, name: value})
-      } else if (hookReturn.status === NoteNameDuplicate) {
-        setIsDuplicate(true)
-      }
       titleElementRef.current.blur()
     }
     else if (e.key === 'Escape' && titleElementRef.current) {
@@ -132,12 +127,29 @@ const Title = ({ note }: {note: NoteEntity}): JSX.Element => {
     }
   }, [value, item])
 
-  const handleBlur = useCallback(() => {
+  const handleBlur = useCallback(async () => {
+    await submitNoteTitle()
+
     if (!isSubmit.current) {
       setValue(item.name)
+    } else {
+      setItem({...item, name: value})
     }
     isSubmit.current = false
-  }, [item])
+  }, [item, value])
+
+  const submitNoteTitle = useCallback(async () => {
+    const hookReturn = await modifyItem(item.displayId, {
+      name: value
+    })
+
+    if (hookReturn.isSuccess) {
+      isSubmit.current = true
+    } else if (hookReturn.status === NoteNameDuplicate) {
+      isSubmit.current = false
+      setIsDuplicate(true)
+    }
+  }, [item, value])
 
   return (
     <>

@@ -98,13 +98,9 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
 
   const removeItem = useCallback(async (key: string) => {
     const newItems = items.filter((value) => value.displayId !== key)
-    if (newItems.length !== 0) {
-      router.replace(`/note/${newItems[0].displayId}`)
-    } else { router.replace(`/note`) }
 
     await fetchDeleteNoteApi(key, token as string)
-
-    setItems(newItems)
+    router.replace('/note')
 
     return {
       isSuccess: true,
