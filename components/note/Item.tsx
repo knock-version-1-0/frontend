@@ -20,7 +20,7 @@ const Item = ({ value, displayId }: ItemProps): JSX.Element => {
   const [deleteSession, setDeleteSession] = useState<boolean>(false)
 
   return (
-    <div>
+    <li>
       <div
         onClick={() => {
           displayId !== value.displayId &&
@@ -56,7 +56,7 @@ const Item = ({ value, displayId }: ItemProps): JSX.Element => {
           ))
         }
       </div>
-    </div>
+    </li>
   )
 }
 

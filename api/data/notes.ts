@@ -3,6 +3,11 @@ export interface NoteData {
   status?: number
 }
 
+export interface NoteFilterData {
+  name?: string
+  offset?: number
+}
+
 export interface KeywordData {
   noteId: number
   posX: number

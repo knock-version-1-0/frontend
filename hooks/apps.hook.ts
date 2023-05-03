@@ -14,6 +14,8 @@ import { NoteListAppStore } from "@/stores/apps"
 import { MAX_NOTE_LIST_SIZE } from "@/constants/note.constant"
 import { NoteDoesNotExist, NoteNameDuplicate } from "@/api/status"
 
+import { debounce } from "lodash"
+
 export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
   const router = useRouter()
   const { token } = useContext(AppContext)
@@ -21,6 +23,12 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
   const [items, setItems] = useState<NoteSummaryEntity[]>(init)
   const [offset, setOffset] = useState<number>(0)
   const [isLast, setIsLast] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (items.length < MAX_NOTE_LIST_SIZE) {
+      setIsLast(true)
+    }
+  }, [items])
 
   const next = useCallback(async () => {
     const nextOffset = offset + MAX_NOTE_LIST_SIZE
@@ -41,10 +49,36 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
           setIsLast(true)
         } else {
           setItems([...items, ...data])
+          setIsLast(false)
         }
       }
     }
   }, [offset, items])
+
+  const search = useCallback(debounce(async (name: string) => {
+    setOffset(0)
+
+    const payload = await fetchGetNotesApi({
+      name: name,
+      offset: 0
+    }, token ?? '')
+
+    if (payload.status === 'OK') {
+      const data = payload.data
+      if (data) {
+        if (data.length === 0) {
+          setIsLast(true)
+        }
+        else if (data.length >= 0 && data.length < MAX_NOTE_LIST_SIZE) {
+          setItems(data)
+          setIsLast(true)
+        } else {
+          setItems(data)
+          setIsLast(false)
+        }
+      }
+    }
+  }, 250), [items])
   
   const addItem = useCallback(async (data: NoteData) => {
     const payload = await fetchPostNotesApi(data, token as string)
@@ -112,6 +146,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
     items,
     isLast,
     next,
+    search,
     addItem,
     modifyItem,
     removeItem

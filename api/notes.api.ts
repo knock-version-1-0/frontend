@@ -1,7 +1,7 @@
 import { Axios, AxiosWithJwt, getApiStatus } from "@/utils/http.util"
 import qs from "qs"
 
-import { NoteData } from "./data/notes"
+import { NoteData, NoteFilterData } from "./data/notes"
 import { NoteEntity } from "@/models/notes.model"
 import { NoteSummaryEntity } from "@/models/notes.model"
 import { TRAILING_SLASH } from "@/constants/common.constant"
@@ -72,7 +72,7 @@ export const fetchPostNotesApi = async (data: NoteData, token: string): Promise<
   }
 }
 
-export const fetchGetNotesApi = async ({ name, offset }: {name?: string; offset?: number}, token: string): Promise<ApiPayload<NoteSummaryEntity[]>> => {
+export const fetchGetNotesApi = async ({ name, offset }: NoteFilterData, token: string): Promise<ApiPayload<NoteSummaryEntity[]>> => {
   const query = qs.stringify({
     name,
     offset
