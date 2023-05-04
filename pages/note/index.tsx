@@ -11,7 +11,7 @@ import { fetchGetNotesApi } from "@/api/notes.api"
 import { NoteSummaryEntity } from "@/models/notes.model"
 
 import Layout from "@/components/Layout"
-import NoteSideScreenBody from "@/components/note/SideScreenBody"
+import NoteList from "@/components/note/NoteList"
 
 const NoteHome: NextPage = ({ noteItems }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter()
@@ -23,7 +23,7 @@ const NoteHome: NextPage = ({ noteItems }: InferGetServerSidePropsType<typeof ge
 
   return (
     <Layout sideScreenBody={(
-      <NoteSideScreenBody></NoteSideScreenBody>
+      <NoteList></NoteList>
     )}>
       <></>
     </Layout>

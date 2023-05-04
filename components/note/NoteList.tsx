@@ -8,7 +8,7 @@ import CancelIcon from '@mui/icons-material/Cancel'
 import CircleIcon from '@mui/icons-material/Circle'
 import Item from "./Item"
 
-const NoteSideScreenBody = () => {
+const NoteList = () => {
   const { items, isLast, next: showNextList } = useContext(NoteAppContext)
 
   const router = useRouter()
@@ -89,4 +89,4 @@ const SearchBar = (): JSX.Element => {
   )
 }
 
-export default NoteSideScreenBody
+export default NoteList

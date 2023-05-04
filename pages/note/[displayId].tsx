@@ -8,14 +8,14 @@ import {
 import { fetchGetNoteByDisplayIdApi, fetchGetNotesApi } from "@/api/notes.api"
 import { NoteEntity, NoteSummaryEntity } from "@/models/notes.model"
 import { NoteAppContext } from "@/contexts/apps.context"
-import { useNoteList } from "@/hooks/apps.hook"
+import { useNoteList } from "@/hooks/apps/notes.hook"
 import { getAuthTokenFromCookie } from "@/cookies/auth.cookie"
 import { ApiPayload } from "@/utils/types.util"
 import { NoteDoesNotExist } from "@/api/status"
 
 import Note from "@/components/note"
 import Layout from "@/components/Layout"
-import NoteSideScreenBody from "@/components/note/SideScreenBody"
+import NoteList from "@/components/note/NoteList"
 
 const NoteDetail: NextPage = ({ note, noteItems }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const noteList = useNoteList(noteItems)
@@ -23,7 +23,7 @@ const NoteDetail: NextPage = ({ note, noteItems }: InferGetServerSidePropsType<t
   return (
     <NoteAppContext.Provider value={noteList}>
       <Layout sideScreenBody={(
-        <NoteSideScreenBody></NoteSideScreenBody>
+        <NoteList></NoteList>
       )}>
         <Note note={note}/>
       </Layout>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react"
+import React, { useState, useEffect, useRef, useContext, useCallback } from "react"
 
 import { NoteContext } from "@/contexts/note.context"
 import { NoteStatusEnum, KeywordStatusEnum } from "@/constants/note.constant"
@@ -14,6 +14,7 @@ interface BlockProps {
     screenX: number
     screenY: number
     phantom: boolean
+    setPhantom: (value: boolean) => void
   }
   onUpdate: (data: KeywordData) => void
   onCreate?: (data: KeywordData) => void
@@ -27,6 +28,7 @@ const Block = ({
 }: BlockProps): JSX.Element => {
 
   const { noteStatus, setNoteStatus } = useContext(NoteContext)
+  const [keywordStatus, setKeywordStatus] = useState<KeywordStatusEnum>(KeywordStatusEnum.UNSELECT)
 
   const elementRef = useRef<HTMLInputElement>(null)
 
@@ -42,21 +44,62 @@ const Block = ({
       setX(screenX + keyword.posX)
       setY(screenY + keyword.posY)
     }
-  }, [screenX, screenY, keyword])
 
-  /**
-   * Keyword가 phantom 상태일 때, 마우스 cursor의 가운데 지점을 중심으로 phantom Keyword를 움직일 수 있게 하기 위해 center값의 좌표를 계산.
-   */
-  useEffect(() => {
     const height = elementRef.current?.offsetHeight ?? 0
     const width = elementRef.current?.offsetWidth ?? 0
-    keyword && setCenter(
-      [keyword.posX - (width / 2), keyword.posY - (height / 2)]
+
+    let centerX = keyword.posX - (width / 2)
+    let centerY = keyword.posY - (height / 2)
+
+    centerX = centerX < screenX ? screenX : centerX
+    centerY = centerY < screenY ? screenY : centerY
+
+    setCenter(
+      [centerX, centerY]
     )
-  }, [elementRef, keyword])
+  }, [screenX, screenY, keyword])
+
+  useEffect(() => {
+    if (config.phantom) {
+      elementRef.current && elementRef.current.focus()
+    }
+  }, [config.phantom])
+
+  useEffect(() => {
+    if (noteStatus === NoteStatusEnum.EXIT) {
+      elementRef.current && elementRef.current.blur()
+    }
+  }, [noteStatus])
+
+  const keywordEditStatusPolicy = useCallback(() => {
+    setKeywordStatus(KeywordStatusEnum.EDIT)
+
+    if (noteStatus !== NoteStatusEnum.MOD) {
+      setNoteStatus!(NoteStatusEnum.MOD)
+    }
+  }, [noteStatus])
+
+  const keywordReadStatusPolicy = useCallback(() => {
+    setKeywordStatus(KeywordStatusEnum.READ)
+
+    if (noteStatus !== NoteStatusEnum.MOD) {
+      setNoteStatus!(NoteStatusEnum.MOD)
+    }
+  }, [noteStatus])
+
+  const keywordUnselectStatusPolicy = useCallback(() => {
+    setKeywordStatus(KeywordStatusEnum.UNSELECT)
+
+    if (noteStatus !== NoteStatusEnum.EXIT) {
+      setNoteStatus!(NoteStatusEnum.EXIT)
+    }
+    if (config.phantom) config.setPhantom(false)
+  }, [noteStatus, config.phantom])
 
   return (
-    <input type="text" className="absolute w-48 h-[30px] text-center focus:outline-knock-sub border" style={config.phantom ? {
+    <input type="text" className={clsx(
+      "absolute w-48 h-[30px] text-center focus:outline-knock-sub border",
+    )} style={config.phantom ? {
         left: center[0],
         top: center[1]
       } : {
@@ -64,15 +107,13 @@ const Block = ({
         top: y
       }}
       onFocus={() => {
-        if (noteStatus !== NoteStatusEnum.MOD) {
-          setNoteStatus!(NoteStatusEnum.MOD)
+        if (config.phantom) {
+          keywordReadStatusPolicy()
+        } else {
+          keywordEditStatusPolicy()
         }
       }}
-      onBlur={() => {
-        if (noteStatus !== NoteStatusEnum.EXIT) {
-          setNoteStatus!(NoteStatusEnum.EXIT)
-        }
-      }}
+      onBlur={() => {keywordUnselectStatusPolicy()}}
       onKeyDown={(e) => {
         if (e.key === 'Enter' && elementRef.current) {
           elementRef.current.blur()
@@ -93,6 +134,7 @@ const Block = ({
         }
       }}
       ref={elementRef}
+      readOnly={keywordStatus === KeywordStatusEnum.READ}
     />
   )
 }

@@ -9,9 +9,8 @@ import React, {
 import { NoteEntity } from "@/models/notes.model"
 import { NoteContext } from "@/contexts/note.context"
 import { NoteAppContext } from "@/contexts/apps.context"
-import { useNoteStatus } from "@/hooks/note/keycontrol.hook"
 import { NoteStatusEnum, KeywordStatusEnum } from "@/constants/note.constant"
-import { useNoteScreenPosition, usePhantomState } from "@/hooks/note/note.hook"
+import { useNoteScreenPosition, usePhantomState, useNoteStatus } from "@/hooks/note/note.hook"
 import { KeywordEntity } from "@/models/notes.model"
 import { KeywordData } from "@/api/data/notes"
 import { NoteNameDuplicate } from "@/api/status"
@@ -72,6 +71,7 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
               screenX,
               screenY,
               phantom: false,
+              setPhantom: (value: boolean) => setHasPhantom(value)
             }}
             onUpdate={(data: KeywordData) => {}}
           ></Block>
@@ -84,6 +84,7 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
                 screenX,
                 screenY,
                 phantom: hasPhantom,
+                setPhantom: (value: boolean) => setHasPhantom(value)
               }}
               onUpdate={(data: KeywordData) => {}}
               onCreate={(data: KeywordData) => handleCreateKeyword(data)}
