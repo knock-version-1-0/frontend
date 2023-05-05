@@ -63,11 +63,12 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
           <Title note={note}></Title>
           {
             note.keywords.length === 0 ? (
+              noteStatus !== NoteStatusEnum.KEYADD && (
               <div className="mt-56 mr-20 flex flex-col items-center text-3xl font-bold text-zinc-300">
                 <p>Press [Enter] to create</p>
                 <p>keyword</p>
               </div>
-            ) : (
+            )) : (
               note.keywords.map((value, index) => (
                 <Block
                   key={ index }
