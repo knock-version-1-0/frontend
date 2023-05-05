@@ -59,11 +59,11 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
           })
         }}
       >
-        <div className="mx-10">
+        <div className="hidden md:block mx-10">
           <Title note={note}></Title>
           {
             note.keywords.length === 0 ? (
-              <div className="mt-56 flex flex-col justify-center items-center text-3xl font-bold text-zinc-300">
+              <div className="mt-56 mr-20 flex flex-col items-center text-3xl font-bold text-zinc-300">
                 <p>Press [Enter] to create</p>
                 <p>keyword</p>
               </div>
@@ -159,7 +159,7 @@ const Title = ({ note }: {note: NoteEntity}): JSX.Element => {
       </nav>
       <div className="flex flex-row items-end mt-4">
         <div className="border-b border-black w-[284px] cursor-text">
-          <input className="w-full text-2xl outline-none bg-transparent note-title-input-style"
+          <input className="w-full text-2xl outline-none bg-transparent"
             ref={titleElementRef}
             value={value}
             onBlur={handleBlur}
