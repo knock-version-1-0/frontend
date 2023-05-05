@@ -2,37 +2,39 @@ import React, { useState, useEffect, useRef, useContext, useCallback } from "rea
 
 import { NoteContext } from "@/contexts/note.context"
 import { NoteStatusEnum, KeywordStatusEnum } from "@/constants/note.constant"
-
 import { KeywordEntity } from "@/models/notes.model"
 import { KeywordData } from "@/api/data/notes"
+import { useKeywordStatus } from "@/hooks/note/note.hook"
 
 import clsx from "@/utils/clsx.util"
 
 interface BlockProps {
   keyword: KeywordEntity
-  config: {
-    screenX: number
-    screenY: number
-    phantom: boolean
-    setPhantom: (value: boolean) => void
-  }
+  screenX: number
+  screenY: number
   onUpdate: (data: KeywordData) => void
   onCreate?: (data: KeywordData) => void
 }
 
 const Block = ({ 
-  config,
+  screenX,
+  screenY,
   keyword,
   onUpdate,
   onCreate
 }: BlockProps): JSX.Element => {
 
   const { noteStatus, setNoteStatus } = useContext(NoteContext)
-  const [keywordStatus, setKeywordStatus] = useState<KeywordStatusEnum>(KeywordStatusEnum.UNSELECT)
+  const {
+    keywordStatus,
+    keywordEditStatusPolicy,
+    keywordSelectStatusPolicy,
+    keywordUnselectStatusPolicy } = useKeywordStatus({
+      noteStatus: noteStatus,
+      setNoteStatus: setNoteStatus
+    })
 
   const elementRef = useRef<HTMLInputElement>(null)
-
-  const { screenX, screenY } = config
 
   const [x, setX] = useState<number>(0)
   const [y, setY] = useState<number>(0)
@@ -60,46 +62,18 @@ const Block = ({
   }, [screenX, screenY, keyword])
 
   useEffect(() => {
-    if (config.phantom) {
-      elementRef.current && elementRef.current.focus()
-    }
-  }, [config.phantom])
-
-  useEffect(() => {
     if (noteStatus === NoteStatusEnum.EXIT) {
       elementRef.current && elementRef.current.blur()
     }
-  }, [noteStatus])
-
-  const keywordEditStatusPolicy = useCallback(() => {
-    setKeywordStatus(KeywordStatusEnum.EDIT)
-
-    if (noteStatus !== NoteStatusEnum.MOD) {
-      setNoteStatus!(NoteStatusEnum.MOD)
+    else if (noteStatus === NoteStatusEnum.KEYADD) {
+      elementRef.current && elementRef.current.focus()
     }
   }, [noteStatus])
-
-  const keywordReadStatusPolicy = useCallback(() => {
-    setKeywordStatus(KeywordStatusEnum.READ)
-
-    if (noteStatus !== NoteStatusEnum.MOD) {
-      setNoteStatus!(NoteStatusEnum.MOD)
-    }
-  }, [noteStatus])
-
-  const keywordUnselectStatusPolicy = useCallback(() => {
-    setKeywordStatus(KeywordStatusEnum.UNSELECT)
-
-    if (noteStatus !== NoteStatusEnum.EXIT) {
-      setNoteStatus!(NoteStatusEnum.EXIT)
-    }
-    if (config.phantom) config.setPhantom(false)
-  }, [noteStatus, config.phantom])
 
   return (
     <input type="text" className={clsx(
       "absolute w-48 h-[30px] text-center focus:outline-knock-sub border",
-    )} style={config.phantom ? {
+    )} style={noteStatus === NoteStatusEnum.KEYADD ? {
         left: center[0],
         top: center[1]
       } : {
@@ -107,8 +81,8 @@ const Block = ({
         top: y
       }}
       onFocus={() => {
-        if (config.phantom) {
-          keywordReadStatusPolicy()
+        if (noteStatus === NoteStatusEnum.KEYADD) {
+          keywordSelectStatusPolicy()
         } else {
           keywordEditStatusPolicy()
         }
@@ -120,7 +94,7 @@ const Block = ({
         }
       }}
       onClick={(e) => {
-        if (config.phantom) {
+        if (noteStatus === NoteStatusEnum.KEYADD) {
           e.preventDefault()
           onCreate && onCreate({
             noteId: keyword.noteId,
@@ -134,7 +108,7 @@ const Block = ({
         }
       }}
       ref={elementRef}
-      readOnly={keywordStatus === KeywordStatusEnum.READ}
+      readOnly={keywordStatus === KeywordStatusEnum.SELECT}
     />
   )
 }

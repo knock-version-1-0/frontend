@@ -5,12 +5,13 @@ export const NOTE_NAME_LENGTH_LIMIT = 25
 
 export enum NoteStatusEnum {
   EXIT=1,
-  MOD,
+  KEYMOD,
+  KEYADD,
   REL
 }
 
 export enum KeywordStatusEnum {
   UNSELECT=1,
-  READ,
+  SELECT,
   EDIT
 }

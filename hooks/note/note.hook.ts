@@ -1,19 +1,22 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 
-import { NoteStatusEnum } from '@/constants/note.constant'
+import { NoteStatusEnum, KeywordStatusEnum } from '@/constants/note.constant'
 
-export interface NoteStatus {
+export interface NoteState {
   noteStatus: NoteStatusEnum
-  setNoteStatus: React.Dispatch<React.SetStateAction<NoteStatusEnum>>
+  setNoteStatus: React.Dispatch<React.SetStateAction<NoteStatusEnum>> | null
 }
 
-export const useNoteStatus = (): NoteStatus => {
+export const useNoteStatus = (): NoteState => {
   const [noteStatus, setNoteStatus] = useState<NoteStatusEnum>(NoteStatusEnum.EXIT)
   
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setNoteStatus(NoteStatusEnum.EXIT)
+      }
+      else if (event.key === "Enter") {
+        setNoteStatus(NoteStatusEnum.KEYADD)
       }
     }
 
@@ -56,12 +59,41 @@ export const useNoteScreenPosition = (ref: React.RefObject<HTMLDivElement>): Not
   return { screenX, screenY }
 }
 
-interface PhantomState {
-  hasPhantom: boolean
-  setHasPhantom: React.Dispatch<React.SetStateAction<boolean>>
+export interface KeywordState {
+  keywordStatus: KeywordStatusEnum
+  keywordEditStatusPolicy: () => void
+  keywordSelectStatusPolicy: () => void
+  keywordUnselectStatusPolicy: () => void
 }
 
-export const usePhantomState = (): PhantomState => {
-  const [hasPhantom, setHasPhantom] = useState(false)
-  return { hasPhantom, setHasPhantom }
+export const useKeywordStatus = (noteState: NoteState): KeywordState => {
+  const [keywordStatus, setKeywordStatus] = useState<KeywordStatusEnum>(KeywordStatusEnum.UNSELECT)
+  const { noteStatus, setNoteStatus } = noteState
+
+  const keywordEditStatusPolicy = useCallback(() => {
+    setKeywordStatus(KeywordStatusEnum.EDIT)
+
+    if (noteStatus !== NoteStatusEnum.KEYMOD) {
+      setNoteStatus!(NoteStatusEnum.KEYMOD)
+    }
+  }, [noteStatus])
+
+  const keywordSelectStatusPolicy = useCallback(() => {
+    setKeywordStatus(KeywordStatusEnum.SELECT)
+  }, [noteStatus])
+
+  const keywordUnselectStatusPolicy = useCallback(() => {
+    setKeywordStatus(KeywordStatusEnum.UNSELECT)
+
+    if (noteStatus !== NoteStatusEnum.EXIT) {
+      setNoteStatus!(NoteStatusEnum.EXIT)
+    }
+  }, [noteStatus])
+
+  return {
+    keywordStatus,
+    keywordEditStatusPolicy,
+    keywordSelectStatusPolicy,
+    keywordUnselectStatusPolicy
+  }
 }

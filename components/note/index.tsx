@@ -10,7 +10,7 @@ import { NoteEntity } from "@/models/notes.model"
 import { NoteContext } from "@/contexts/note.context"
 import { NoteAppContext } from "@/contexts/apps.context"
 import { NoteStatusEnum, KeywordStatusEnum } from "@/constants/note.constant"
-import { useNoteScreenPosition, usePhantomState, useNoteStatus } from "@/hooks/note/note.hook"
+import { useNoteScreenPosition, useNoteStatus } from "@/hooks/note/note.hook"
 import { KeywordEntity } from "@/models/notes.model"
 import { KeywordData } from "@/api/data/notes"
 import { NoteNameDuplicate } from "@/api/status"
@@ -29,11 +29,8 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
 
   const { noteStatus, setNoteStatus } = useNoteStatus()
 
-  const { hasPhantom, setHasPhantom } = usePhantomState()
-
   const handleCreateKeyword = useCallback((data: KeywordData) => {
-    setNoteStatus(NoteStatusEnum.EXIT)
-    setHasPhantom(false)
+    setNoteStatus!(NoteStatusEnum.EXIT)
   }, [])
 
   const InitKeywordModel: KeywordEntity = {
@@ -62,36 +59,38 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
           })
         }}
       >
-        <div className="ml-10">
+        <div className="mx-10">
           <Title note={note}></Title>
-          {/** note.keywords.map */}
-          <Block
-            keyword={ InitKeywordModel }
-            config={{
-              screenX,
-              screenY,
-              phantom: false,
-              setPhantom: (value: boolean) => setHasPhantom(value)
-            }}
-            onUpdate={(data: KeywordData) => {}}
-          ></Block>
-          {/** --------------------------------- */}
           {
-            hasPhantom &&
+            note.keywords.length === 0 ? (
+              <div className="mt-56 flex flex-col justify-center items-center text-3xl font-bold text-zinc-300">
+                <p>Press [Enter] to create</p>
+                <p>keyword</p>
+              </div>
+            ) : (
+              note.keywords.map((value, index) => (
+                <Block
+                  key={ index }
+                  keyword={ value }
+                  screenX={ screenX }
+                  screenY={ screenY }
+                  onUpdate={(data: KeywordData) => {}}
+                ></Block>
+              ))
+            )
+          }
+          {
+            noteStatus === NoteStatusEnum.KEYADD &&
             <Block
               keyword={ PhantomKeywordModel }
-              config={{
-                screenX,
-                screenY,
-                phantom: hasPhantom,
-                setPhantom: (value: boolean) => setHasPhantom(value)
-              }}
+              screenX={ screenX }
+              screenY={ screenY }
               onUpdate={(data: KeywordData) => {}}
               onCreate={(data: KeywordData) => handleCreateKeyword(data)}
             ></Block>
           }
           <Toolbar
-            onCreateKeyword={() => setHasPhantom(true)}
+            onCreateKeyword={() => setNoteStatus!(NoteStatusEnum.KEYADD)}
           ></Toolbar>
         </div>
       </div>

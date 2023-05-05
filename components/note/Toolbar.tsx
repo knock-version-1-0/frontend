@@ -46,7 +46,7 @@ const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
         icon={KeywordInitialIcon}
         setFocus={() => {
           setCursor(Label.KeywordInitial)
-          setNoteStatus!(NoteStatusEnum.MOD)
+          setNoteStatus!(NoteStatusEnum.KEYADD)
         }}
         label={Label.KeywordInitial}
         cursor={cursor}
@@ -116,7 +116,7 @@ const Button = (props: ButtonProps): JSX.Element => {
     if (noteStatus === NoteStatusEnum.EXIT && label === Label.ArrowCursor) {
       setFocus()
     }
-    else if (noteStatus === NoteStatusEnum.MOD && label === Label.KeywordInitial) {
+    else if ((noteStatus === NoteStatusEnum.KEYMOD || noteStatus === NoteStatusEnum.KEYADD) && label === Label.KeywordInitial) {
       setFocus()
     }
   }, [noteStatus, label])
