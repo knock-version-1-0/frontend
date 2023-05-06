@@ -8,14 +8,14 @@ export type ErrorDetail = {
   message: string
 }
 
-export type CallbackReturn = {
+export type HookCallbackReturn = {
   isSuccess: boolean
   status: string
 }
 
 export interface ItemStore<List, Data, KeyType> {
   items: List
-  addItem?: (data: Data) => Promise<CallbackReturn>
-  modifyItem?: (key: KeyType, data: Data) => Promise<CallbackReturn>
-  removeItem?: (key: KeyType) => Promise<CallbackReturn>
+  addItem?: (data: Data) => Promise<HookCallbackReturn>
+  modifyItem?: (key: KeyType, data: Data) => Promise<HookCallbackReturn>
+  removeItem?: (key: KeyType) => Promise<HookCallbackReturn>
 }

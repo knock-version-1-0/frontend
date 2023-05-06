@@ -7,7 +7,8 @@ export enum NoteStatusEnum {
   EXIT=1,
   KEYMOD,
   KEYADD,
-  REL
+  REL,
+  TITLEMOD
 }
 
 export enum KeywordStatusEnum {

@@ -1,6 +1,6 @@
-import { NoteSummaryEntity } from "@/models/notes.model";
-import { NoteData } from "@/api/data/notes";
-import { ItemStore, CallbackReturn } from "@/utils/types.util"
+import { KeywordEntity, NoteSummaryEntity } from "@/models/notes.model";
+import { KeywordData, NoteData } from "@/api/data/notes";
+import { ItemStore, HookCallbackReturn } from "@/utils/types.util"
 
 import { DebouncedFunc, debounce } from 'lodash'
 
@@ -9,9 +9,9 @@ export interface NoteListAppStore extends ItemStore<NoteSummaryEntity[], NoteDat
   next: () => void
   search: DebouncedFunc<(name: string) => void>
   isLast: boolean
-  addItem: (data: NoteData) => Promise<CallbackReturn>
-  modifyItem: (key: string, data: NoteData) => Promise<CallbackReturn>
-  removeItem: (key: string) => Promise<CallbackReturn>
+  addItem: (data: NoteData) => Promise<HookCallbackReturn>
+  modifyItem: (key: string, data: NoteData) => Promise<HookCallbackReturn>
+  removeItem: (key: string) => Promise<HookCallbackReturn>
 }
 
 export const InitNoteListAppStore: NoteListAppStore = {
@@ -32,3 +32,5 @@ export const InitNoteListAppStore: NoteListAppStore = {
     status: ''
   })
 }
+
+export interface KeywordListAppStore extends ItemStore<KeywordEntity[], KeywordData, number> {}

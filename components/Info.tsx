@@ -2,7 +2,13 @@ import { useState, useEffect } from "react"
 
 import clsx from "@/utils/clsx.util"
 
-const Info = ({text, trigger}: {text: string, trigger: boolean}): JSX.Element => {
+interface InfoProps {
+  text: string
+  trigger: boolean
+  className?: string
+}
+
+const Info = ({text, trigger, className}: InfoProps): JSX.Element => {
   const [isVisable, setIsVisable] = useState<boolean>(false)
   const [opacity, setOpacity] = useState(1)
 
@@ -33,6 +39,7 @@ const Info = ({text, trigger}: {text: string, trigger: boolean}): JSX.Element =>
         isVisable && (
           <div className={clsx(
             "bg-red-200",
+            className
           )}
             style={{ opacity: opacity }}
           >

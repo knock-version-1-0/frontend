@@ -33,9 +33,9 @@ const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
         activeChildClassName="fill-knock-main"
         inActiveChildClassName="fill-black"
         icon={ArrowCursorIcon}
-        setFocus={() => {
+        setFocus={(status: NoteStatusEnum) => {
           setCursor(Label.ArrowCursor)
-          setNoteStatus!(NoteStatusEnum.EXIT)
+          setNoteStatus!(status)
         }}
         label={Label.ArrowCursor}
         cursor={cursor}
@@ -44,9 +44,9 @@ const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
         activeChildClassName="fill-knock-main"
         inActiveChildClassName="fill-black"
         icon={KeywordInitialIcon}
-        setFocus={() => {
+        setFocus={(status: NoteStatusEnum) => {
           setCursor(Label.KeywordInitial)
-          setNoteStatus!(NoteStatusEnum.KEYADD)
+          setNoteStatus!(status)
         }}
         label={Label.KeywordInitial}
         cursor={cursor}
@@ -56,9 +56,9 @@ const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
         activeChildClassName="text-knock-main"
         childClassName=""
         icon={CallMadeIcon}
-        setFocus={() => {
+        setFocus={(status: NoteStatusEnum) => {
           setCursor(Label.Arrow)
-          setNoteStatus!(NoteStatusEnum.REL)
+          setNoteStatus!(status)
         }}
         label={Label.Arrow}
         cursor={cursor}
@@ -67,9 +67,9 @@ const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
         activeChildClassName="stroke-knock-main"
         childClassName="stroke-2 stroke-black"
         icon={RelationLineIcon}
-        setFocus={() => {
+        setFocus={(status: NoteStatusEnum) => {
           setCursor(Label.Line)
-          setNoteStatus!(NoteStatusEnum.REL)
+          setNoteStatus!(status)
         }}
         label={Label.Line}
         cursor={cursor}
@@ -78,9 +78,9 @@ const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
         activeChildClassName="stroke-knock-main"
         childClassName="stroke-1 stroke-black"
         icon={FragmentLineIcon}
-        setFocus={() => {
+        setFocus={(status: NoteStatusEnum) => {
           setCursor(Label.FragmentLine)
-          setNoteStatus!(NoteStatusEnum.REL)
+          setNoteStatus!(status)
         }}
         label={Label.FragmentLine}
         cursor={cursor}
@@ -95,7 +95,7 @@ interface ButtonProps extends React.PropsWithChildren {
   childClassName?: string
   icon: any
   label: Label
-  setFocus: () => void
+  setFocus: (status: NoteStatusEnum) => void
   cursor: number
   onCreateKeyword?: () => void
 }
@@ -113,11 +113,11 @@ const Button = (props: ButtonProps): JSX.Element => {
   }, [cursor, label, hover])
 
   useEffect(() => {
-    if (noteStatus === NoteStatusEnum.EXIT && label === Label.ArrowCursor) {
-      setFocus()
+    if ((noteStatus === NoteStatusEnum.EXIT || noteStatus === NoteStatusEnum.TITLEMOD) && label === Label.ArrowCursor) {
+      setFocus(noteStatus)
     }
     else if ((noteStatus === NoteStatusEnum.KEYMOD || noteStatus === NoteStatusEnum.KEYADD) && label === Label.KeywordInitial) {
-      setFocus()
+      setFocus(noteStatus)
     }
   }, [noteStatus, label])
 
@@ -131,9 +131,21 @@ const Button = (props: ButtonProps): JSX.Element => {
       onMouseEnter={() => { setHover(true) }}
       onMouseLeave={() => { setHover(false) }}
       onClick={() => {
-        setFocus()
-        if (label === Label.KeywordInitial) {
+        if (label === Label.ArrowCursor) {
+          setFocus(NoteStatusEnum.EXIT)
+        }
+        else if (label === Label.KeywordInitial) {
+          setFocus(NoteStatusEnum.KEYADD)
           props.onCreateKeyword!()
+        }
+        else if (label === Label.Arrow) {
+          setFocus(NoteStatusEnum.REL)
+        }
+        else if (label === Label.Line) {
+          setFocus(NoteStatusEnum.REL)
+        }
+        else if (label === Label.FragmentLine) {
+          setFocus(NoteStatusEnum.REL)
         }
       }}
     >

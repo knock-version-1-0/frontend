@@ -29,10 +29,11 @@ const Block = ({
     keywordStatus,
     keywordEditStatusPolicy,
     keywordSelectStatusPolicy,
-    keywordUnselectStatusPolicy } = useKeywordStatus({
-      noteStatus: noteStatus,
-      setNoteStatus: setNoteStatus
-    })
+    keywordUnselectStatusPolicy
+  } = useKeywordStatus({
+    noteStatus: noteStatus,
+    setNoteStatus: setNoteStatus!
+  })
 
   const elementRef = useRef<HTMLInputElement>(null)
 

@@ -1,8 +1,8 @@
-import { Axios, AxiosWithJwt, getApiStatus } from "@/utils/http.util"
+import { Axios, AxiosWithJwt, getApiStatus, sendWebSocketData } from "@/utils/http.util"
 import qs from "qs"
 
-import { NoteData, NoteFilterData } from "./data/notes"
-import { NoteEntity } from "@/models/notes.model"
+import { NoteData, NoteFilterData, KeywordData } from "./data/notes"
+import { KeywordEntity, NoteEntity } from "@/models/notes.model"
 import { NoteSummaryEntity } from "@/models/notes.model"
 import { TRAILING_SLASH } from "@/constants/common.constant"
 import {
@@ -134,4 +134,12 @@ export const fetchPatchNoteApi = async (data: NoteData, displayId: string, token
       }
     ])
   }
+}
+
+export const fetchUpdateNoteKeywordApi = (data: KeywordData, key: number, token: string): Promise<ApiPayload<KeywordEntity>> => {
+  return sendWebSocketData<KeywordEntity, KeywordData>(`/${APP_NAME}/keywords/${key}${TRAILING_SLASH}`, data, token)
+}
+
+export const fetchCreateNoteKeywordApi = (data: KeywordData, token: string): Promise<ApiPayload<KeywordEntity>> => {
+  return sendWebSocketData<KeywordEntity, KeywordData>(`/${APP_NAME}/keywords${TRAILING_SLASH}`, data, token)
 }

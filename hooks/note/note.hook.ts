@@ -4,29 +4,12 @@ import { NoteStatusEnum, KeywordStatusEnum } from '@/constants/note.constant'
 
 export interface NoteState {
   noteStatus: NoteStatusEnum
-  setNoteStatus: React.Dispatch<React.SetStateAction<NoteStatusEnum>> | null
+  setNoteStatus: React.Dispatch<React.SetStateAction<NoteStatusEnum>>
 }
 
-export const useNoteStatus = (): NoteState => {
-  const [noteStatus, setNoteStatus] = useState<NoteStatusEnum>(NoteStatusEnum.EXIT)
+export const useNoteStatus = (init: NoteStatusEnum): NoteState => {
+  const [noteStatus, setNoteStatus] = useState<NoteStatusEnum>(init)
   
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setNoteStatus(NoteStatusEnum.EXIT)
-      }
-      else if (event.key === "Enter") {
-        setNoteStatus(NoteStatusEnum.KEYADD)
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown)
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown)
-    }
-  }, [])
-
   return { noteStatus, setNoteStatus }
 }
 
@@ -74,7 +57,7 @@ export const useKeywordStatus = (noteState: NoteState): KeywordState => {
     setKeywordStatus(KeywordStatusEnum.EDIT)
 
     if (noteStatus !== NoteStatusEnum.KEYMOD) {
-      setNoteStatus!(NoteStatusEnum.KEYMOD)
+      setNoteStatus(NoteStatusEnum.KEYMOD)
     }
   }, [noteStatus])
 
@@ -86,7 +69,7 @@ export const useKeywordStatus = (noteState: NoteState): KeywordState => {
     setKeywordStatus(KeywordStatusEnum.UNSELECT)
 
     if (noteStatus !== NoteStatusEnum.EXIT) {
-      setNoteStatus!(NoteStatusEnum.EXIT)
+      setNoteStatus(NoteStatusEnum.EXIT)
     }
   }, [noteStatus])
 

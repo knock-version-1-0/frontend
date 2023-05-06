@@ -2,17 +2,21 @@ import { useState, useCallback, useContext, useEffect } from "react"
 import { useRouter } from "next/router"
 
 import { AppContext } from "@/contexts/apps.context"
-import { NoteSummaryEntity, NoteEntity } from "@/models/notes.model"
+import { NoteSummaryEntity, NoteEntity, KeywordEntity } from "@/models/notes.model"
+import { NoteData, KeywordData } from "@/api/data/notes"
 import {
   fetchPostNotesApi,
   fetchGetNotesApi,
   fetchDeleteNoteApi,
-  fetchPatchNoteApi
+  fetchPatchNoteApi,
+  fetchUpdateNoteKeywordApi,
+  fetchCreateNoteKeywordApi
 } from "@/api/notes.api"
-import { NoteData } from "@/api/data/notes"
-import { NoteListAppStore } from "@/stores/apps"
+import { useWebSocket } from "@/utils/http.util"
+import { KeywordListAppStore, NoteListAppStore } from "@/stores/apps"
 import { MAX_NOTE_LIST_SIZE } from "@/constants/note.constant"
 import { NoteDoesNotExist, NoteNameDuplicate } from "@/api/status"
+import { HookCallbackReturn } from "@/utils/types.util"
 
 import { debounce } from "lodash"
 
@@ -131,8 +135,6 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
   }, [items])
 
   const removeItem = useCallback(async (key: string) => {
-    const newItems = items.filter((value) => value.displayId !== key)
-
     await fetchDeleteNoteApi(key, token as string)
     router.replace('/note')
 
@@ -150,5 +152,58 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
     addItem,
     modifyItem,
     removeItem
+  }
+}
+
+export const useKeywordList = (init: KeywordEntity[]): KeywordListAppStore => {
+  const { token } = useContext(AppContext)
+
+  const [items, setItems] = useState<KeywordEntity[]>(init)
+
+  const modifyItem = useCallback(async (key: number, data: KeywordData) => {
+    const payload = await fetchUpdateNoteKeywordApi(data, key, token as string)
+
+    if (payload.status === 'OK') {
+      const keyword = payload.data!
+      setItems(items.map((value) => {
+        if (value.id === keyword.id) {
+          return keyword
+        } else return value
+      }))
+
+      return {
+        isSuccess: true,
+        status: payload.status
+      }
+    }
+
+    return {
+      isSuccess: false,
+      status: payload.status
+    }
+  }, [items])
+
+  const addItem = useCallback(async (data: KeywordData) => {
+    const payload = await fetchCreateNoteKeywordApi(data, token as string)
+
+    if (payload.status === 'OK') {
+      const keyword = payload.data!
+      setItems([...items, keyword])
+      return {
+        isSuccess: true,
+        status: payload.status
+      }
+    }
+
+    return {
+      isSuccess: false,
+      status: payload.status
+    }
+  }, [items])
+
+  return {
+    items,
+    modifyItem,
+    addItem
   }
 }

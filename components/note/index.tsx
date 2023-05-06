@@ -3,7 +3,7 @@ import React, {
   useRef,
   useState,
   useContext,
-  useEffect
+  useEffect,
 } from "react"
 
 import { NoteEntity } from "@/models/notes.model"
@@ -15,6 +15,7 @@ import { KeywordEntity } from "@/models/notes.model"
 import { KeywordData } from "@/api/data/notes"
 import { NoteNameDuplicate } from "@/api/status"
 import { NOTE_NAME_LENGTH_LIMIT } from "@/constants/note.constant"
+import { useKeywordList } from "@/hooks/apps/notes.hook"
 
 import Block from "./Block"
 import Toolbar from "./Toolbar"
@@ -26,11 +27,15 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
   const noteElementRef = useRef<HTMLDivElement>(null)
 
   const { screenX, screenY } = useNoteScreenPosition(noteElementRef)
+  const { noteStatus, setNoteStatus } = useNoteStatus(NoteStatusEnum.EXIT)
+  const { items: keywords, modifyItem, addItem } = useKeywordList(note.keywords)
 
-  const { noteStatus, setNoteStatus } = useNoteStatus()
+  useEffect(() => {
+    noteElementRef.current?.focus()
+  }, [])
 
   const handleCreateKeyword = useCallback((data: KeywordData) => {
-    setNoteStatus!(NoteStatusEnum.EXIT)
+    setNoteStatus(NoteStatusEnum.EXIT)
   }, [])
 
   const InitKeywordModel: KeywordEntity = {
@@ -45,12 +50,29 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
 
   const [PhantomKeywordModel, setPhantomKeywordModel] = useState<KeywordEntity>(InitKeywordModel)
 
+  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+    if (event.key === "Escape") {
+      noteElementRef.current?.focus()
+
+      setNoteStatus(NoteStatusEnum.EXIT)
+    }
+    else if (event.key === "Enter") {
+      noteElementRef.current?.focus()
+
+      if (noteStatus === NoteStatusEnum.EXIT) {
+        setNoteStatus(NoteStatusEnum.KEYADD)
+      } else if (noteStatus === NoteStatusEnum.TITLEMOD) {
+        setNoteStatus(NoteStatusEnum.EXIT)
+      }
+    }
+  }, [noteStatus, setNoteStatus])
+
   return (
     <NoteContext.Provider value={{
       noteStatus,
       setNoteStatus
     }}>
-      <div className="w-full h-full bg-zinc-50" ref={noteElementRef}
+      <div className="w-full h-full bg-zinc-50 focus:outline-none" ref={noteElementRef}
         onMouseMove={(e) => {
           PhantomKeywordModel && setPhantomKeywordModel({
             ...PhantomKeywordModel,
@@ -58,18 +80,20 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
             posY: e.clientY as number
           })
         }}
+        onKeyDown={(e) => {handleKeyDown(e)}}
+        tabIndex={0}
       >
         <div className="hidden md:block mx-10">
           <Title note={note}></Title>
           {
-            note.keywords.length === 0 ? (
+            keywords.length === 0 ? (
               noteStatus !== NoteStatusEnum.KEYADD && (
               <div className="mt-56 mr-20 flex flex-col items-center text-3xl font-bold text-zinc-300">
                 <p>Press [Enter] to create</p>
                 <p>keyword</p>
               </div>
             )) : (
-              note.keywords.map((value, index) => (
+              keywords.map((value, index) => (
                 <Block
                   key={ index }
                   keyword={ value }
@@ -91,7 +115,7 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
             ></Block>
           }
           <Toolbar
-            onCreateKeyword={() => setNoteStatus!(NoteStatusEnum.KEYADD)}
+            onCreateKeyword={() => setNoteStatus(NoteStatusEnum.KEYADD)}
           ></Toolbar>
         </div>
       </div>
@@ -101,6 +125,7 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
 
 const Title = ({ note }: {note: NoteEntity}): JSX.Element => {
   const { modifyItem } = useContext(NoteAppContext)
+  const { setNoteStatus } = useContext(NoteContext)
 
   const [value, setValue] = useState<string>(note.name)
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false)
@@ -164,6 +189,7 @@ const Title = ({ note }: {note: NoteEntity}): JSX.Element => {
             ref={titleElementRef}
             value={value}
             onBlur={handleBlur}
+            onFocus={() => {setNoteStatus!(NoteStatusEnum.TITLEMOD)}}
             onChange={(e) => {
               setValue(e.target.value)
             }}
@@ -175,6 +201,7 @@ const Title = ({ note }: {note: NoteEntity}): JSX.Element => {
         <Info
           text={'! Note name is duplicated'}
           trigger={isDuplicate}
+          className="ml-2"
         ></Info>
       </div>
     </>

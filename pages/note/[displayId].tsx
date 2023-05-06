@@ -18,10 +18,10 @@ import Layout from "@/components/Layout"
 import NoteList from "@/components/note/NoteList"
 
 const NoteDetail: NextPage = ({ note, noteItems }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const noteList = useNoteList(noteItems)
+  const noteListAppStore = useNoteList(noteItems)
 
   return (
-    <NoteAppContext.Provider value={noteList}>
+    <NoteAppContext.Provider value={noteListAppStore}>
       <Layout sideScreenBody={(
         <NoteList></NoteList>
       )}>
