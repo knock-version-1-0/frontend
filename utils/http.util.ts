@@ -43,32 +43,24 @@ export const getApiStatus = <T>(error: unknown, responses: Response[]): ApiPaylo
   throw error
 }
 
-export const useWebSocket = <ResponseData, RequestData>(url: string, data: RequestData, token?: string): {
+export const useWebSocket = <ResponseData>(url: string): {
   payload: ApiPayload<ResponseData>
-  isClose: React.MutableRefObject<boolean>
-  send: () => void
+  sendMessage: (message: string) => void
+  clear: () => void
 } => {
   const socketRef = useRef<WebSocket>();
   const [payload, setPayload] = useState<ApiPayload<ResponseData>>({status: 'LOADING'})
-  const isClose = useRef<boolean>(false)
   
   useEffect(() => {
-    const socket = new WebSocket(
-      `ws://${process.env.NEXT_PUBLIC_SERVER_URL}${url}`,
-      token ? [`Authorization: Token ${token}`] : undefined
-    )
+    const socket = new WebSocket(`ws://${process.env.NEXT_PUBLIC_SERVER_URL}${url}`)
 
     socket.onopen = () => {
       console.log('WebSocket connection opened')
     }
 
     socket.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      setPayload({
-        status: 'OK',
-        data: data
-      })
-      isClose.current = true
+      const data: ApiPayload<ResponseData> = JSON.parse(event.data)
+      setPayload(data)
       console.log('WebSocket message received:', event.data)
     }
 
@@ -81,30 +73,19 @@ export const useWebSocket = <ResponseData, RequestData>(url: string, data: Reque
     return () => {
       socketRef.current?.close()
     }
-  }, [payload, isClose.current])
+  }, [payload])
 
-  const send = useCallback(() => {
-    const message = JSON.stringify(data)
+  const clear = useCallback(() => {
+    setPayload({status: 'LOADING'})
+  }, [setPayload])
+
+  const sendMessage = useCallback((message: string) => {
     socketRef.current?.send(message)
-  }, [data])
+  }, [])
 
   return {
     payload,
-    isClose,
-    send
+    sendMessage,
+    clear
   }
-}
-
-export const sendWebSocketData = <ResponseData, RequestData>(url: string, data: RequestData, token?: string) => {
-  const {payload, send, isClose} = useWebSocket<ResponseData, RequestData>(url, data, token)
-  send()
-
-  return new Promise((resolve: (value: ApiPayload<ResponseData>) => void) => {
-    const intervalId = setInterval(() => {
-      if (isClose.current) {
-        clearInterval(intervalId)
-        resolve(payload)
-      }
-    }, 100)
-  })
 }

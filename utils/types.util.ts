@@ -15,7 +15,7 @@ export type HookCallbackReturn = {
 
 export interface ItemStore<List, Data, KeyType> {
   items: List
-  addItem?: (data: Data) => Promise<HookCallbackReturn>
-  modifyItem?: (key: KeyType, data: Data) => Promise<HookCallbackReturn>
-  removeItem?: (key: KeyType) => Promise<HookCallbackReturn>
+  addItem?: (data: Data) => Promise<HookCallbackReturn> | void
+  modifyItem?: (key: KeyType, data: Data) => Promise<HookCallbackReturn> | void
+  removeItem?: (key: KeyType) => Promise<HookCallbackReturn> | void
 }

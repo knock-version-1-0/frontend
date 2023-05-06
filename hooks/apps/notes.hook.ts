@@ -4,19 +4,17 @@ import { useRouter } from "next/router"
 import { AppContext } from "@/contexts/apps.context"
 import { NoteSummaryEntity, NoteEntity, KeywordEntity } from "@/models/notes.model"
 import { NoteData, KeywordData } from "@/api/data/notes"
+import { useWebSocket } from "@/utils/http.util"
 import {
   fetchPostNotesApi,
   fetchGetNotesApi,
   fetchDeleteNoteApi,
   fetchPatchNoteApi,
-  fetchUpdateNoteKeywordApi,
-  fetchCreateNoteKeywordApi
 } from "@/api/notes.api"
-import { useWebSocket } from "@/utils/http.util"
 import { KeywordListAppStore, NoteListAppStore } from "@/stores/apps"
 import { MAX_NOTE_LIST_SIZE } from "@/constants/note.constant"
 import { NoteDoesNotExist, NoteNameDuplicate } from "@/api/status"
-import { HookCallbackReturn } from "@/utils/types.util"
+import { TRAILING_SLASH } from "@/constants/common.constant"
 
 import { debounce } from "lodash"
 
@@ -155,50 +153,51 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
   }
 }
 
-export const useKeywordList = (init: KeywordEntity[]): KeywordListAppStore => {
+export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordListAppStore => {
   const { token } = useContext(AppContext)
 
   const [items, setItems] = useState<KeywordEntity[]>(init)
 
-  const modifyItem = useCallback(async (key: number, data: KeywordData) => {
-    const payload = await fetchUpdateNoteKeywordApi(data, key, token as string)
+  const {
+    payload: modifiedItemPayload,
+    sendMessage: sendModifyMessage,
+    clear: clearModifyItemPayload
+  } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/UpdateKeyword${TRAILING_SLASH}`)
 
-    if (payload.status === 'OK') {
-      const keyword = payload.data!
+  const {
+    payload: addItemPayload,
+    sendMessage: sendAddMessage,
+    clear: clearAddItemPayload
+  } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/CreateKeyword${TRAILING_SLASH}`)
+
+  useEffect(() => {
+    if (modifiedItemPayload.status === 'OK') {
+      const keyword = modifiedItemPayload.data!
       setItems(items.map((value) => {
         if (value.id === keyword.id) {
           return keyword
         } else return value
       }))
-
-      return {
-        isSuccess: true,
-        status: payload.status
-      }
+      return clearModifyItemPayload()
     }
+  }, [items, modifiedItemPayload])
 
-    return {
-      isSuccess: false,
-      status: payload.status
+  useEffect(() => {
+    if (addItemPayload.status === 'CREATED') {
+      const keyword = addItemPayload.data!
+      setItems([...items, keyword])
+      return clearAddItemPayload()
     }
+  }, [items, addItemPayload])
+
+  const modifyItem = useCallback(async (key: number, data: KeywordData) => {
+    const message = JSON.stringify(data)
+    sendModifyMessage(message)
   }, [items])
 
   const addItem = useCallback(async (data: KeywordData) => {
-    const payload = await fetchCreateNoteKeywordApi(data, token as string)
-
-    if (payload.status === 'OK') {
-      const keyword = payload.data!
-      setItems([...items, keyword])
-      return {
-        isSuccess: true,
-        status: payload.status
-      }
-    }
-
-    return {
-      isSuccess: false,
-      status: payload.status
-    }
+    const message = JSON.stringify(data)
+    sendAddMessage(message)
   }, [items])
 
   return {

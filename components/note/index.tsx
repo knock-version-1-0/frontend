@@ -28,7 +28,7 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
 
   const { screenX, screenY } = useNoteScreenPosition(noteElementRef)
   const { noteStatus, setNoteStatus } = useNoteStatus(NoteStatusEnum.EXIT)
-  const { items: keywords, modifyItem, addItem } = useKeywordList(note.keywords)
+  const { items: keywords, modifyItem, addItem } = useKeywordList(note.keywords, note.id)
 
   useEffect(() => {
     noteElementRef.current?.focus()

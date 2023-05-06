@@ -33,4 +33,7 @@ export const InitNoteListAppStore: NoteListAppStore = {
   })
 }
 
-export interface KeywordListAppStore extends ItemStore<KeywordEntity[], KeywordData, number> {}
+export interface KeywordListAppStore extends ItemStore<KeywordEntity[], KeywordData, number> {
+  addItem: (data: KeywordData) => void
+  modifyItem: (key: number, data: KeywordData) => void
+}

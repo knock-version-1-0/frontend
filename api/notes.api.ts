@@ -1,4 +1,4 @@
-import { Axios, AxiosWithJwt, getApiStatus, sendWebSocketData } from "@/utils/http.util"
+import { Axios, AxiosWithJwt, getApiStatus } from "@/utils/http.util"
 import qs from "qs"
 
 import { NoteData, NoteFilterData, KeywordData } from "./data/notes"
@@ -20,12 +20,9 @@ const APP_NAME = 'notes'
 export const fetchGetNoteByDisplayIdApi = async (displayId: string, token: string): Promise<ApiPayload<NoteEntity>> => {
   try {
     const res = await AxiosWithJwt(token)
-      .get<NoteEntity | ErrorDetail>(`${APP_NAME}/${displayId}${TRAILING_SLASH}`)
-    const resData = res.data as NoteEntity
-    return {
-      status: res.statusText,
-      data: resData
-    }
+      .get<ApiPayload<NoteEntity> | ErrorDetail>(`${APP_NAME}/${displayId}${TRAILING_SLASH}`)
+    const resData = res.data as ApiPayload<NoteEntity>
+    return resData
   } catch (err: unknown) {
     return getApiStatus<NoteEntity>(err, [
       {
@@ -47,13 +44,9 @@ export const fetchGetNoteByDisplayIdApi = async (displayId: string, token: strin
 export const fetchPostNotesApi = async (data: NoteData, token: string): Promise<ApiPayload<NoteEntity>> => {
   try {
     const res = await AxiosWithJwt(token)
-      .post<NoteEntity | ErrorDetail>(`${APP_NAME}${TRAILING_SLASH}`, data=data)
-    const resData = res.data as NoteEntity
-
-    return {
-      status: res.statusText,
-      data: resData
-    }
+      .post<ApiPayload<NoteEntity> | ErrorDetail>(`${APP_NAME}${TRAILING_SLASH}`, data=data)
+    const resData = res.data as ApiPayload<NoteEntity>
+    return resData
   } catch (err: unknown) {
     return getApiStatus<NoteEntity>(err, [
       {
@@ -79,12 +72,9 @@ export const fetchGetNotesApi = async ({ name, offset }: NoteFilterData, token: 
   })
   try {
     const res = await AxiosWithJwt(token)
-      .get<NoteSummaryEntity[] | ErrorDetail>(`${APP_NAME}${TRAILING_SLASH}?${query}`)
-    const resData = res.data as NoteSummaryEntity[]
-    return {
-      status: res.statusText,
-      data: resData
-    }
+      .get<ApiPayload<NoteSummaryEntity[]> | ErrorDetail>(`${APP_NAME}${TRAILING_SLASH}?${query}`)
+    const resData = res.data as ApiPayload<NoteSummaryEntity[]>
+    return resData
   } catch (err: unknown) {
     return getApiStatus<NoteSummaryEntity[]>(err, [
       {
@@ -104,12 +94,9 @@ export const fetchDeleteNoteApi = async (displayId: string, token: string): Prom
 export const fetchPatchNoteApi = async (data: NoteData, displayId: string, token: string): Promise<ApiPayload<NoteEntity>> => {
   try {
     const res = await AxiosWithJwt(token)
-      .patch<NoteEntity | ErrorDetail>(`${APP_NAME}/${displayId}${TRAILING_SLASH}`, data)
-    const resData = res.data as NoteEntity
-    return {
-      status: res.statusText,
-      data: resData
-    }
+      .patch<ApiPayload<NoteEntity> | ErrorDetail>(`${APP_NAME}/${displayId}${TRAILING_SLASH}`, data)
+    const resData = res.data as ApiPayload<NoteEntity>
+    return resData
   } catch (err: unknown) {
     return getApiStatus<NoteEntity>(err, [
       {
@@ -134,12 +121,4 @@ export const fetchPatchNoteApi = async (data: NoteData, displayId: string, token
       }
     ])
   }
-}
-
-export const fetchUpdateNoteKeywordApi = (data: KeywordData, key: number, token: string): Promise<ApiPayload<KeywordEntity>> => {
-  return sendWebSocketData<KeywordEntity, KeywordData>(`/${APP_NAME}/keywords/${key}${TRAILING_SLASH}`, data, token)
-}
-
-export const fetchCreateNoteKeywordApi = (data: KeywordData, token: string): Promise<ApiPayload<KeywordEntity>> => {
-  return sendWebSocketData<KeywordEntity, KeywordData>(`/${APP_NAME}/keywords${TRAILING_SLASH}`, data, token)
 }
