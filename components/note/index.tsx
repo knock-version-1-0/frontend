@@ -165,9 +165,9 @@ const Title = ({ note }: {note: NoteEntity}): JSX.Element => {
   }, [item, value])
 
   const submitNoteTitle = useCallback(async () => {
-    const hookReturn = await modifyItem(item.displayId, {
+    const hookReturn = await modifyItem({
       name: value
-    })
+    }, item.displayId)
 
     if (hookReturn.isSuccess) {
       isSubmit.current = true

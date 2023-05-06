@@ -105,7 +105,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
     }
   }, [items])
 
-  const modifyItem = useCallback(async (key: string, data: NoteData) => {
+  const modifyItem = useCallback(async (data: NoteData, key: string) => {
     const payload = await fetchPatchNoteApi(data, key, token as string)
 
     if (payload.status === NoteNameDuplicate) {
@@ -165,9 +165,9 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
   } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/UpdateKeyword${TRAILING_SLASH}`)
 
   const {
-    payload: addItemPayload,
+    payload: addedItemPayload,
     sendMessage: sendAddMessage,
-    clear: clearAddItemPayload
+    clear: clearAddedItemPayload
   } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/CreateKeyword${TRAILING_SLASH}`)
 
   useEffect(() => {
@@ -183,19 +183,19 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
   }, [items, modifiedItemPayload])
 
   useEffect(() => {
-    if (addItemPayload.status === 'CREATED') {
-      const keyword = addItemPayload.data!
+    if (addedItemPayload.status === 'CREATED') {
+      const keyword = addedItemPayload.data!
       setItems([...items, keyword])
-      return clearAddItemPayload()
+      return clearAddedItemPayload()
     }
-  }, [items, addItemPayload])
+  }, [items, addedItemPayload])
 
-  const modifyItem = useCallback(async (key: number, data: KeywordData) => {
+  const modifyItem = useCallback((data: KeywordData, key: number) => {
     const message = JSON.stringify(data)
     sendModifyMessage(message)
   }, [items])
 
-  const addItem = useCallback(async (data: KeywordData) => {
+  const addItem = useCallback((data: KeywordData) => {
     const message = JSON.stringify(data)
     sendAddMessage(message)
   }, [items])

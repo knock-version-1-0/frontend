@@ -10,7 +10,7 @@ export interface NoteListAppStore extends ItemStore<NoteSummaryEntity[], NoteDat
   search: DebouncedFunc<(name: string) => void>
   isLast: boolean
   addItem: (data: NoteData) => Promise<HookCallbackReturn>
-  modifyItem: (key: string, data: NoteData) => Promise<HookCallbackReturn>
+  modifyItem: (data: NoteData, key: string) => Promise<HookCallbackReturn>
   removeItem: (key: string) => Promise<HookCallbackReturn>
 }
 
@@ -23,7 +23,7 @@ export const InitNoteListAppStore: NoteListAppStore = {
     isSuccess: false,
     status: ''
   }),
-  modifyItem: (key: string, data: NoteData) => Promise.resolve({
+  modifyItem: (data: NoteData, key: string) => Promise.resolve({
     isSuccess: false,
     status: ''
   }),
@@ -35,5 +35,5 @@ export const InitNoteListAppStore: NoteListAppStore = {
 
 export interface KeywordListAppStore extends ItemStore<KeywordEntity[], KeywordData, number> {
   addItem: (data: KeywordData) => void
-  modifyItem: (key: number, data: KeywordData) => void
+  modifyItem: (data: KeywordData, key: number) => void
 }
