@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios'
 import { useRef, useEffect, useState, useCallback } from 'react'
 
 import { ErrorDetail, ApiPayload } from './types.util'
+import { LOADING } from '@/api/status'
 
 export const Axios = () =>
   axios.create({
@@ -49,7 +50,7 @@ export const useWebSocket = <ResponseData>(url: string): {
   clear: () => void
 } => {
   const socketRef = useRef<WebSocket>();
-  const [payload, setPayload] = useState<ApiPayload<ResponseData>>({status: 'LOADING'})
+  const [payload, setPayload] = useState<ApiPayload<ResponseData>>({status: LOADING})
   
   useEffect(() => {
     const socket = new WebSocket(`ws://${process.env.NEXT_PUBLIC_SERVER_URL}${url}`)
@@ -76,7 +77,7 @@ export const useWebSocket = <ResponseData>(url: string): {
   }, [payload])
 
   const clear = useCallback(() => {
-    setPayload({status: 'LOADING'})
+    setPayload({status: LOADING})
   }, [setPayload])
 
   const sendMessage = useCallback((message: string) => {

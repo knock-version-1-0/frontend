@@ -9,6 +9,7 @@ import { useRouter } from "next/router"
 import { getAuthTokenFromCookie } from "@/cookies/auth.cookie"
 import { fetchGetNotesApi } from "@/api/notes.api"
 import { NoteSummaryEntity } from "@/models/notes.model"
+import { OK } from "@/api/status"
 
 import Layout from "@/components/Layout"
 import NoteList from "@/components/note/NoteList"
@@ -37,7 +38,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
     name: '',
     offset: 0
   }, token)
-  if (payload.status !== 'OK') { throw Error(payload.status) }
+  if (payload.status !== OK) { throw Error(payload.status) }
   const noteItems: NoteSummaryEntity[] = payload.data!
 
   return {

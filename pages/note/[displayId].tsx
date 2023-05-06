@@ -11,7 +11,7 @@ import { NoteAppContext } from "@/contexts/apps.context"
 import { useNoteList } from "@/hooks/apps/notes.hook"
 import { getAuthTokenFromCookie } from "@/cookies/auth.cookie"
 import { ApiPayload } from "@/utils/types.util"
-import { NoteDoesNotExist } from "@/api/status"
+import { NoteDoesNotExist, OK } from "@/api/status"
 
 import Note from "@/components/note"
 import Layout from "@/components/Layout"
@@ -38,7 +38,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
     name: '',
     offset: 0
   }, token)
-  if (noteItemsPayload.status !== 'OK') { throw Error(noteItemsPayload.status) }
+  if (noteItemsPayload.status !== OK) { throw Error(noteItemsPayload.status) }
   const noteItems: NoteSummaryEntity[] = noteItemsPayload.data!
 
   const notePayload: ApiPayload<NoteEntity> = await fetchGetNoteByDisplayIdApi(params!.displayId as string, token)
@@ -47,7 +47,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
     return {
       notFound: true
     }
-  } else if (notePayload.status !== 'OK') {
+  } else if (notePayload.status !== OK) {
     throw Error(notePayload.status)
   }
   const note: NoteEntity = notePayload.data!

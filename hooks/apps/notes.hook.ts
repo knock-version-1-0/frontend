@@ -15,6 +15,7 @@ import { KeywordListAppStore, NoteListAppStore } from "@/stores/apps"
 import { MAX_NOTE_LIST_SIZE } from "@/constants/note.constant"
 import { NoteDoesNotExist, NoteNameDuplicate } from "@/api/status"
 import { TRAILING_SLASH } from "@/constants/common.constant"
+import { OK, CREATED, CONNECTED, LOADING } from "@/api/status"
 
 import { debounce } from "lodash"
 
@@ -40,7 +41,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
       offset: nextOffset
     }, token ?? '')
 
-    if (payload.status === 'OK') {
+    if (payload.status === OK) {
       const data = payload.data
       if (data) {
         if (data.length === 0) {
@@ -65,7 +66,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
       offset: 0
     }, token ?? '')
 
-    if (payload.status === 'OK') {
+    if (payload.status === OK) {
       const data = payload.data
       if (data) {
         if (data.length === 0) {
@@ -138,7 +139,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
 
     return {
       isSuccess: true,
-      status: 'OK'
+      status: OK
     }
   }, [items])
 
@@ -171,7 +172,7 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
   } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/CreateKeyword${TRAILING_SLASH}`)
 
   useEffect(() => {
-    if (modifiedItemPayload.status === 'OK') {
+    if (modifiedItemPayload.status === OK) {
       const keyword = modifiedItemPayload.data!
       setItems(items.map((value) => {
         if (value.id === keyword.id) {
@@ -183,19 +184,19 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
   }, [items, modifiedItemPayload])
 
   useEffect(() => {
-    if (addedItemPayload.status === 'CREATED') {
+    if (addedItemPayload.status === CREATED) {
       const keyword = addedItemPayload.data!
       setItems([...items, keyword])
       return clearAddedItemPayload()
     }
   }, [items, addedItemPayload])
 
-  const modifyItem = useCallback((data: KeywordData, key: number) => {
+  const modifyItem = useCallback(async (data: KeywordData, key: number) => {
     const message = JSON.stringify(data)
     sendModifyMessage(message)
   }, [items])
 
-  const addItem = useCallback((data: KeywordData) => {
+  const addItem = useCallback(async (data: KeywordData) => {
     const message = JSON.stringify(data)
     sendAddMessage(message)
   }, [items])
