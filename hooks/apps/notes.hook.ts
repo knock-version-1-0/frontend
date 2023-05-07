@@ -4,7 +4,7 @@ import { useRouter } from "next/router"
 import { AppContext } from "@/contexts/apps.context"
 import { NoteSummaryEntity, NoteEntity, KeywordEntity } from "@/models/notes.model"
 import { NoteData, KeywordData } from "@/api/data/notes"
-import { useWebSocket } from "@/utils/http.util"
+import { useWebSocket } from "@/utils/ws.util"
 import {
   fetchPostNotesApi,
   fetchGetNotesApi,
