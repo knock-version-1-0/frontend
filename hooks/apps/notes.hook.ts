@@ -163,13 +163,13 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
     payload: modifiedItemPayload,
     sendMessage: sendModifyMessage,
     clear: clearModifyItemPayload
-  } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/UpdateKeyword${TRAILING_SLASH}`)
+  } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/update-keyword${TRAILING_SLASH}`)
 
   const {
     payload: addedItemPayload,
     sendMessage: sendAddMessage,
     clear: clearAddedItemPayload
-  } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/CreateKeyword${TRAILING_SLASH}`)
+  } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/create-keyword${TRAILING_SLASH}`)
 
   useEffect(() => {
     if (modifiedItemPayload.status === OK) {

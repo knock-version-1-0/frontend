@@ -23,7 +23,11 @@ import Info from "../Info"
 import ModeEditIcon from '@mui/icons-material/ModeEdit'
 import clsx from "@/utils/clsx.util"
 
-const Note = ({note}: {note: NoteEntity}): JSX.Element => {
+interface NoteProps {
+  note: NoteEntity
+}
+
+const Note: React.FC<NoteProps> = ({note}) => {
   const noteElementRef = useRef<HTMLDivElement>(null)
 
   const { screenX, screenY } = useNoteScreenPosition(noteElementRef)
@@ -31,8 +35,10 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
   const { items: keywords, modifyItem, addItem } = useKeywordList(note.keywords, note.id)
 
   useEffect(() => {
-    noteElementRef.current?.focus()
-  }, [])
+    if (noteStatus === NoteStatusEnum.EXIT) {
+      noteElementRef.current?.focus()
+    }
+  }, [noteStatus])
 
   const handleCreateKeyword = useCallback((data: KeywordData) => {
     setNoteStatus(NoteStatusEnum.EXIT)
@@ -52,13 +58,9 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
     if (event.key === "Escape") {
-      noteElementRef.current?.focus()
-
       setNoteStatus(NoteStatusEnum.EXIT)
     }
     else if (event.key === "Enter") {
-      noteElementRef.current?.focus()
-
       if (noteStatus === NoteStatusEnum.EXIT) {
         setNoteStatus(NoteStatusEnum.KEYADD)
       } else if (noteStatus === NoteStatusEnum.TITLEMOD) {
@@ -88,7 +90,7 @@ const Note = ({note}: {note: NoteEntity}): JSX.Element => {
           {
             keywords.length === 0 ? (
               noteStatus !== NoteStatusEnum.KEYADD && (
-              <div className="mt-56 mr-20 flex flex-col items-center text-3xl font-bold text-zinc-300">
+              <div className="mt-56 mr-20 flex flex-col items-center text-3xl font-bold text-zinc-300 cursor-default">
                 <p>Press [Enter] to create</p>
                 <p>keyword</p>
               </div>

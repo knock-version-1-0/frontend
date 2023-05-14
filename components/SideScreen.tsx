@@ -15,7 +15,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
 interface SideScreenProps extends React.PropsWithChildren {}
 
-const SideScreen = (props: SideScreenProps): JSX.Element => {
+const SideScreen: React.FC<SideScreenProps> = (props) => {
   return (
     <div className="h-screen">
       <div className="relative w-[320px] h-full">

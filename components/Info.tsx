@@ -8,7 +8,7 @@ interface InfoProps {
   className?: string
 }
 
-const Info = ({text, trigger, className}: InfoProps): JSX.Element => {
+const Info: React.FC<InfoProps> = ({text, trigger, className}) => {
   const [isVisable, setIsVisable] = useState<boolean>(false)
   const [opacity, setOpacity] = useState(1)
 

@@ -16,13 +16,13 @@ interface BlockProps {
   onCreate?: (data: KeywordData) => void
 }
 
-const Block = ({ 
+const Block: React.FC<BlockProps> = ({ 
   screenX,
   screenY,
   keyword,
   onUpdate,
   onCreate
-}: BlockProps): JSX.Element => {
+}) => {
 
   const { noteStatus, setNoteStatus } = useContext(NoteContext)
   const {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect, useContext } from "react"
 
 import { NoteContext } from "@/contexts/note.context"
 import { NoteStatusEnum } from "@/constants/note.constant"
@@ -22,7 +22,7 @@ enum Label {
   FragmentLine
 }
 
-const Toolbar = ({ onCreateKeyword }: ToolbarProps): JSX.Element => {
+const Toolbar: React.FC<ToolbarProps> = ({ onCreateKeyword }) => {
   const { setNoteStatus } = useContext(NoteContext)
 
   const [cursor, setCursor] = useState<number>(0)
@@ -100,7 +100,7 @@ interface ButtonProps extends React.PropsWithChildren {
   onCreateKeyword?: () => void
 }
 
-const Button = (props: ButtonProps): JSX.Element => {
+const Button: React.FC<ButtonProps> = (props) => {
   const { noteStatus } = useContext(NoteContext)
 
   const { setFocus, cursor, label } = props
@@ -164,7 +164,7 @@ interface IconProps {
   icon: any
 }
 
-const Icon = (props: IconProps): JSX.Element => {
+const Icon: React.FC<IconProps> = (props) => {
   const { statusClassName } = props
 
   return (

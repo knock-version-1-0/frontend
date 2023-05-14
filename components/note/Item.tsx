@@ -13,7 +13,7 @@ interface ItemProps {
   displayId: string
 }
 
-const Item = ({ value, displayId }: ItemProps): JSX.Element => {
+const Item: React.FC<ItemProps> = ({ value, displayId }) => {
   const router = useRouter()
   const { removeItem } = useContext(NoteAppContext)
 
