@@ -10,7 +10,7 @@ import { NoteEntity } from "@/models/notes.model"
 import { NoteContext } from "@/contexts/note.context"
 import { NoteAppContext } from "@/contexts/apps.context"
 import { NoteStatusEnum, BlockStatusEnum } from "@/constants/note.constant"
-import { useNoteScreenPosition, useNoteStatus } from "@/hooks/note/note.hook"
+import { useNoteScreenPosition, useNoteStatus, useBlockStatus } from "@/hooks/note/note.hook"
 import { KeywordEntity } from "@/models/notes.model"
 import { KeywordData } from "@/api/data/notes"
 import { NoteNameDuplicate } from "@/api/status"
@@ -32,6 +32,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
 
   const { screenX, screenY } = useNoteScreenPosition(noteElementRef)
   const { noteStatus, setNoteStatus } = useNoteStatus(NoteStatusEnum.EXIT)
+  const { blockStatus, setBlockStatus } = useBlockStatus()
   const { items: keywords, modifyItem, addItem } = useKeywordList(note.keywords, note.id)
 
   useEffect(() => {
@@ -62,7 +63,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
         if (event.nativeEvent.isComposing) return
         setNoteStatus(NoteStatusEnum.EXIT)
       }
-      else if (noteStatus === NoteStatusEnum.KEYADD || noteStatus === NoteStatusEnum.KEYMOD) {
+      else if (noteStatus === NoteStatusEnum.KEYMOD) {
         if (event.nativeEvent.isComposing) return
         setNoteStatus(NoteStatusEnum.EXIT)
       }
@@ -78,17 +79,27 @@ const Note: React.FC<NoteProps> = ({note}) => {
         if (event.nativeEvent.isComposing) return
         setNoteStatus(NoteStatusEnum.EXIT)
       }
-      else if (noteStatus === NoteStatusEnum.KEYADD || noteStatus === NoteStatusEnum.KEYMOD) {
-        if (event.nativeEvent.isComposing) return
+      else if (noteStatus === NoteStatusEnum.KEYADD) {
         setNoteStatus(NoteStatusEnum.EXIT)
       }
+      else if (noteStatus === NoteStatusEnum.KEYMOD) {
+        if (event.nativeEvent.isComposing) return
+        if (blockStatus === BlockStatusEnum.SELECT) {
+          setBlockStatus(BlockStatusEnum.EDIT)
+        }
+        else {
+          setNoteStatus(NoteStatusEnum.EXIT)
+        }
+      }
     }
-  }, [noteStatus, setNoteStatus])
+  }, [noteStatus, setNoteStatus, blockStatus, setBlockStatus])
 
   return (
     <NoteContext.Provider value={{
       noteStatus,
-      setNoteStatus
+      setNoteStatus,
+      blockStatus,
+      setBlockStatus
     }}>
       <div className="w-full h-full bg-zinc-50 focus:outline-none" ref={noteElementRef}
         onMouseMove={(e) => {

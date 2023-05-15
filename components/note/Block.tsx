@@ -4,7 +4,6 @@ import { NoteContext } from "@/contexts/note.context"
 import { NoteStatusEnum, BlockStatusEnum } from "@/constants/note.constant"
 import { KeywordEntity } from "@/models/notes.model"
 import { KeywordData } from "@/api/data/notes"
-import { useBlockStatus } from "@/hooks/note/note.hook"
 
 import clsx from "@/utils/clsx.util"
 
@@ -24,11 +23,7 @@ const Block: React.FC<BlockProps> = ({
   onCreate
 }) => {
 
-  const { noteStatus } = useContext(NoteContext)
-  const {
-    blockStatus,
-    setBlockStatus
-  } = useBlockStatus()
+  const { noteStatus, blockStatus, setBlockStatus } = useContext(NoteContext)
 
   const elementRef = useRef<HTMLInputElement>(null)
 
@@ -59,21 +54,31 @@ const Block: React.FC<BlockProps> = ({
 
   useEffect(() => {
     if (noteStatus === NoteStatusEnum.EXIT) {
-      setBlockStatus(BlockStatusEnum.UNSELECT)
+      setBlockStatus!(BlockStatusEnum.UNSELECT)
     }
     if (noteStatus === NoteStatusEnum.KEYADD) {
-      setBlockStatus(BlockStatusEnum.SELECT)
+      setBlockStatus!(BlockStatusEnum.SELECT)
       elementRef.current && elementRef.current.focus()
     }
     else if (noteStatus === NoteStatusEnum.KEYMOD) {
-      setBlockStatus(BlockStatusEnum.EDIT)
+      if (blockStatus === BlockStatusEnum.UNSELECT) {
+        setBlockStatus!(BlockStatusEnum.SELECT)
+      }
+      else if (blockStatus === BlockStatusEnum.SELECT) {
+        setBlockStatus!(BlockStatusEnum.EDIT)
+      }
+      else {
+        setBlockStatus!(BlockStatusEnum.EDIT)
+      }
+
       elementRef.current && elementRef.current.focus()
     }
-  }, [noteStatus])
+  }, [noteStatus, blockStatus])
 
   return (
     <input type="text" className={clsx(
       "absolute w-48 h-[30px] text-center focus:outline-knock-sub border",
+      noteStatus === NoteStatusEnum.KEYADD ? "cursor-auto" : ""
     )} style={noteStatus === NoteStatusEnum.KEYADD ? {
         left: center[0],
         top: center[1]
