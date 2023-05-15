@@ -44,39 +44,14 @@ export const useNoteScreenPosition = (ref: React.RefObject<HTMLDivElement>): Not
 
 export interface KeywordState {
   keywordStatus: KeywordStatusEnum
-  keywordEditStatusPolicy: () => void
-  keywordSelectStatusPolicy: () => void
-  keywordUnselectStatusPolicy: () => void
+  setKeywordStatus: React.Dispatch<React.SetStateAction<KeywordStatusEnum>>
 }
 
-export const useKeywordStatus = (noteState: NoteState): KeywordState => {
+export const useKeywordStatus = (): KeywordState => {
   const [keywordStatus, setKeywordStatus] = useState<KeywordStatusEnum>(KeywordStatusEnum.UNSELECT)
-  const { noteStatus, setNoteStatus } = noteState
-
-  const keywordEditStatusPolicy = useCallback(() => {
-    setKeywordStatus(KeywordStatusEnum.EDIT)
-
-    if (noteStatus !== NoteStatusEnum.KEYMOD) {
-      setNoteStatus(NoteStatusEnum.KEYMOD)
-    }
-  }, [noteStatus])
-
-  const keywordSelectStatusPolicy = useCallback(() => {
-    setKeywordStatus(KeywordStatusEnum.SELECT)
-  }, [noteStatus])
-
-  const keywordUnselectStatusPolicy = useCallback(() => {
-    setKeywordStatus(KeywordStatusEnum.UNSELECT)
-
-    if (noteStatus !== NoteStatusEnum.EXIT) {
-      setNoteStatus(NoteStatusEnum.EXIT)
-    }
-  }, [noteStatus])
 
   return {
     keywordStatus,
-    keywordEditStatusPolicy,
-    keywordSelectStatusPolicy,
-    keywordUnselectStatusPolicy
+    setKeywordStatus
   }
 }

@@ -9,7 +9,7 @@ import CircleIcon from '@mui/icons-material/Circle'
 import Item from "./Item"
 
 const NoteList = () => {
-  const { items, isLast, next: showNextList } = useContext(NoteAppContext)
+  const { items, isLast, nextPage, loader } = useContext(NoteAppContext)
 
   const router = useRouter()
   const { displayId } = router.query
@@ -27,33 +27,42 @@ const NoteList = () => {
   return (
     <>
       <SearchBar/>
-      <ul 
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        className={clsx(
-          "list",
-          showScrollbar ? "scrollbar-visible" : "",
-          "h-full pt-2 pl-2 pr-1"
-        )}
-      >
-        {
-          items.map((value, index) => (
-            <Item value={value} displayId={displayId as string} key={index} />
-          ))
-        }
-        <div className={`w-full py-3 text-center cursor-pointer hover:bg-zinc-50 hover:shadow-sm`}
-          onClick={() => {
-            if (!isLast)
-              showNextList()
-          }}
-        >
-          {
-            !isLast && (
-              <p className="text-sm text-knock-sub">Next</p>
-            )
-          }
-        </div>
-      </ul>
+      {
+        loader && !loader.read ? (
+          <ul 
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            className={clsx(
+              "list",
+              showScrollbar ? "scrollbar-visible" : "",
+              "h-full pt-2 pl-2 pr-1"
+            )}
+          >
+            {
+              loader && loader.add && (
+                <div>loading...</div>
+              )
+            }
+            {
+              items.map((value, index) => (
+                <Item value={value} displayId={displayId as string} key={index} />
+              )) 
+            }
+            <div className={`w-full py-3 text-center cursor-pointer hover:bg-zinc-50 hover:shadow-sm`}
+              onClick={() => {
+                if (!isLast)
+                  nextPage()
+              }}
+            >
+              {
+                !isLast && (
+                  <p className="text-sm text-knock-sub">Next</p>
+                )
+              }
+            </div>
+          </ul>
+        ) : <div className="flex items-center justify-center h-full pt-2 pl-2 pr-1">loading...</div>
+      }
     </>
   )
 }

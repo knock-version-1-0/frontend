@@ -4,7 +4,7 @@ import { useRouter } from "next/router"
 
 import Layout from "@/components/Layout"
 
-const Home: NextPage = () => {
+const HomePage: NextPage = () => {
   const router = useRouter()
   useEffect(() => {
     router.push('/note')
@@ -19,4 +19,4 @@ const Home: NextPage = () => {
   )
 }
 
-export default Home
+export default HomePage

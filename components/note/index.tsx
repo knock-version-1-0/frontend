@@ -58,12 +58,28 @@ const Note: React.FC<NoteProps> = ({note}) => {
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
     if (event.key === "Escape") {
-      setNoteStatus(NoteStatusEnum.EXIT)
+      if (noteStatus === NoteStatusEnum.TITLEMOD) {
+        if (event.nativeEvent.isComposing) return
+        setNoteStatus(NoteStatusEnum.EXIT)
+      }
+      else if (noteStatus === NoteStatusEnum.KEYADD || noteStatus === NoteStatusEnum.KEYMOD) {
+        if (event.nativeEvent.isComposing) return
+        setNoteStatus(NoteStatusEnum.EXIT)
+      }
+      else {
+        setNoteStatus(NoteStatusEnum.EXIT)
+      }
     }
     else if (event.key === "Enter") {
       if (noteStatus === NoteStatusEnum.EXIT) {
         setNoteStatus(NoteStatusEnum.KEYADD)
-      } else if (noteStatus === NoteStatusEnum.TITLEMOD) {
+      }
+      else if (noteStatus === NoteStatusEnum.TITLEMOD) {
+        if (event.nativeEvent.isComposing) return
+        setNoteStatus(NoteStatusEnum.EXIT)
+      }
+      else if (noteStatus === NoteStatusEnum.KEYADD || noteStatus === NoteStatusEnum.KEYMOD) {
+        if (event.nativeEvent.isComposing) return
         setNoteStatus(NoteStatusEnum.EXIT)
       }
     }
@@ -127,75 +143,58 @@ const Note: React.FC<NoteProps> = ({note}) => {
 
 const Title = ({ note }: {note: NoteEntity}): JSX.Element => {
   const { modifyItem } = useContext(NoteAppContext)
-  const { setNoteStatus } = useContext(NoteContext)
+  const { noteStatus, setNoteStatus } = useContext(NoteContext)
 
-  const [value, setValue] = useState<string>(note.name)
+  const [noteName, setNoteName] = useState<string>(note.name)
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false)
 
-  const [item, setItem] = useState<NoteEntity>(note)
+  const [noteItem, setNoteItem] = useState<NoteEntity>(note)
 
   useEffect(() => {
-    setValue(note.name)
-    setItem(note)
+    setNoteName(note.name)
+    setNoteItem(note)
   }, [note])
 
   useEffect(() => {
     setIsDuplicate(false)
   }, [isDuplicate])
 
-  const isSubmit = useRef<boolean>(false)
   const titleElementRef = useRef<HTMLInputElement>(null)
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && titleElementRef.current) {
-      titleElementRef.current.blur()
-    }
-    else if (e.key === 'Escape' && titleElementRef.current) {
-      titleElementRef.current.blur()
-    }
-  }, [value, item])
-
   const handleBlur = useCallback(async () => {
-    await submitNoteTitle()
+    await submitNoteTitle(noteName)
+  }, [noteItem, noteName, noteStatus])
 
-    if (!isSubmit.current) {
-      setValue(item.name)
-    } else {
-      setItem({...item, name: value})
-    }
-    isSubmit.current = false
-  }, [item, value])
-
-  const submitNoteTitle = useCallback(async () => {
+  const submitNoteTitle = useCallback(async (name: string) => {
     const hookReturn = await modifyItem({
-      name: value
-    }, item.displayId)
+      name: name
+    }, noteItem.displayId)
 
     if (hookReturn.isSuccess) {
-      isSubmit.current = true
+      const data = hookReturn.data as NoteEntity
+      setNoteItem(data)
+      setNoteName(data.name)
     } else if (hookReturn.status === NoteNameDuplicate) {
-      isSubmit.current = false
       setIsDuplicate(true)
     }
-  }, [item, value])
+  }, [noteItem])
 
   return (
     <>
       <nav className="mt-5 text-md">
-        <span className="text-knock-sub underline cursor-pointer hover:opacity-70">{item.name === '' ? '_' : item.name}</span>
+        <span className="text-knock-sub underline cursor-pointer hover:opacity-70">{noteItem.name === '' ? '_' : noteItem.name}</span>
         <span className="mx-2">/</span>
       </nav>
       <div className="flex flex-row items-end mt-4">
         <div className="border-b border-black w-[284px] cursor-text">
           <input className="w-full text-2xl outline-none bg-transparent"
             ref={titleElementRef}
-            value={value}
+            value={noteName}
             onBlur={handleBlur}
             onFocus={() => {setNoteStatus!(NoteStatusEnum.TITLEMOD)}}
             onChange={(e) => {
-              setValue(e.target.value)
+              setNoteName(e.target.value)
             }}
-            onKeyDown={handleKeyDown}
             maxLength={NOTE_NAME_LENGTH_LIMIT}
           />
         </div>

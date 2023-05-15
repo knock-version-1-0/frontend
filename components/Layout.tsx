@@ -6,7 +6,7 @@ interface LayoutProps extends React.PropsWithChildren {
 
 const Layout: React.FC<LayoutProps> = (props) => {
   return (
-    <div className="flex flex-row h-screen">
+    <div className="flex flex-row justify-center w-screen h-screen bg-zinc-50">
       <SideScreen>
         {props.sideScreenBody}
       </SideScreen>

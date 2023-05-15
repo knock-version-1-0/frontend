@@ -10,11 +10,14 @@ import { getAuthTokenFromCookie } from "@/cookies/auth.cookie"
 import { fetchGetNotesApi } from "@/api/notes.api"
 import { NoteSummaryEntity } from "@/models/notes.model"
 import { OK } from "@/api/status"
+import { useNoteList } from "@/hooks/apps/notes.hook"
+import { NoteAppContext } from "@/contexts/apps.context"
 
 import Layout from "@/components/Layout"
 import NoteList from "@/components/note/NoteList"
 
-const NoteHome: NextPage = ({ noteItems }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const NoteHomePage: NextPage = ({ noteItems }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const noteListAppStore = useNoteList(noteItems)
   const router = useRouter()
 
   useEffect(() => {
@@ -23,11 +26,13 @@ const NoteHome: NextPage = ({ noteItems }: InferGetServerSidePropsType<typeof ge
   }, [])
 
   return (
-    <Layout sideScreenBody={(
-      <NoteList></NoteList>
-    )}>
-      <></>
-    </Layout>
+    <NoteAppContext.Provider value={noteListAppStore}>
+      <Layout sideScreenBody={(
+        <NoteList></NoteList>
+      )}>
+        <div className="w-full h-full bg-zinc-50"></div>
+      </Layout>
+    </NoteAppContext.Provider>
   )
 }
 
@@ -48,4 +53,4 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
   }
 }
 
-export default NoteHome
+export default NoteHomePage

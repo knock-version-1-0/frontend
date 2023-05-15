@@ -24,16 +24,11 @@ const Block: React.FC<BlockProps> = ({
   onCreate
 }) => {
 
-  const { noteStatus, setNoteStatus } = useContext(NoteContext)
+  const { noteStatus } = useContext(NoteContext)
   const {
     keywordStatus,
-    keywordEditStatusPolicy,
-    keywordSelectStatusPolicy,
-    keywordUnselectStatusPolicy
-  } = useKeywordStatus({
-    noteStatus: noteStatus,
-    setNoteStatus: setNoteStatus!
-  })
+    setKeywordStatus
+  } = useKeywordStatus()
 
   const elementRef = useRef<HTMLInputElement>(null)
 
@@ -64,9 +59,14 @@ const Block: React.FC<BlockProps> = ({
 
   useEffect(() => {
     if (noteStatus === NoteStatusEnum.EXIT) {
-      elementRef.current && elementRef.current.blur()
+      setKeywordStatus(KeywordStatusEnum.UNSELECT)
     }
-    else if (noteStatus === NoteStatusEnum.KEYADD) {
+    if (noteStatus === NoteStatusEnum.KEYADD) {
+      setKeywordStatus(KeywordStatusEnum.SELECT)
+      elementRef.current && elementRef.current.focus()
+    }
+    else if (noteStatus === NoteStatusEnum.KEYMOD) {
+      setKeywordStatus(KeywordStatusEnum.EDIT)
       elementRef.current && elementRef.current.focus()
     }
   }, [noteStatus])
@@ -80,19 +80,6 @@ const Block: React.FC<BlockProps> = ({
       } : {
         left: x,
         top: y
-      }}
-      onFocus={() => {
-        if (noteStatus === NoteStatusEnum.KEYADD) {
-          keywordSelectStatusPolicy()
-        } else {
-          keywordEditStatusPolicy()
-        }
-      }}
-      onBlur={() => {keywordUnselectStatusPolicy()}}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' && elementRef.current) {
-          elementRef.current.blur()
-        }
       }}
       onClick={(e) => {
         if (noteStatus === NoteStatusEnum.KEYADD) {

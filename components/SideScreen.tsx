@@ -17,8 +17,8 @@ interface SideScreenProps extends React.PropsWithChildren {}
 
 const SideScreen: React.FC<SideScreenProps> = (props) => {
   return (
-    <div className="h-screen">
-      <div className="relative w-[320px] h-full">
+    <div>
+      <div className="relative w-[320px] h-full bg-white">
         <Header className="pl-4 pr-6 border-b"></Header>
         <div className="w-full h-full pt-20 pb-28">
           {props.children}
@@ -41,7 +41,7 @@ const Header = (props: {
       )
     }>
       <Image alt='logo' src={KnockLogo} />
-      <MenuIcon className="cursor-pointer hover:text-etc" />
+      {/* <MenuIcon className="cursor-pointer hover:text-etc" /> */}
     </div>
   )
 }
@@ -52,7 +52,13 @@ const Navigator = (props: {
   const router = useRouter()
   const pathname = router.pathname
 
-  const { addItem } = useContext(NoteAppContext)
+  const { items, addItem } = useContext(NoteAppContext)
+
+  enum NavChoice {
+    NOTE=1,
+    ADD,
+    MY
+  }
 
   const navPath = {
     note: {
@@ -69,14 +75,26 @@ const Navigator = (props: {
     }
   }
 
-  const handleClick = (path: string) => {
-    if (path === navPath.home.path) {
-      const InitData: NoteData = {
-        name: '',
-        status: StatusChoice.SAVE
-      }
-      addItem(InitData)
-    }
+  const handleClick = (choice: NavChoice) => {
+    switch (choice) {
+      case NavChoice.NOTE:
+        if (!navPath.note.re.exec(pathname))
+          router.push(navPath.home.path)
+        break
+      case NavChoice.ADD:
+        if (items.length !== 0 && items[0].name !== '') {
+          const InitData: NoteData = {
+            name: '',
+            status: StatusChoice.SAVE
+          }
+          addItem(InitData)
+        }
+        break
+      case NavChoice.MY:
+        if (!navPath.my.re.exec(pathname))
+          router.push(navPath.my.path)
+        break
+    } 
   }
 
   return (
@@ -85,17 +103,17 @@ const Navigator = (props: {
         props.className ?? '',
         "absolute bottom-0 w-full flex flex-row justify-between pt-3 pb-8"
       )}>
-      <button onClick={()=>router.push(navPath.note.path)}>
+      <button onClick={()=>handleClick(NavChoice.NOTE)}>
         <DriveFileRenameOutlineIcon
           className={`${navPath.note.re.exec(pathname) ? '' : 'text-etc'}`}
         ></DriveFileRenameOutlineIcon>
       </button>
-      <button onClick={()=>handleClick(navPath.home.path)}>
+      <button onClick={()=>handleClick(NavChoice.ADD)}>
         <AddIcon
           className='hover:text-black text-etc'
         ></AddIcon>
       </button>
-      <button onClick={()=>router.push(navPath.my.path)}>
+      <button onClick={()=>handleClick(NavChoice.MY)}>
         <AccountCircleIcon
           className={`${navPath.my.re.exec(pathname) ? '' : 'text-etc'} hover:text-black`}
         ></AccountCircleIcon>

@@ -17,7 +17,7 @@ import Note from "@/components/note"
 import Layout from "@/components/Layout"
 import NoteList from "@/components/note/NoteList"
 
-const NoteDetail: NextPage = ({ note, noteItems }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const NoteDetailPage: NextPage = ({ note, noteItems }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const noteListAppStore = useNoteList(noteItems)
 
   return (
@@ -60,4 +60,4 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req, res 
   }
 }
 
-export default NoteDetail
+export default NoteDetailPage

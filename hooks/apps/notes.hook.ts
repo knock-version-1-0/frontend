@@ -1,4 +1,4 @@
-import { useState, useCallback, useContext, useEffect } from "react"
+import { useState, useCallback, useContext, useEffect, useRef } from "react"
 import { useRouter } from "next/router"
 
 import { AppContext } from "@/contexts/apps.context"
@@ -16,6 +16,7 @@ import { MAX_NOTE_LIST_SIZE } from "@/constants/note.constant"
 import { NoteDoesNotExist, NoteNameDuplicate } from "@/api/status"
 import { TRAILING_SLASH } from "@/constants/common.constant"
 import { OK, CREATED, CONNECTED, LOADING } from "@/api/status"
+import { StatusChoice } from "@/utils/enums.util"
 
 import { debounce } from "lodash"
 
@@ -25,21 +26,34 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
 
   const [items, setItems] = useState<NoteSummaryEntity[]>(init)
   const [offset, setOffset] = useState<number>(0)
-  const [isLast, setIsLast] = useState<boolean>(false)
+  const [isLast, setIsLast] = useState<boolean>(true)
+  
+  const [readLoader, setReadLoader] = useState<boolean>(false)
+  const [addLoader, setAddLoader] = useState<boolean>(false)
+  const [modifyLoader, setModifyLoader] = useState<boolean>(false)
+  const [removeLoader, setRemoveLoader] = useState<boolean>(false)
 
   useEffect(() => {
     if (items.length < MAX_NOTE_LIST_SIZE) {
       setIsLast(true)
     }
+    if (items.length === 0) {
+      addItem({
+        name: '',
+        status: StatusChoice.SAVE
+      })
+    }
   }, [items])
 
-  const next = useCallback(async () => {
+  const nextPage = useCallback(async () => {
     const nextOffset = offset + MAX_NOTE_LIST_SIZE
     setOffset(nextOffset)
 
+    setReadLoader(true)
     const payload = await fetchGetNotesApi({
       offset: nextOffset
     }, token ?? '')
+    setReadLoader(false)
 
     if (payload.status === OK) {
       const data = payload.data
@@ -61,10 +75,12 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
   const search = useCallback(debounce(async (name: string) => {
     setOffset(0)
 
+    setReadLoader(true)
     const payload = await fetchGetNotesApi({
       name: name,
       offset: 0
     }, token ?? '')
+    setReadLoader(false)
 
     if (payload.status === OK) {
       const data = payload.data
@@ -84,7 +100,9 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
   }, 250), [items])
   
   const addItem = useCallback(async (data: NoteData) => {
+    setAddLoader(true)
     const payload = await fetchPostNotesApi(data, token as string)
+    setAddLoader(false)
 
     if (payload.status === NoteNameDuplicate) {
       return {
@@ -102,12 +120,15 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
 
     return {
       isSuccess: true,
-      status: payload.status
+      status: payload.status,
+      data: payload.data
     }
   }, [items])
 
   const modifyItem = useCallback(async (data: NoteData, key: string) => {
+    setModifyLoader(true)
     const payload = await fetchPatchNoteApi(data, key, token as string)
+    setModifyLoader(false)
 
     if (payload.status === NoteNameDuplicate) {
       return {
@@ -129,12 +150,16 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
 
     return {
       isSuccess: true,
-      status: payload.status
+      status: payload.status,
+      data: payload.data
     }
   }, [items])
 
   const removeItem = useCallback(async (key: string) => {
+    setRemoveLoader(true)
     await fetchDeleteNoteApi(key, token as string)
+    setRemoveLoader(false)
+
     router.replace('/note')
 
     return {
@@ -146,8 +171,14 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
   return {
     items,
     isLast,
-    next,
+    nextPage,
     search,
+    loader: {
+      read: readLoader,
+      add: addLoader,
+      modify: modifyLoader,
+      remove: removeLoader
+    },
     addItem,
     modifyItem,
     removeItem
