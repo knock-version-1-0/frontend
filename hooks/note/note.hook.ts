@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 
-import { NoteStatusEnum, KeywordStatusEnum } from '@/constants/note.constant'
+import { NoteStatusEnum, BlockStatusEnum } from '@/constants/note.constant'
 
 export interface NoteState {
   noteStatus: NoteStatusEnum
@@ -43,15 +43,15 @@ export const useNoteScreenPosition = (ref: React.RefObject<HTMLDivElement>): Not
 }
 
 export interface KeywordState {
-  keywordStatus: KeywordStatusEnum
-  setKeywordStatus: React.Dispatch<React.SetStateAction<KeywordStatusEnum>>
+  blockStatus: BlockStatusEnum
+  setBlockStatus: React.Dispatch<React.SetStateAction<BlockStatusEnum>>
 }
 
-export const useKeywordStatus = (): KeywordState => {
-  const [keywordStatus, setKeywordStatus] = useState<KeywordStatusEnum>(KeywordStatusEnum.UNSELECT)
+export const useBlockStatus = (): KeywordState => {
+  const [blockStatus, setBlockStatus] = useState<BlockStatusEnum>(BlockStatusEnum.UNSELECT)
 
   return {
-    keywordStatus,
-    setKeywordStatus
+    blockStatus,
+    setBlockStatus
   }
 }

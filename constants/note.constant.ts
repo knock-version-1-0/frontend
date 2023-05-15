@@ -11,7 +11,7 @@ export enum NoteStatusEnum {
   TITLEMOD
 }
 
-export enum KeywordStatusEnum {
+export enum BlockStatusEnum {
   UNSELECT=1,
   SELECT,
   EDIT

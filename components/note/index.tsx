@@ -9,7 +9,7 @@ import React, {
 import { NoteEntity } from "@/models/notes.model"
 import { NoteContext } from "@/contexts/note.context"
 import { NoteAppContext } from "@/contexts/apps.context"
-import { NoteStatusEnum, KeywordStatusEnum } from "@/constants/note.constant"
+import { NoteStatusEnum, BlockStatusEnum } from "@/constants/note.constant"
 import { useNoteScreenPosition, useNoteStatus } from "@/hooks/note/note.hook"
 import { KeywordEntity } from "@/models/notes.model"
 import { KeywordData } from "@/api/data/notes"
@@ -50,7 +50,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
     posY: 0,
     text: '',
     parentId: null,
-    status: KeywordStatusEnum.UNSELECT,
+    status: BlockStatusEnum.UNSELECT,
     timestamp: Date.now()
   }
 

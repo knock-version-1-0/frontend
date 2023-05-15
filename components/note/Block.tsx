@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useContext, useCallback } from "react"
 
 import { NoteContext } from "@/contexts/note.context"
-import { NoteStatusEnum, KeywordStatusEnum } from "@/constants/note.constant"
+import { NoteStatusEnum, BlockStatusEnum } from "@/constants/note.constant"
 import { KeywordEntity } from "@/models/notes.model"
 import { KeywordData } from "@/api/data/notes"
-import { useKeywordStatus } from "@/hooks/note/note.hook"
+import { useBlockStatus } from "@/hooks/note/note.hook"
 
 import clsx from "@/utils/clsx.util"
 
@@ -26,9 +26,9 @@ const Block: React.FC<BlockProps> = ({
 
   const { noteStatus } = useContext(NoteContext)
   const {
-    keywordStatus,
-    setKeywordStatus
-  } = useKeywordStatus()
+    blockStatus,
+    setBlockStatus
+  } = useBlockStatus()
 
   const elementRef = useRef<HTMLInputElement>(null)
 
@@ -59,14 +59,14 @@ const Block: React.FC<BlockProps> = ({
 
   useEffect(() => {
     if (noteStatus === NoteStatusEnum.EXIT) {
-      setKeywordStatus(KeywordStatusEnum.UNSELECT)
+      setBlockStatus(BlockStatusEnum.UNSELECT)
     }
     if (noteStatus === NoteStatusEnum.KEYADD) {
-      setKeywordStatus(KeywordStatusEnum.SELECT)
+      setBlockStatus(BlockStatusEnum.SELECT)
       elementRef.current && elementRef.current.focus()
     }
     else if (noteStatus === NoteStatusEnum.KEYMOD) {
-      setKeywordStatus(KeywordStatusEnum.EDIT)
+      setBlockStatus(BlockStatusEnum.EDIT)
       elementRef.current && elementRef.current.focus()
     }
   }, [noteStatus])
@@ -90,13 +90,13 @@ const Block: React.FC<BlockProps> = ({
             posY: keyword.posY,
             text: keyword.text,
             parentId: keyword.parentId,
-            status: KeywordStatusEnum.EDIT,
+            status: BlockStatusEnum.EDIT,
             timestamp: Date.now()
           })
         }
       }}
       ref={elementRef}
-      readOnly={keywordStatus === KeywordStatusEnum.SELECT}
+      readOnly={blockStatus === BlockStatusEnum.SELECT}
     />
   )
 }
