@@ -79,7 +79,7 @@ const Navigator = (props: {
     switch (choice) {
       case NavChoice.NOTE:
         if (!navPath.note.re.exec(pathname))
-          router.push(navPath.home.path)
+          window.location.replace(navPath.home.path)
         break
       case NavChoice.ADD:
         if (items.length !== 0 && items[0].name !== '') {
@@ -92,7 +92,7 @@ const Navigator = (props: {
         break
       case NavChoice.MY:
         if (!navPath.my.re.exec(pathname))
-          router.push(navPath.my.path)
+          window.location.replace(navPath.my.path)
         break
     } 
   }

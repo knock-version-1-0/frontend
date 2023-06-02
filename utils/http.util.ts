@@ -2,22 +2,24 @@ import axios, { AxiosError } from 'axios'
 
 import { ErrorDetail, ApiPayload } from './types.util'
 
-export const Axios = () =>
+export const Axios = (headers: object = {}) =>
   axios.create({
     baseURL: `${process.env.NEXT_PUBLIC_HTTP_PROTOCOL_TYPE}://${process.env.NEXT_PUBLIC_SERVER_URL}`,
     withCredentials: true,
     headers: {
       'Content-type': 'application/json',
+      ...headers
     },
   })
 
-export const AxiosWithJwt = (jwtToken: string) =>
+export const AxiosWithJwt = (jwtToken: string, headers: object = {}) =>
   axios.create({
     baseURL: `${process.env.NEXT_PUBLIC_HTTP_PROTOCOL_TYPE}://${process.env.NEXT_PUBLIC_SERVER_URL}`,
     withCredentials: true,
     headers: {
       'Content-type': 'application/json',
       authorization: `Token ${jwtToken}`,
+      ...headers
     },
   })
 

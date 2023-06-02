@@ -37,7 +37,7 @@ const NoteHomePage: NextPage = ({ noteItems }: InferGetServerSidePropsType<typeo
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
-  const token = getAuthTokenFromCookie({req, res}) ?? ''
+  const token = getAuthTokenFromCookie({req, res}) as string
 
   const payload = await fetchGetNotesApi({
     name: '',

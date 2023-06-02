@@ -32,7 +32,7 @@ const NoteDetailPage: NextPage = ({ note, noteItems }: InferGetServerSidePropsTy
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
-  const token = getAuthTokenFromCookie({req, res}) ?? ''
+  const token = getAuthTokenFromCookie({req, res}) as string
 
   const noteItemsPayload: ApiPayload<NoteSummaryEntity[]> = await fetchGetNotesApi({
     name: '',

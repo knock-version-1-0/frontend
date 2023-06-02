@@ -1,8 +1,8 @@
 import { Axios, AxiosWithJwt, getApiStatus } from "@/utils/http.util"
 import qs from "qs"
 
-import { NoteData, NoteFilterData, KeywordData } from "./data/notes"
-import { KeywordEntity, NoteEntity } from "@/models/notes.model"
+import { NoteData, NoteFilterData } from "./data/notes"
+import { NoteEntity } from "@/models/notes.model"
 import { NoteSummaryEntity } from "@/models/notes.model"
 import { TRAILING_SLASH } from "@/constants/common.constant"
 import {
