@@ -8,6 +8,7 @@ import { useRouter } from "next/router"
 
 import { getAuthTokenFromCookie } from "@/cookies/auth.cookie"
 import { fetchGetNotesApi } from "@/api/notes.api"
+import { fetchPostAuthTokenApi } from "@/api/users.api"
 import { NoteSummaryEntity } from "@/models/notes.model"
 import { OK } from "@/api/status"
 import { useNoteList } from "@/hooks/apps/notes.hook"
@@ -37,7 +38,30 @@ const NoteHomePage: NextPage = ({ noteItems }: InferGetServerSidePropsType<typeo
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
-  const token = getAuthTokenFromCookie({req, res}) as string
+  const refreshToken = getAuthTokenFromCookie({req, res})
+  if (!refreshToken) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login"
+      }
+    }
+  }
+  
+  const authPayload = await fetchPostAuthTokenApi({
+    type: 'refresh',
+    value: refreshToken
+  })
+  if (authPayload.status !== OK) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login"
+      }
+    }
+  }
+
+  const token = authPayload.data!.value
 
   const payload = await fetchGetNotesApi({
     name: '',

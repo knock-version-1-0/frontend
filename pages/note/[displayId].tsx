@@ -6,6 +6,7 @@ import {
 } from "next"
 
 import { fetchGetNoteByDisplayIdApi, fetchGetNotesApi } from "@/api/notes.api"
+import { fetchPostAuthTokenApi } from "@/api/users.api"
 import { NoteEntity, NoteSummaryEntity } from "@/models/notes.model"
 import { NoteAppContext } from "@/contexts/apps.context"
 import { useNoteList } from "@/hooks/apps/notes.hook"
@@ -32,7 +33,29 @@ const NoteDetailPage: NextPage = ({ note, noteItems }: InferGetServerSidePropsTy
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
-  const token = getAuthTokenFromCookie({req, res}) as string
+  const refreshToken = getAuthTokenFromCookie({req, res})
+  if (!refreshToken) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login"
+      }
+    }
+  }
+  const authPayload = await fetchPostAuthTokenApi({
+    type: 'refresh',
+    value: refreshToken
+  })
+  if (authPayload.status !== OK) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login"
+      }
+    }
+  }
+
+  const token = authPayload.data!.value
 
   const noteItemsPayload: ApiPayload<NoteSummaryEntity[]> = await fetchGetNotesApi({
     name: '',
