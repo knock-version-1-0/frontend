@@ -1,5 +1,7 @@
+"use client"
+
 import { useState, useEffect } from "react"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 
 import {
   fetchPostAuthVerificationApi,
@@ -41,7 +43,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ sessionId, email }) => {
       })
 
       if (userPayload.status === CREATED) {
-        router.replace(`/auth?token=${userPayload.data!.refreshToken}`)
+        router.push(`/auth?token=${userPayload.data!.refreshToken}`)
       } else {
         router.push('/login')
       }

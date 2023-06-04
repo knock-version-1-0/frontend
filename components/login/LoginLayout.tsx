@@ -1,3 +1,5 @@
+"use client";
+
 interface LoginLayoutProps extends React.PropsWithChildren {
   title: string | React.ReactNode
 }

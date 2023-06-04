@@ -1,3 +1,5 @@
+"use client";
+
 import SideScreen from "./SideScreen";
 
 interface LayoutProps extends React.PropsWithChildren {

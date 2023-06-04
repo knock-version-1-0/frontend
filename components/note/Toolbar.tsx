@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useContext } from "react"
 
 import { NoteContext } from "@/contexts/note.context"

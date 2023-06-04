@@ -1,5 +1,5 @@
 import { useState, useCallback, useContext, useEffect, useRef } from "react"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 
 import { AppContext } from "@/contexts/apps.context"
 import { NoteSummaryEntity, NoteEntity, KeywordEntity } from "@/models/notes.model"
