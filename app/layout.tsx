@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 
 import { fetchPostAuthTokenApi } from '@/api/users.api';
 import { OK } from '@/api/status';
+import { AUTH_TOKEN_KEY } from '@/constants/auth.constant';
 
 import ClientLayout from './layout.client';
 
@@ -19,7 +20,7 @@ export default async function RootLayout({
 }) {
   const cookieStore = cookies();
   let token;
-  const refreshToken = cookieStore.get('auth/token')?.value;
+  const refreshToken = cookieStore.get(AUTH_TOKEN_KEY)?.value;
 
   if (refreshToken) {
     const payload = await fetchPostAuthTokenApi({
