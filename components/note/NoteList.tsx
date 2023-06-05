@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useCallback, useContext, useState, useRef } from "react"
-import { useRouter } from "next/router"
+import { useSearchParams } from "next/navigation"
 
 import { NoteAppContext } from "@/contexts/apps.context"
 
@@ -8,11 +10,12 @@ import CancelIcon from '@mui/icons-material/Cancel'
 import CircleIcon from '@mui/icons-material/Circle'
 import Item from "./Item"
 
-const NoteList = () => {
-  const { items, isLast, nextPage, loader } = useContext(NoteAppContext)
+interface NoteListProps {
+  displayId?: string
+}
 
-  const router = useRouter()
-  const { displayId } = router.query
+const NoteList: React.FC<NoteListProps> = ({ displayId }) => {
+  const { items, isLast, nextPage, loader } = useContext(NoteAppContext)
 
   const [showScrollbar, setShowScrollbar] = useState(false)
 

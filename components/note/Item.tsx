@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useContext, useState } from "react"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 
 import { NoteAppContext } from "@/contexts/apps.context"
 import { NoteSummaryEntity } from "@/models/notes.model"

@@ -1,5 +1,7 @@
+"use client";
+
 import { useContext } from "react"
-import { useRouter } from "next/router"
+import { useRouter, usePathname } from "next/navigation"
 import Image from "next/image"
 
 import { NoteAppContext } from "@/contexts/apps.context"
@@ -50,7 +52,7 @@ const Navigator = (props: {
   className?: string
 }): JSX.Element => {
   const router = useRouter()
-  const pathname = router.pathname
+  const pathname = usePathname()
 
   const { items, addItem } = useContext(NoteAppContext)
 
