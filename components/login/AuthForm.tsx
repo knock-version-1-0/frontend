@@ -1,59 +1,59 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 import {
   fetchPostAuthVerificationApi,
   fetchPostUsersApi
-} from "@/api/users.api"
-import { OK, CREATED, AttemptLimitOver } from "@/api/status"
+} from "@/api/users.api";
+import { OK, CREATED, AttemptLimitOver } from "@/api/status";
 
-import Info from "../Info"
-import { LoginLayout } from "./LoginLayout"
-import clsx from "@/utils/clsx.util"
+import Info from "../Info";
+import { LoginLayout } from "./LoginLayout";
+import clsx from "@/utils/clsx.util";
 
 interface AuthFormProps {
-  sessionId: string
-  email: string
+  sessionId: string;
+  email: string;
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({ sessionId, email }) => {
-  const router = useRouter()
+  const router = useRouter();
 
-  const [value, setValue] = useState('')
-  const [error, setError] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [isValid, setIsValid] = useState(false)
+  const [value, setValue] = useState('');
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    setLoading(true)
+    setLoading(true);
     const authPayload = await fetchPostAuthVerificationApi({
       id: sessionId,
       email: email,
       emailCode: value,
       currentTime: Math.round(Date.now() / 1000)
-    })
+    });
 
     if (authPayload.status === OK) {
       const userPayload = await fetchPostUsersApi({
         email: email
-      })
+      });
 
       if (userPayload.status === CREATED) {
-        router.push(`/auth?token=${userPayload.data!.refreshToken}`)
+        router.push(`/auth?token=${userPayload.data!.refreshToken}`);
       } else {
-        router.push('/login')
+        router.push('/login');
       }
     } else if (authPayload.status === AttemptLimitOver) {
-      router.replace('/login')
+      router.replace('/login');
     } else {
-      setError(true)
+      setError(true);
     }
-    setLoading(false)
-    setIsValid(false)
+    setLoading(false);
+    setIsValid(false);
   }
 
   return (
@@ -88,32 +88,32 @@ const AuthForm: React.FC<AuthFormProps> = ({ sessionId, email }) => {
       </form>
       <Info text={'Verification code is invalid'} trigger={error}></Info>
     </LoginLayout>
-  )
+  );
 }
 
 interface TimerProps {
-  duration: number
-  onTimeout: () => void
+  duration: number;
+  onTimeout: () => void;
 }
 
 const Timer: React.FC<TimerProps> = ({ duration, onTimeout }) => {
-  const [seconds, setSeconds] = useState(duration % 60)
-  const [minutes, setMinutes] = useState(Math.floor(duration / 60))
+  const [seconds, setSeconds] = useState(duration % 60);
+  const [minutes, setMinutes] = useState(Math.floor(duration / 60));
 
   useEffect(() => {
-    let timerId: NodeJS.Timeout | undefined = undefined
+    let timerId: NodeJS.Timeout | undefined = undefined;
 
     if (seconds > 0 || minutes > 0) {
       timerId = setInterval(() => {
         if (seconds === 0) {
-          setMinutes((prevMinutes) => prevMinutes - 1)
-          setSeconds(59)
+          setMinutes((prevMinutes) => prevMinutes - 1);
+          setSeconds(59);
         } else {
-          setSeconds((prevSeconds) => prevSeconds - 1)
+          setSeconds((prevSeconds) => prevSeconds - 1);
         }
       }, 1000);
     } else {
-      onTimeout()
+      onTimeout();
     }
 
     return () => {
@@ -121,11 +121,11 @@ const Timer: React.FC<TimerProps> = ({ duration, onTimeout }) => {
         clearInterval(timerId);
       }
     };
-  }, [seconds, minutes, onTimeout])
+  }, [seconds, minutes, onTimeout]);
 
   return (
     <div>{`${minutes}` + ':' + `${seconds}`.padStart(2, '0')}</div>
-  )
+  );
 }
 
-export default AuthForm
+export default AuthForm;

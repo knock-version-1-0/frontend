@@ -1,10 +1,10 @@
 "use client";
 
-import * as React from "react"
-import { SVGProps } from "react"
+import * as React from "react";
+import { SVGProps } from "react";
 
 interface Props extends SVGProps<SVGSVGElement> {
-  className?: string
+  className?: string;
 }
 
 const ArrowCursorIcon = (props: Props) => (
@@ -20,6 +20,6 @@ const ArrowCursorIcon = (props: Props) => (
     <path d="m7.531 11.683 2.598-1.5 4 6.928-2.598 1.5-4-6.928Z" />
     <path d="m7.031 10.817 2.598-1.5.5.866-2.598 1.5z" />
   </svg>
-)
+);
 
-export default ArrowCursorIcon
+export default ArrowCursorIcon;

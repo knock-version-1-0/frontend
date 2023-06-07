@@ -1,5 +1,5 @@
 const clsx = (...args: (string | {[key: string]: boolean | undefined} | undefined)[]): string => {
-  const classes: string[] = []
+  const classes: string[] = [];
 
   // 문자열로 된 클래스 추가
   for (const arg of args) {
@@ -22,4 +22,4 @@ const clsx = (...args: (string | {[key: string]: boolean | undefined} | undefine
   return classes.join(" ");
 }
 
-export default clsx
+export default clsx;

@@ -1,11 +1,11 @@
-import { createContext } from "react"
+import { createContext } from "react";
 
 import {
   AppStore,
   InitAppStore,
   NoteListAppStore,
   InitNoteListAppStore  
-} from "@/stores/apps"
+} from "@/stores/apps";
 
-export const AppContext = createContext<AppStore>(InitAppStore)
-export const NoteAppContext = createContext<NoteListAppStore>(InitNoteListAppStore)
+export const AppContext = createContext<AppStore>(InitAppStore);
+export const NoteAppContext = createContext<NoteListAppStore>(InitNoteListAppStore);

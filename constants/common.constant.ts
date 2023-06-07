@@ -1,1 +1,1 @@
-export const TRAILING_SLASH = '/'
+export const TRAILING_SLASH = '/';

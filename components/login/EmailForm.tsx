@@ -1,39 +1,39 @@
 "use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-import { fetchPostAuthEmailApi } from "@/api/users.api"
-import { OK } from "@/api/status"
+import { fetchPostAuthEmailApi } from "@/api/users.api";
+import { OK } from "@/api/status";
 
-import Info from "../Info"
-import { LoginLayout } from "./LoginLayout"
-import clsx from "@/utils/clsx.util"
+import Info from "../Info";
+import { LoginLayout } from "./LoginLayout";
+import clsx from "@/utils/clsx.util";
 
 const EmailForm: React.FC = () => {
-  const router = useRouter()
+  const router = useRouter();
 
-  const [value, setValue] = useState('')
-  const [error, setError] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [isValid, setIsValid] = useState(false)
+  const [value, setValue] = useState('');
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    setLoading(true)
+    setLoading(true);
     const payload = await fetchPostAuthEmailApi({
       at: Math.round(Date.now() / 1000),
       email: value
-    })
+    });
 
     if (payload.status === OK) {
-      router.push(`/login?session-id=${payload.data!.id}&email=${payload.data!.email}`)
+      router.push(`/login?session-id=${payload.data!.id}&email=${payload.data!.email}`);
     } else {
-      setError(true)
+      setError(true);
     }
-    setLoading(false)
-    setIsValid(false)
+    setLoading(false);
+    setIsValid(false);
   }
 
   return (
@@ -64,7 +64,7 @@ const EmailForm: React.FC = () => {
       </form>
       <Info text={'Email is invalid'} trigger={error}></Info>
     </LoginLayout>
-  )
+  );
 }
 
-export default EmailForm
+export default EmailForm;

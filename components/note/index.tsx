@@ -6,46 +6,46 @@ import React, {
   useState,
   useContext,
   useEffect,
-} from "react"
+} from "react";
 
-import { NoteEntity } from "@/models/notes.model"
-import { NoteContext } from "@/contexts/note.context"
-import { NoteAppContext } from "@/contexts/apps.context"
-import { NoteStatusEnum, BlockStatusEnum } from "@/constants/note.constant"
-import { useNoteScreenPosition, useNoteStatus, useBlockStatus } from "@/hooks/note/note.hook"
-import { KeywordEntity } from "@/models/notes.model"
-import { KeywordData } from "@/api/data/notes"
-import { NoteNameDuplicate } from "@/api/status"
-import { NOTE_NAME_LENGTH_LIMIT } from "@/constants/note.constant"
-import { useKeywordList } from "@/hooks/apps/notes.hook"
+import { NoteEntity } from "@/models/notes.model";
+import { NoteContext } from "@/contexts/note.context";
+import { NoteAppContext } from "@/contexts/apps.context";
+import { NoteStatusEnum, BlockStatusEnum } from "@/constants/note.constant";
+import { useNoteScreenPosition, useNoteStatus, useBlockStatus } from "@/hooks/note/note.hook";
+import { KeywordEntity } from "@/models/notes.model";
+import { KeywordData } from "@/api/data/notes";
+import { NoteNameDuplicate } from "@/api/status";
+import { NOTE_NAME_LENGTH_LIMIT } from "@/constants/note.constant";
+import { useKeywordList } from "@/hooks/apps/notes.hook";
 
-import Block from "./Block"
-import Toolbar from "./Toolbar"
-import Info from "../Info"
-import ModeEditIcon from '@mui/icons-material/ModeEdit'
-import clsx from "@/utils/clsx.util"
+import Block from "./Block";
+import Toolbar from "./Toolbar";
+import Info from "../Info";
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import clsx from "@/utils/clsx.util";
 
 interface NoteProps {
-  note: NoteEntity
+  note: NoteEntity;
 }
 
 const Note: React.FC<NoteProps> = ({note}) => {
-  const noteElementRef = useRef<HTMLDivElement>(null)
+  const noteElementRef = useRef<HTMLDivElement>(null);
 
-  const { screenX, screenY } = useNoteScreenPosition(noteElementRef)
-  const { noteStatus, setNoteStatus } = useNoteStatus(NoteStatusEnum.EXIT)
-  const { blockStatus, setBlockStatus } = useBlockStatus()
-  const { items: keywords, modifyItem, addItem } = useKeywordList(note.keywords, note.id)
+  const { screenX, screenY } = useNoteScreenPosition(noteElementRef);
+  const { noteStatus, setNoteStatus } = useNoteStatus(NoteStatusEnum.EXIT);
+  const { blockStatus, setBlockStatus } = useBlockStatus();
+  const { items: keywords, modifyItem, addItem } = useKeywordList(note.keywords, note.id);
 
   useEffect(() => {
     if (noteStatus === NoteStatusEnum.EXIT) {
-      noteElementRef.current?.focus()
+      noteElementRef.current?.focus();
     }
-  }, [noteStatus])
+  }, [noteStatus]);
 
   const handleCreateKeyword = useCallback((data: KeywordData) => {
-    setNoteStatus(NoteStatusEnum.EXIT)
-  }, [])
+    setNoteStatus(NoteStatusEnum.EXIT);
+  }, []);
 
   const InitKeywordModel: KeywordEntity = {
     noteId: note.id,
@@ -57,44 +57,44 @@ const Note: React.FC<NoteProps> = ({note}) => {
     timestamp: Date.now()
   }
 
-  const [PhantomKeywordModel, setPhantomKeywordModel] = useState<KeywordEntity>(InitKeywordModel)
+  const [PhantomKeywordModel, setPhantomKeywordModel] = useState<KeywordEntity>(InitKeywordModel);
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
     if (event.key === "Escape") {
       if (noteStatus === NoteStatusEnum.TITLEMOD) {
-        if (event.nativeEvent.isComposing) return
-        setNoteStatus(NoteStatusEnum.EXIT)
+        if (event.nativeEvent.isComposing) return;
+        setNoteStatus(NoteStatusEnum.EXIT);
       }
       else if (noteStatus === NoteStatusEnum.KEYMOD) {
-        if (event.nativeEvent.isComposing) return
-        setNoteStatus(NoteStatusEnum.EXIT)
+        if (event.nativeEvent.isComposing) return;
+        setNoteStatus(NoteStatusEnum.EXIT);
       }
       else {
-        setNoteStatus(NoteStatusEnum.EXIT)
+        setNoteStatus(NoteStatusEnum.EXIT);
       }
     }
     else if (event.key === "Enter") {
       if (noteStatus === NoteStatusEnum.EXIT) {
-        setNoteStatus(NoteStatusEnum.KEYADD)
+        setNoteStatus(NoteStatusEnum.KEYADD);
       }
       else if (noteStatus === NoteStatusEnum.TITLEMOD) {
-        if (event.nativeEvent.isComposing) return
-        setNoteStatus(NoteStatusEnum.EXIT)
+        if (event.nativeEvent.isComposing) return;
+        setNoteStatus(NoteStatusEnum.EXIT);
       }
       else if (noteStatus === NoteStatusEnum.KEYADD) {
-        setNoteStatus(NoteStatusEnum.EXIT)
+        setNoteStatus(NoteStatusEnum.EXIT);
       }
       else if (noteStatus === NoteStatusEnum.KEYMOD) {
-        if (event.nativeEvent.isComposing) return
+        if (event.nativeEvent.isComposing) return;
         if (blockStatus === BlockStatusEnum.SELECT) {
-          setBlockStatus(BlockStatusEnum.EDIT)
+          setBlockStatus(BlockStatusEnum.EDIT);
         }
         else {
-          setNoteStatus(NoteStatusEnum.EXIT)
+          setNoteStatus(NoteStatusEnum.EXIT);
         }
       }
     }
-  }, [noteStatus, setNoteStatus, blockStatus, setBlockStatus])
+  }, [noteStatus, setNoteStatus, blockStatus, setBlockStatus]);
 
   return (
     <NoteContext.Provider value={{
@@ -151,46 +151,46 @@ const Note: React.FC<NoteProps> = ({note}) => {
         </div>
       </div>
     </NoteContext.Provider>
-  )
+  );
 }
 
 const Title = ({ note }: {note: NoteEntity}): JSX.Element => {
-  const { modifyItem } = useContext(NoteAppContext)
-  const { noteStatus, setNoteStatus } = useContext(NoteContext)
+  const { modifyItem } = useContext(NoteAppContext);
+  const { noteStatus, setNoteStatus } = useContext(NoteContext);
 
-  const [noteName, setNoteName] = useState<string>(note.name)
-  const [isDuplicate, setIsDuplicate] = useState<boolean>(false)
+  const [noteName, setNoteName] = useState<string>(note.name);
+  const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
 
-  const [noteItem, setNoteItem] = useState<NoteEntity>(note)
+  const [noteItem, setNoteItem] = useState<NoteEntity>(note);
 
   useEffect(() => {
     setNoteName(note.name)
     setNoteItem(note)
-  }, [note])
+  }, [note]);
 
   useEffect(() => {
     setIsDuplicate(false)
-  }, [isDuplicate])
+  }, [isDuplicate]);
 
-  const titleElementRef = useRef<HTMLInputElement>(null)
+  const titleElementRef = useRef<HTMLInputElement>(null);
 
   const handleBlur = useCallback(async () => {
     await submitNoteTitle(noteName)
-  }, [noteItem, noteName, noteStatus])
+  }, [noteItem, noteName, noteStatus]);
 
   const submitNoteTitle = useCallback(async (name: string) => {
     const hookReturn = await modifyItem({
       name: name
-    }, noteItem.displayId)
+    }, noteItem.displayId);
 
     if (hookReturn.isSuccess) {
-      const data = hookReturn.data as NoteEntity
-      setNoteItem(data)
-      setNoteName(data.name)
+      const data = hookReturn.data as NoteEntity;
+      setNoteItem(data);
+      setNoteName(data.name);
     } else if (hookReturn.status === NoteNameDuplicate) {
-      setIsDuplicate(true)
+      setIsDuplicate(true);
     }
-  }, [noteItem])
+  }, [noteItem]);
 
   return (
     <>
@@ -219,7 +219,7 @@ const Title = ({ note }: {note: NoteEntity}): JSX.Element => {
         ></Info>
       </div>
     </>
-  )
+  );
 }
 
-export default Note
+export default Note;

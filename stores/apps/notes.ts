@@ -1,19 +1,17 @@
-import { useRef } from 'react'
-
 import { KeywordEntity, NoteEntity, NoteSummaryEntity } from "@/models/notes.model";
 import { KeywordData, NoteData } from "@/api/data/notes";
-import { ItemStore, HookCallbackReturn } from "@/utils/types.util"
+import { ItemStore, HookCallbackReturn } from "@/utils/types.util";
 
-import { DebouncedFunc, debounce } from 'lodash'
+import { DebouncedFunc, debounce } from 'lodash';
 
 export interface NoteListAppStore extends ItemStore<NoteSummaryEntity, NoteData, string> {
-  items: NoteSummaryEntity[]
-  nextPage: () => void
-  search: DebouncedFunc<(name: string) => void>
-  isLast: boolean
-  addItem: (data: NoteData) => Promise<HookCallbackReturn<NoteEntity>>
-  modifyItem: (data: NoteData, key: string) => Promise<HookCallbackReturn<NoteEntity>>
-  removeItem: (key: string) => Promise<HookCallbackReturn<NoteEntity>>
+  items: NoteSummaryEntity[];
+  nextPage: () => void;
+  search: DebouncedFunc<(name: string) => void>;
+  isLast: boolean;
+  addItem: (data: NoteData) => Promise<HookCallbackReturn<NoteEntity>>;
+  modifyItem: (data: NoteData, key: string) => Promise<HookCallbackReturn<NoteEntity>>;
+  removeItem: (key: string) => Promise<HookCallbackReturn<NoteEntity>>;
 }
 
 export const InitNoteListAppStore: NoteListAppStore = {
@@ -36,6 +34,6 @@ export const InitNoteListAppStore: NoteListAppStore = {
 }
 
 export interface KeywordListAppStore extends ItemStore<KeywordEntity, KeywordData, number> {
-  addItem: (data: KeywordData) => void
-  modifyItem: (data: KeywordData, key: number) => void
+  addItem: (data: KeywordData) => void;
+  modifyItem: (data: KeywordData, key: number) => void;
 }

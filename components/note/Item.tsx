@@ -1,25 +1,25 @@
 "use client";
 
-import React, { useContext, useState } from "react"
-import { useRouter } from "next/navigation"
+import React, { useContext, useState } from "react";
+import { useRouter } from "next/navigation";
 
-import { NoteAppContext } from "@/contexts/apps.context"
-import { NoteSummaryEntity } from "@/models/notes.model"
+import { NoteAppContext } from "@/contexts/apps.context";
+import { NoteSummaryEntity } from "@/models/notes.model";
 
-import clsx from "@/utils/clsx.util"
-import DeleteIcon from '@mui/icons-material/Delete'
-import CloseIcon from '@mui/icons-material/Close'
+import clsx from "@/utils/clsx.util";
+import DeleteIcon from '@mui/icons-material/Delete';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface ItemProps {
-  value: NoteSummaryEntity
-  displayId: string
+  value: NoteSummaryEntity;
+  displayId: string;
 }
 
 const Item: React.FC<ItemProps> = ({ value, displayId }) => {
-  const router = useRouter()
-  const { removeItem } = useContext(NoteAppContext)
+  const router = useRouter();
+  const { removeItem } = useContext(NoteAppContext);
 
-  const [deleteSession, setDeleteSession] = useState<boolean>(false)
+  const [deleteSession, setDeleteSession] = useState<boolean>(false);
 
   return (
     <li>
@@ -59,7 +59,7 @@ const Item: React.FC<ItemProps> = ({ value, displayId }) => {
         }
       </div>
     </li>
-  )
+  );
 }
 
-export default Item
+export default Item;

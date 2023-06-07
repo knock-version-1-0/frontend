@@ -1,9 +1,9 @@
 export interface AppStore {
-  token?: string
+  token?: string;
 }
 
 export const InitAppStore: AppStore = {
   token: undefined
 }
 
-export * from './notes'
+export * from './notes';

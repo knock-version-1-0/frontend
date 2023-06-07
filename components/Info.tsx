@@ -1,24 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
-import clsx from "@/utils/clsx.util"
+import clsx from "@/utils/clsx.util";
 
 interface InfoProps {
-  text: string
-  trigger: boolean
-  className?: string
+  text: string;
+  trigger: boolean;
+  className?: string;
 }
 
 const Info: React.FC<InfoProps> = ({text, trigger, className}) => {
-  const [isVisable, setIsVisable] = useState<boolean>(false)
-  const [opacity, setOpacity] = useState(1)
+  const [isVisable, setIsVisable] = useState<boolean>(false);
+  const [opacity, setOpacity] = useState(1);
 
   useEffect(() => {
     if (trigger) {
-      setIsVisable(true)
+      setIsVisable(true);
     }
-  }, [trigger])
+  }, [trigger]);
 
   useEffect(() => {
     if (isVisable) {
@@ -27,13 +27,13 @@ const Info: React.FC<InfoProps> = ({text, trigger, className}) => {
       }, 100)
 
       const timerId = setTimeout(() => {
-        clearInterval(intervalId)
-        setIsVisable(false)
-        setOpacity(1)
+        clearInterval(intervalId);
+        setIsVisable(false);
+        setOpacity(1);
       }, 2500)
-      return () => clearTimeout(timerId)
+      return () => clearTimeout(timerId);
     }
-  }, [isVisable])
+  }, [isVisable]);
 
   return (
     <>
@@ -50,7 +50,7 @@ const Info: React.FC<InfoProps> = ({text, trigger, className}) => {
         )
       }
     </>
-  )
+  );
 }
 
-export default Info
+export default Info;

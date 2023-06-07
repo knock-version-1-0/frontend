@@ -1,7 +1,7 @@
 "use client";
 
 interface LoginLayoutProps extends React.PropsWithChildren {
-  title: string | React.ReactNode
+  title: string | React.ReactNode;
 }
 
 export const LoginLayout: React.FC<LoginLayoutProps> = ({ title, children }) => {
@@ -12,5 +12,5 @@ export const LoginLayout: React.FC<LoginLayoutProps> = ({ title, children }) => 
       </div>
       { children }
     </div>
-  )
+  );
 }

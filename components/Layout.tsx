@@ -3,7 +3,7 @@
 import SideScreen from "./SideScreen";
 
 interface LayoutProps extends React.PropsWithChildren {
-  sideScreenBody: JSX.Element
+  sideScreenBody: JSX.Element;
 }
 
 const Layout: React.FC<LayoutProps> = (props) => {
@@ -14,7 +14,7 @@ const Layout: React.FC<LayoutProps> = (props) => {
       </SideScreen>
       {props.children}
     </div>
-  )
+  );
 }
 
-export default Layout
+export default Layout;

@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect, useContext } from "react";
 
-import { NoteContext } from "@/contexts/note.context"
-import { NoteStatusEnum } from "@/constants/note.constant"
+import { NoteContext } from "@/contexts/note.context";
+import { NoteStatusEnum } from "@/constants/note.constant";
 
-import ArrowCursorIcon from '@/components/svg/ArrowCursorIcon'
-import KeywordInitialIcon from '@/components/svg/KeywordInitialIcon'
-import CallMadeIcon from '@mui/icons-material/CallMade'
-import RelationLineIcon from '@/components/svg/RelationLineIcon'
-import FragmentLineIcon from '@/components/svg/FragmentLineIcon'
-import clsx from "@/utils/clsx.util"
+import ArrowCursorIcon from '@/components/svg/ArrowCursorIcon';
+import KeywordInitialIcon from '@/components/svg/KeywordInitialIcon';
+import CallMadeIcon from '@mui/icons-material/CallMade';
+import RelationLineIcon from '@/components/svg/RelationLineIcon';
+import FragmentLineIcon from '@/components/svg/FragmentLineIcon';
+import clsx from "@/utils/clsx.util";
 
 interface ToolbarProps {
-  onCreateKeyword: () => void
+  onCreateKeyword: () => void;
 }
 
 enum Label {
@@ -25,9 +25,9 @@ enum Label {
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({ onCreateKeyword }) => {
-  const { setNoteStatus } = useContext(NoteContext)
+  const { setNoteStatus } = useContext(NoteContext);
 
-  const [cursor, setCursor] = useState<number>(0)
+  const [cursor, setCursor] = useState<number>(0);
   
   return (
     <div className="absolute top-0 right-10 flex flex-col items-center justify-center space-y-4 w-[30px] h-full">
@@ -88,7 +88,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ onCreateKeyword }) => {
         cursor={cursor}
       ></Button>
     </div>
-  )
+  );
 }
 
 interface ButtonProps extends React.PropsWithChildren {
@@ -103,25 +103,25 @@ interface ButtonProps extends React.PropsWithChildren {
 }
 
 const Button: React.FC<ButtonProps> = (props) => {
-  const { noteStatus } = useContext(NoteContext)
+  const { noteStatus } = useContext(NoteContext);
 
-  const { setFocus, cursor, label } = props
+  const { setFocus, cursor, label } = props;
 
-  const [hover, setHover] = useState(false)
-  const [isActive, setIsActive] = useState(false)
+  const [hover, setHover] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     setIsActive(cursor === label || (cursor !== label && hover))
-  }, [cursor, label, hover])
+  }, [cursor, label, hover]);
 
   useEffect(() => {
     if ((noteStatus === NoteStatusEnum.EXIT || noteStatus === NoteStatusEnum.TITLEMOD) && label === Label.ArrowCursor) {
-      setFocus(noteStatus)
+      setFocus(noteStatus);
     }
     else if ((noteStatus === NoteStatusEnum.KEYMOD || noteStatus === NoteStatusEnum.KEYADD) && label === Label.KeywordInitial) {
-      setFocus(noteStatus)
+      setFocus(noteStatus);
     }
-  }, [noteStatus, label])
+  }, [noteStatus, label]);
 
   return (
     <div className={
@@ -157,23 +157,23 @@ const Button: React.FC<ButtonProps> = (props) => {
         icon={props.icon}
       ></Icon>
     </div>
-  )
+  );
 }
 
 interface IconProps {
-  statusClassName?: string
-  className?: string
-  icon: any
+  statusClassName?: string;
+  className?: string;
+  icon: any;
 }
 
 const Icon: React.FC<IconProps> = (props) => {
-  const { statusClassName } = props
+  const { statusClassName } = props;
 
   return (
     <props.icon
       className={clsx(props.className, statusClassName)}
     ></props.icon>
-  )
+  );
 }
 
-export default Toolbar
+export default Toolbar;

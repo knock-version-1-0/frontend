@@ -1,10 +1,10 @@
 "use client";
 
-import * as React from "react"
-import { SVGProps } from "react"
+import * as React from "react";
+import { SVGProps } from "react";
 
 interface Props extends SVGProps<SVGSVGElement> {
-  className?: string
+  className?: string;
 }
 
 const RelationLineIcon = (props: Props) => (
@@ -16,6 +16,6 @@ const RelationLineIcon = (props: Props) => (
   >
     <path d="m1.293 12.293 11-11" />
   </svg>
-)
+);
 
-export default RelationLineIcon
+export default RelationLineIcon;

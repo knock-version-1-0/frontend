@@ -1,10 +1,10 @@
 "use client";
 
-import * as React from "react"
-import { SVGProps } from "react"
+import * as React from "react";
+import { SVGProps } from "react";
 
 interface Props extends SVGProps<SVGSVGElement> {
-  className?: string
+  className?: string;
 }
 
 const KeywordInitialIcon = (props: Props) => (
@@ -18,5 +18,6 @@ const KeywordInitialIcon = (props: Props) => (
       d="M.87 15V.455h3.075v6.413h.192L9.37.455h3.686L7.66 6.967 13.121 15H9.442L5.458 9.02l-1.513 1.847V15H.87Z"
     />
   </svg>
-)
-export default KeywordInitialIcon
+);
+
+export default KeywordInitialIcon;

@@ -1,6 +1,6 @@
-import { IncomingMessage, ServerResponse } from "http"
+import { IncomingMessage, ServerResponse } from "http";
 
 export interface ServerSideOpt {
-  req?: IncomingMessage
-  res?: ServerResponse
+  req?: IncomingMessage;
+  res?: ServerResponse;
 }

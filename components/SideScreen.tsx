@@ -1,19 +1,19 @@
 "use client";
 
-import { useContext } from "react"
-import { useRouter, usePathname } from "next/navigation"
-import Image from "next/image"
+import { useContext } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 
-import { NoteAppContext } from "@/contexts/apps.context"
-import { NoteData } from "@/api/data/notes"
-import { StatusChoice } from "@/utils/enums.util"
+import { NoteAppContext } from "@/contexts/apps.context";
+import { NoteData } from "@/api/data/notes";
+import { StatusChoice } from "@/utils/enums.util";
 
-import KnockLogo from '@/public/knock-logo-40.svg'
-import clsx from "@/utils/clsx.util"
-import AddIcon from '@mui/icons-material/Add'
-import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline'
-import MenuIcon from '@mui/icons-material/Menu'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import KnockLogo from '@/public/knock-logo-40.svg';
+import clsx from "@/utils/clsx.util";
+import AddIcon from '@mui/icons-material/Add';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 interface SideScreenProps extends React.PropsWithChildren {}
 
@@ -28,11 +28,11 @@ const SideScreen: React.FC<SideScreenProps> = (props) => {
         <Navigator className="px-8 border-t"></Navigator>
       </div>
     </div>
-  )
+  );
 }
 
 const Header = (props: {
-  className?: string
+  className?: string;
 }): JSX.Element => {
 
   return (
@@ -49,12 +49,12 @@ const Header = (props: {
 }
 
 const Navigator = (props: {
-  className?: string
+  className?: string;
 }): JSX.Element => {
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const { items, addItem } = useContext(NoteAppContext)
+  const { items, addItem } = useContext(NoteAppContext);
 
   enum NavChoice {
     NOTE=1,
@@ -81,7 +81,7 @@ const Navigator = (props: {
     switch (choice) {
       case NavChoice.NOTE:
         if (!navPath.note.re.exec(pathname))
-          window.location.replace(navPath.home.path)
+          window.location.replace(navPath.home.path);
         break
       case NavChoice.ADD:
         if (items.length !== 0 && items[0].name !== '') {
@@ -89,12 +89,12 @@ const Navigator = (props: {
             name: '',
             status: StatusChoice.SAVE
           }
-          addItem(InitData)
+          addItem(InitData);
         }
         break
       case NavChoice.MY:
         if (!navPath.my.re.exec(pathname))
-          window.location.replace(navPath.my.path)
+          window.location.replace(navPath.my.path);
         break
     } 
   }
@@ -121,7 +121,7 @@ const Navigator = (props: {
         ></AccountCircleIcon>
       </button>
     </div>
-  )
+  );
 }
 
-export default SideScreen
+export default SideScreen;

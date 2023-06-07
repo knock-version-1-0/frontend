@@ -1,10 +1,10 @@
 "use client";
 
-import * as React from "react"
-import { SVGProps } from "react"
+import * as React from "react";
+import { SVGProps } from "react";
 
 interface Props extends SVGProps<SVGSVGElement> {
-  className?: string
+  className?: string;
 }
 
 const FragmentLineIcon = (props: Props) => (
@@ -20,6 +20,6 @@ const FragmentLineIcon = (props: Props) => (
       d="M1 12.293 11.607 1.686"
     />
   </svg>
-)
+);
 
-export default FragmentLineIcon
+export default FragmentLineIcon;

@@ -1,6 +1,6 @@
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError } from 'axios';
 
-import { ErrorDetail, ApiPayload } from './types.util'
+import { ErrorDetail, ApiPayload } from './types.util';
 
 export const Axios = (headers: object = {}) =>
   axios.create({
@@ -10,7 +10,7 @@ export const Axios = (headers: object = {}) =>
       'Content-type': 'application/json',
       ...headers
     },
-  })
+  });
 
 export const AxiosWithJwt = (jwtToken: string, headers: object = {}) =>
   axios.create({
@@ -21,17 +21,17 @@ export const AxiosWithJwt = (jwtToken: string, headers: object = {}) =>
       authorization: `Token ${jwtToken}`,
       ...headers
     },
-  })
+  });
 
 export interface Response {
-  statusCode: number
-  types: string[]
+  statusCode: number;
+  types: string[];
 }
 
 export const getApiStatus = <T>(error: unknown, responses: Response[]): ApiPayload<T> => {
   if (error instanceof AxiosError) {
-    const res = error.response!
-    const detail = res.data as ErrorDetail
+    const res = error.response!;
+    const detail = res.data as ErrorDetail;
 
     for (let response of responses) {
       if (res.status === response.statusCode) {
@@ -41,5 +41,5 @@ export const getApiStatus = <T>(error: unknown, responses: Response[]): ApiPaylo
       }
     }
   }
-  throw error
+  throw error;
 }
