@@ -42,6 +42,13 @@ const Note: React.FC<NoteProps> = ({note}) => {
     if (noteStatus === NoteStatusEnum.EXIT) {
       noteElementRef.current?.focus();
     }
+    else if (noteStatus === NoteStatusEnum.KEYADD) {
+      PhantomKeywordModel && setPhantomKeywordModel({
+        ...PhantomKeywordModel,
+        posX: 0,
+        posY: 0
+      });
+    }
   }, [noteStatus]);
 
   const handleCreateKeyword = useCallback((data: KeywordData) => {
@@ -110,11 +117,13 @@ const Note: React.FC<NoteProps> = ({note}) => {
     }}>
       <div className="hidden sm:block w-full h-full focus:outline-none bg-zinc-50" ref={noteElementRef}
         onMouseMove={(e) => {
-          PhantomKeywordModel && setPhantomKeywordModel({
-            ...PhantomKeywordModel,
-            posX: e.clientX as number,
-            posY: e.clientY as number
-          })
+          if (noteStatus === NoteStatusEnum.KEYADD) {
+            PhantomKeywordModel && setPhantomKeywordModel({
+              ...PhantomKeywordModel,
+              posX: e.clientX as number,
+              posY: e.clientY as number
+            });
+          }
         }}
         onKeyDown={(e) => {handleKeyDown(e)}}
         tabIndex={0}

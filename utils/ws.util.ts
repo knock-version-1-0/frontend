@@ -21,7 +21,7 @@ export const useWebSocket = <ResponseData>(url: string): {
     socket.onmessage = (event) => {
       const data: ApiPayload<ResponseData> = JSON.parse(event.data);
       setPayload(data);
-      console.log('WebSocket message received:', data);
+      console.log('WebSocket message received');
     }
 
     socket.onclose = () => {
