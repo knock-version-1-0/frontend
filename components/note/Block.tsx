@@ -31,15 +31,15 @@ const Block: React.FC<BlockProps> = ({
 
   const elementRef = useRef<HTMLInputElement>(null);
 
-  const [x, setX] = useState<number>(0);
-  const [y, setY] = useState<number>(0);
+  const [blockX, setBlockX] = useState<number>(0);
+  const [blockY, setBlockY] = useState<number>(0);
 
   const [center, setCenter] = useState<Array<number>>([0, 0]);
 
   useEffect(() => {
     if (keyword && screenX !== undefined && screenY !== undefined) {
-      setX(screenX + keyword.posX);
-      setY(screenY + keyword.posY);
+      setBlockX(screenX + keyword.posX);
+      setBlockY(screenY + keyword.posY);
     }
 
     const height = elementRef.current?.offsetHeight ?? 0;
@@ -113,8 +113,8 @@ const Block: React.FC<BlockProps> = ({
         left: center[0],
         top: center[1]
       } : {
-        left: x,
-        top: y
+        left: blockX,
+        top: blockY
       }}
       onClick={(e) => {
         handleClick(e);
