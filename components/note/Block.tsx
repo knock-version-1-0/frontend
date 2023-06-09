@@ -109,7 +109,8 @@ const Block: React.FC<BlockProps> = ({
   return (
     <input type="text" className={clsx(
       "absolute w-48 h-[30px] text-center focus:outline-knock-sub border border-knock-main",
-      (blockStatus !== BlockStatusEnum.EDIT) ? "cursor-default" : ""
+      (blockStatus !== BlockStatusEnum.EDIT) ? "cursor-default" : "",
+      (blockX === 0 && blockY === 0) ? "hidden" : ""
     )} style={isPhantom ? {
         left: center[0],
         top: center[1]
