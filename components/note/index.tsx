@@ -96,6 +96,9 @@ const Note: React.FC<NoteProps> = ({note}) => {
         }
       }
     }
+    else if (event.key === 'Tab') {
+      event.preventDefault();
+    }
   }, [noteStatus, setNoteStatus, blockStatus, setBlockStatus]);
 
   return (
