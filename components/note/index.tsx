@@ -108,7 +108,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
       blockStatus,
       setBlockStatus
     }}>
-      <div className="w-full h-full focus:outline-none bg-zinc-50" ref={noteElementRef}
+      <div className="hidden sm:block w-full h-full focus:outline-none bg-zinc-50" ref={noteElementRef}
         onMouseMove={(e) => {
           PhantomKeywordModel && setPhantomKeywordModel({
             ...PhantomKeywordModel,

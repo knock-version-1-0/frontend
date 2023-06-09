@@ -20,7 +20,7 @@ interface SideScreenProps extends React.PropsWithChildren {}
 const SideScreen: React.FC<SideScreenProps> = (props) => {
   return (
     <div>
-      <div className="relative w-[320px] h-full bg-white">
+      <div className="relative w-[360px] sm:w-[320px] h-full bg-white">
         <Header className="pl-4 pr-6 border-b"></Header>
         <div className="w-full h-full pt-20 pb-28">
           {props.children}
