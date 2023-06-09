@@ -215,7 +215,7 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
   }, [items, modifiedItemPayload]);
 
   useEffect(() => {
-    if (addedItemPayload.status === CREATED) {
+    if (addedItemPayload.status === OK) {
       const keyword = addedItemPayload.data!;
       setItems([...items, keyword]);
       return clearAddedItemPayload();

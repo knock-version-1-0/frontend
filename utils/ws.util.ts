@@ -21,7 +21,7 @@ export const useWebSocket = <ResponseData>(url: string): {
     socket.onmessage = (event) => {
       const data: ApiPayload<ResponseData> = JSON.parse(event.data);
       setPayload(data);
-      console.log('WebSocket message received:', event.data);
+      console.log('WebSocket message received:', data);
     }
 
     socket.onclose = () => {
@@ -36,11 +36,11 @@ export const useWebSocket = <ResponseData>(url: string): {
   }, [payload]);
 
   const clear = useCallback(() => {
-    setPayload({ status: LOADING })
+    setPayload({ status: LOADING });
   }, [setPayload]);
 
   const sendMessage = useCallback((message: string) => {
-    socketRef.current?.send(message)
+    socketRef.current?.send(message);
   }, []);
 
   return {

@@ -51,18 +51,15 @@ const NoteList: React.FC<NoteListProps> = ({ displayId }) => {
                 <Item value={value} displayId={displayId as string} key={index} />
               )) 
             }
-            <div className={`w-full py-3 text-center cursor-pointer hover:bg-zinc-50 hover:shadow-sm`}
-              onClick={() => {
-                if (!isLast)
-                  nextPage()
-              }}
-            >
-              {
-                !isLast && (
+            {
+              !isLast && (
+                <div className={`w-full py-3 text-center cursor-pointer hover:bg-zinc-50 hover:shadow-sm`}
+                  onClick={() => { nextPage() }}
+                >  
                   <p className="text-sm text-knock-sub">Next</p>
-                )
-              }
-            </div>
+                </div>
+              )
+            }
           </ul>
         ) : <div className="flex items-center justify-center h-full pt-2 pl-2 pr-1">loading...</div>
       }

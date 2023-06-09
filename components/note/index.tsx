@@ -45,6 +45,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
 
   const handleCreateKeyword = useCallback((data: KeywordData) => {
     setNoteStatus(NoteStatusEnum.EXIT);
+    addItem(data);
   }, []);
 
   const InitKeywordModel: KeywordEntity = {
@@ -103,7 +104,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
       blockStatus,
       setBlockStatus
     }}>
-      <div className="w-full h-full bg-zinc-50 focus:outline-none" ref={noteElementRef}
+      <div className="w-full h-full focus:outline-none bg-zinc-50" ref={noteElementRef}
         onMouseMove={(e) => {
           PhantomKeywordModel && setPhantomKeywordModel({
             ...PhantomKeywordModel,
@@ -131,6 +132,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
                   screenX={ screenX }
                   screenY={ screenY }
                   onUpdate={(data: KeywordData) => {}}
+                  isPhantom={ false }
                 ></Block>
               ))
             )
@@ -143,6 +145,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
               screenY={ screenY }
               onUpdate={(data: KeywordData) => {}}
               onCreate={(data: KeywordData) => handleCreateKeyword(data)}
+              isPhantom={ true }
             ></Block>
           }
           <Toolbar

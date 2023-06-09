@@ -28,7 +28,7 @@ export interface Response {
   types: string[];
 }
 
-export const getApiStatus = <T>(error: unknown, responses: Response[]): ApiPayload<T> => {
+export const getApiErrorPayload = <T>(error: unknown, responses: Response[]): ApiPayload<T> => {
   if (error instanceof AxiosError) {
     const res = error.response!;
     const detail = res.data as ErrorDetail;

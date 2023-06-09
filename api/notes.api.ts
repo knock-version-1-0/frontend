@@ -1,4 +1,4 @@
-import { Axios, AxiosWithJwt, getApiStatus } from "@/utils/http.util";
+import { Axios, AxiosWithJwt, getApiErrorPayload } from "@/utils/http.util";
 import qs from "qs";
 
 import { NoteData, NoteFilterData } from "./data/notes";
@@ -24,7 +24,7 @@ export const fetchGetNoteByDisplayIdApi = async (displayId: string, token: strin
     const resData = res.data as ApiPayload<NoteEntity>;
     return resData;
   } catch (err: unknown) {
-    return getApiStatus<NoteEntity>(err, [
+    return getApiErrorPayload<NoteEntity>(err, [
       {
         statusCode: 401,
         types: [UserInvalid]
@@ -48,7 +48,7 @@ export const fetchPostNotesApi = async (data: NoteData, token: string): Promise<
     const resData = res.data as ApiPayload<NoteEntity>;
     return resData;
   } catch (err: unknown) {
-    return getApiStatus<NoteEntity>(err, [
+    return getApiErrorPayload<NoteEntity>(err, [
       {
         statusCode: 400,
         types: [NoteNameDuplicate]
@@ -76,7 +76,7 @@ export const fetchGetNotesApi = async ({ name, offset }: NoteFilterData, token: 
     const resData = res.data as ApiPayload<NoteSummaryEntity[]>;
     return resData;
   } catch (err: unknown) {
-    return getApiStatus<NoteSummaryEntity[]>(err, [
+    return getApiErrorPayload<NoteSummaryEntity[]>(err, [
       {
         statusCode: 401,
         types: [UserInvalid]
@@ -98,7 +98,7 @@ export const fetchPatchNoteApi = async (data: NoteData, displayId: string, token
     const resData = res.data as ApiPayload<NoteEntity>;
     return resData;
   } catch (err: unknown) {
-    return getApiStatus<NoteEntity>(err, [
+    return getApiErrorPayload<NoteEntity>(err, [
       {
         statusCode: 400,
         types: [NoteNameLengthOver, NoteNameDuplicate]

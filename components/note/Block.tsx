@@ -15,6 +15,7 @@ interface BlockProps {
   screenY: number;
   onUpdate: (data: KeywordData) => void;
   onCreate?: (data: KeywordData) => void;
+  isPhantom: boolean;
 }
 
 const Block: React.FC<BlockProps> = ({ 
@@ -22,10 +23,11 @@ const Block: React.FC<BlockProps> = ({
   screenY,
   keyword,
   onUpdate,
-  onCreate
+  onCreate,
+  isPhantom
 }) => {
 
-  const { noteStatus, blockStatus, setBlockStatus } = useContext(NoteContext);
+  const { noteStatus, blockStatus, setBlockStatus, setNoteStatus } = useContext(NoteContext);
 
   const elementRef = useRef<HTMLInputElement>(null);
 
@@ -43,11 +45,25 @@ const Block: React.FC<BlockProps> = ({
     const height = elementRef.current?.offsetHeight ?? 0;
     const width = elementRef.current?.offsetWidth ?? 0;
 
+    const screenScope = {
+      x: [screenX, window.document.documentElement.clientWidth-width-80],
+      y: [screenY, window.document.documentElement.clientHeight-height-40]
+    }
+
     let centerX = keyword.posX - (width / 2);
     let centerY = keyword.posY - (height / 2);
+  
+    if (centerX < screenScope.x[0]) {
+      centerX = screenScope.x[0];
+    } else if (centerX > screenScope.x[1]) {
+      centerX = screenScope.x[1];
+    }
 
-    centerX = centerX < screenX ? screenX : centerX;
-    centerY = centerY < screenY ? screenY : centerY;
+    if (centerY < screenScope.y[0]) {
+      centerY = screenScope.y[0];
+    } else if (centerY > screenScope.y[1]) {
+      centerY = screenScope.y[1];
+    }
 
     setCenter(
       [centerX, centerY]
@@ -58,30 +74,42 @@ const Block: React.FC<BlockProps> = ({
     if (noteStatus === NoteStatusEnum.EXIT) {
       setBlockStatus!(BlockStatusEnum.UNSELECT);
     }
-    if (noteStatus === NoteStatusEnum.KEYADD) {
+    else if (noteStatus === NoteStatusEnum.KEYADD) {
       setBlockStatus!(BlockStatusEnum.SELECT);
-      elementRef.current && elementRef.current.focus();
-    }
-    else if (noteStatus === NoteStatusEnum.KEYMOD) {
-      if (blockStatus === BlockStatusEnum.UNSELECT) {
-        setBlockStatus!(BlockStatusEnum.SELECT);
-      }
-      else if (blockStatus === BlockStatusEnum.SELECT) {
-        setBlockStatus!(BlockStatusEnum.EDIT);
-      }
-      else {
-        setBlockStatus!(BlockStatusEnum.EDIT);
-      }
-
       elementRef.current && elementRef.current.focus();
     }
   }, [noteStatus, blockStatus]);
 
+  const handleClick = useCallback((e: React.MouseEvent<HTMLInputElement>) => {
+    if (noteStatus === NoteStatusEnum.KEYADD) {
+      e.preventDefault();
+      onCreate!({
+        noteId: keyword.noteId,
+        posX: center[0] - screenX,
+        posY: center[1] - screenY,
+        text: keyword.text,
+        parentId: keyword.parentId,
+        status: BlockStatusEnum.EDIT,
+        timestamp: Date.now()
+      });
+    }
+    else if (noteStatus === NoteStatusEnum.EXIT) {
+      e.preventDefault();
+      setNoteStatus!(NoteStatusEnum.KEYMOD);
+      setBlockStatus!(BlockStatusEnum.SELECT);
+    }
+    else if (noteStatus === NoteStatusEnum.KEYMOD) {
+      e.preventDefault();
+      setBlockStatus!(BlockStatusEnum.EDIT);
+    }
+    elementRef.current && elementRef.current.focus();
+  }, [noteStatus, center, keyword]);
+
   return (
     <input type="text" className={clsx(
-      "absolute w-48 h-[30px] text-center focus:outline-knock-sub border",
-      noteStatus === NoteStatusEnum.KEYADD ? "cursor-auto" : ""
-    )} style={noteStatus === NoteStatusEnum.KEYADD ? {
+      "absolute w-48 h-[30px] text-center focus:outline-knock-sub border border-knock-main",
+      (blockStatus !== BlockStatusEnum.EDIT) ? "cursor-default" : ""
+    )} style={isPhantom ? {
         left: center[0],
         top: center[1]
       } : {
@@ -89,17 +117,11 @@ const Block: React.FC<BlockProps> = ({
         top: y
       }}
       onClick={(e) => {
-        if (noteStatus === NoteStatusEnum.KEYADD) {
-          e.preventDefault()
-          onCreate && onCreate({
-            noteId: keyword.noteId,
-            posX: keyword.posX,
-            posY: keyword.posY,
-            text: keyword.text,
-            parentId: keyword.parentId,
-            status: BlockStatusEnum.EDIT,
-            timestamp: Date.now()
-          })
+        handleClick(e);
+      }}
+      onBlur={() => {
+        if (noteStatus === NoteStatusEnum.KEYMOD) {
+          setNoteStatus!(NoteStatusEnum.EXIT);
         }
       }}
       ref={elementRef}
