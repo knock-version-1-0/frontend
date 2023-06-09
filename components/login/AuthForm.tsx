@@ -12,6 +12,7 @@ import { OK, CREATED, AttemptLimitOver } from "@/api/status";
 import Info from "../Info";
 import { LoginLayout } from "./LoginLayout";
 import clsx from "@/utils/clsx.util";
+import { getCurrentTime } from "@/utils";
 
 interface AuthFormProps {
   sessionId: string;
@@ -34,7 +35,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ sessionId, email }) => {
       id: sessionId,
       email: email,
       emailCode: value,
-      currentTime: Math.round(Date.now() / 1000)
+      currentTime: getCurrentTime()
     });
 
     if (authPayload.status === OK) {

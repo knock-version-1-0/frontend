@@ -24,6 +24,7 @@ import Toolbar from "./Toolbar";
 import Info from "../Info";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import clsx from "@/utils/clsx.util";
+import { getCurrentTime } from "@/utils";
 
 interface NoteProps {
   note: NoteEntity;
@@ -55,7 +56,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
     text: '',
     parentId: null,
     status: BlockStatusEnum.UNSELECT,
-    timestamp: Date.now()
+    timestamp: getCurrentTime()
   }
 
   const [PhantomKeywordModel, setPhantomKeywordModel] = useState<KeywordEntity>(InitKeywordModel);

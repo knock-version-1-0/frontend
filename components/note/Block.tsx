@@ -3,11 +3,12 @@
 import React, { useState, useEffect, useRef, useContext, useCallback } from "react";
 
 import { NoteContext } from "@/contexts/note.context";
-import { NoteStatusEnum, BlockStatusEnum } from "@/constants/note.constant";
+import { NoteStatusEnum, BlockStatusEnum, KEYWORD_LENGTH_LIMIT } from "@/constants/note.constant";
 import { KeywordEntity } from "@/models/notes.model";
 import { KeywordData } from "@/api/data/notes";
 
 import clsx from "@/utils/clsx.util";
+import { getCurrentTime } from "@/utils";
 
 interface BlockProps {
   keyword: KeywordEntity;
@@ -90,7 +91,7 @@ const Block: React.FC<BlockProps> = ({
         text: keyword.text,
         parentId: keyword.parentId,
         status: BlockStatusEnum.EDIT,
-        timestamp: Date.now()
+        timestamp: getCurrentTime()
       });
     }
     else if (noteStatus === NoteStatusEnum.EXIT) {
@@ -126,6 +127,22 @@ const Block: React.FC<BlockProps> = ({
       }}
       ref={elementRef}
       readOnly={blockStatus === BlockStatusEnum.SELECT}
+      maxLength={KEYWORD_LENGTH_LIMIT}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          if (noteStatus === NoteStatusEnum.KEYADD) {
+            onCreate!({
+              noteId: keyword.noteId,
+              posX: center[0] - screenX,
+              posY: center[1] - screenY,
+              text: keyword.text,
+              parentId: keyword.parentId,
+              status: BlockStatusEnum.EDIT,
+              timestamp: getCurrentTime()
+            });
+          }
+        }
+      }}
     />
   );
 }

@@ -9,6 +9,7 @@ import { OK } from "@/api/status";
 import Info from "../Info";
 import { LoginLayout } from "./LoginLayout";
 import clsx from "@/utils/clsx.util";
+import { getCurrentTime } from "@/utils";
 
 const EmailForm: React.FC = () => {
   const router = useRouter();
@@ -23,7 +24,7 @@ const EmailForm: React.FC = () => {
 
     setLoading(true);
     const payload = await fetchPostAuthEmailApi({
-      at: Math.round(Date.now() / 1000),
+      at: getCurrentTime(),
       email: value
     });
 
