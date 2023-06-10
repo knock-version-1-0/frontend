@@ -49,3 +49,16 @@ export const useWebSocket = <ResponseData>(url: string): {
     clear
   }
 }
+
+interface MessageDataOption {
+  key?: string | number,
+  token?: string
+}
+
+export const toMessage = <T>(data: T, option?: MessageDataOption) => {
+  return JSON.stringify({
+    data: JSON.stringify(data),
+    key: option?.key,
+    authorization: `Token ${option?.token}`
+  });
+}

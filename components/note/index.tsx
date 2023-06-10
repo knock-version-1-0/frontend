@@ -38,6 +38,17 @@ const Note: React.FC<NoteProps> = ({note}) => {
   const { blockStatus, setBlockStatus } = useBlockStatus();
   const { items: keywords, modifyItem, addItem } = useKeywordList(note.keywords, note.id);
 
+  const InitKeywordModel: KeywordEntity = {
+    noteId: note.id,
+    posX: 0,
+    posY: 0,
+    text: '',
+    parentId: null,
+    status: BlockStatusEnum.UNSELECT,
+    timestamp: getCurrentTime()
+  }
+  const [PhantomKeywordModel, setPhantomKeywordModel] = useState<KeywordEntity>(InitKeywordModel);
+
   useEffect(() => {
     if (noteStatus === NoteStatusEnum.EXIT) {
       noteElementRef.current?.focus();
@@ -55,18 +66,6 @@ const Note: React.FC<NoteProps> = ({note}) => {
     setNoteStatus(NoteStatusEnum.EXIT);
     addItem(data);
   }, []);
-
-  const InitKeywordModel: KeywordEntity = {
-    noteId: note.id,
-    posX: 0,
-    posY: 0,
-    text: '',
-    parentId: null,
-    status: BlockStatusEnum.UNSELECT,
-    timestamp: getCurrentTime()
-  }
-
-  const [PhantomKeywordModel, setPhantomKeywordModel] = useState<KeywordEntity>(InitKeywordModel);
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
     if (event.key === "Escape") {

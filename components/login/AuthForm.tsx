@@ -87,7 +87,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ sessionId, email }) => {
           {loading ? 'loading...' : 'Send'}
         </button>
       </form>
-      <Info text={'Verification code is invalid'} trigger={error}></Info>
+      <Info text={'Verification code is invalid'} trigger={error} className="mt-2"></Info>
     </LoginLayout>
   );
 }

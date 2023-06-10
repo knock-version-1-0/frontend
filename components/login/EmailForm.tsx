@@ -63,7 +63,7 @@ const EmailForm: React.FC = () => {
           {loading ? 'loading...' : 'Send'}
         </button>
       </form>
-      <Info text={'Email is invalid'} trigger={error}></Info>
+      <Info text={'Email is invalid'} trigger={error} className="mt-2"></Info>
     </LoginLayout>
   );
 }

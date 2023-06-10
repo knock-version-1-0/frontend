@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useCallback, useContext, useState, useRef } from "react";
-import { useSearchParams } from "next/navigation";
 
 import { NoteAppContext } from "@/contexts/apps.context";
 

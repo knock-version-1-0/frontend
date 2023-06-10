@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { AppContext } from "@/contexts/apps.context";
 import { NoteSummaryEntity, NoteEntity, KeywordEntity } from "@/models/notes.model";
 import { NoteData, KeywordData } from "@/api/data/notes";
-import { useWebSocket } from "@/utils/ws.util";
+import { useWebSocket, toMessage } from "@/utils/ws.util";
 import {
   fetchPostNotesApi,
   fetchGetNotesApi,
@@ -228,7 +228,7 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
   }, [items]);
 
   const addItem = useCallback(async (data: KeywordData) => {
-    const message = JSON.stringify(data);
+    const message = toMessage(data, { token });
     sendAddMessage(message);
   }, [items]);
 
