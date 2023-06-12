@@ -42,7 +42,7 @@ const Header = (props: {
         "absolute top-0 w-full flex flex-row justify-between items-center py-4"
       )
     }>
-      <Image alt='logo' src={KnockLogo} />
+      <Image alt='logo' src={KnockLogo} priority={true} />
       {/* <MenuIcon className="cursor-pointer hover:text-etc" /> */}
     </div>
   )

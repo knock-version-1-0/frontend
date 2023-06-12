@@ -27,8 +27,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ sessionId, email }) => {
   const [loading, setLoading] = useState(false);
   const [isValid, setIsValid] = useState(false);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     setLoading(true);
     const authPayload = await fetchPostAuthVerificationApi({

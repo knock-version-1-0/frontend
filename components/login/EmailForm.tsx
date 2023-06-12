@@ -19,8 +19,8 @@ const EmailForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isValid, setIsValid] = useState(false);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     setLoading(true);
     const payload = await fetchPostAuthEmailApi({

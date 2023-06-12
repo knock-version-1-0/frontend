@@ -112,7 +112,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
     }
 
     const note: NoteEntity = payload.data!;
-    router.replace(`/note/${note.displayId}`);
+    router.push(`/note/${note.displayId}`);
     setItems([{
       displayId: note.displayId,
       name: note.name
@@ -160,7 +160,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
     await fetchDeleteNoteApi(key, token as string);
     setRemoveLoader(false);
 
-    router.replace('/note');
+    router.push('/note');
 
     return {
       isSuccess: true,
@@ -223,7 +223,7 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
   }, [items, addedItemPayload]);
 
   const modifyItem = useCallback(async (data: KeywordData, key: number) => {
-    const message = JSON.stringify(data);
+    const message = toMessage(data, { token, key });
     sendModifyMessage(message);
   }, [items]);
 

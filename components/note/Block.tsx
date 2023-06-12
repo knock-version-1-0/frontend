@@ -37,6 +37,8 @@ const Block: React.FC<BlockProps> = ({
 
   const [center, setCenter] = useState<Array<number>>([0, 0]);
 
+  const [textValue, setTextValue] = useState<string>(keyword.text);
+
   useEffect(() => {
     if (keyword && screenX !== undefined && screenY !== undefined) {
       setBlockX(screenX + keyword.posX);
@@ -77,34 +79,93 @@ const Block: React.FC<BlockProps> = ({
     }
     else if (noteStatus === NoteStatusEnum.KEYADD) {
       setBlockStatus!(BlockStatusEnum.SELECT);
+    }
+    else if (noteStatus === NoteStatusEnum.KEYMOD) {
+      setBlockStatus!(BlockStatusEnum.SELECT);
+    }
+  }, [noteStatus]);
+
+  useEffect(() => {
+    if (blockStatus === BlockStatusEnum.EDIT) {
       elementRef.current && elementRef.current.focus();
     }
-  }, [noteStatus, blockStatus]);
+    else if (blockStatus === BlockStatusEnum.SELECT) {
+      elementRef.current && elementRef.current.focus();
+    }
+    else if (blockStatus === BlockStatusEnum.SAVE) {
+      elementRef.current && elementRef.current.blur();
+    }
+  }, [blockStatus]);
 
-  const handleClick = useCallback((e: React.MouseEvent<HTMLInputElement>) => {
-    if (noteStatus === NoteStatusEnum.KEYADD) {
-      e.preventDefault();
+  const handleSubmit = useCallback(async () => {
+    if (noteStatus === NoteStatusEnum.KEYMOD) {
+      onUpdate!({
+        noteId: keyword.noteId,
+        posX: keyword.posX,
+        posY: keyword.posY,
+        text: textValue,
+        parentId: keyword.parentId,
+        status: blockStatus,
+        timestamp: getCurrentTime()
+      });
+    }
+    else if (noteStatus === NoteStatusEnum.KEYADD) {
       onCreate!({
         noteId: keyword.noteId,
         posX: center[0] - screenX,
         posY: center[1] - screenY,
-        text: keyword.text,
+        text: textValue,
         parentId: keyword.parentId,
         status: BlockStatusEnum.EDIT,
         timestamp: getCurrentTime()
       });
     }
+    else { return; }
+
+    setBlockStatus!(BlockStatusEnum.SAVE);
+  }, [
+    noteStatus,
+    blockX,
+    blockY,
+    textValue,
+    blockStatus,
+    keyword,
+    center
+  ]);
+
+  const handleClick = useCallback(async (e: React.MouseEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    if (noteStatus === NoteStatusEnum.KEYADD) {
+      await handleSubmit();
+    }
     else if (noteStatus === NoteStatusEnum.EXIT) {
-      e.preventDefault();
       setNoteStatus!(NoteStatusEnum.KEYMOD);
-      setBlockStatus!(BlockStatusEnum.SELECT);
     }
     else if (noteStatus === NoteStatusEnum.KEYMOD) {
-      e.preventDefault();
       setBlockStatus!(BlockStatusEnum.EDIT);
     }
-    elementRef.current && elementRef.current.focus();
-  }, [noteStatus, center, keyword]);
+  }, [noteStatus, handleSubmit]);
+
+  const handleKeyDown = useCallback(async (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+
+      if (noteStatus === NoteStatusEnum.KEYADD) {
+        return await handleSubmit();
+      }
+      if (noteStatus === NoteStatusEnum.KEYMOD) {
+        if (blockStatus === BlockStatusEnum.EDIT) {
+          if (e.nativeEvent.isComposing) return;
+          return await handleSubmit();
+        }
+        if (blockStatus === BlockStatusEnum.SELECT) {
+          setBlockStatus!(BlockStatusEnum.EDIT);
+          return;
+        }
+      }
+    }
+  }, [noteStatus, blockStatus, handleSubmit]);
 
   return (
     <input type="text" className={clsx(
@@ -118,32 +179,22 @@ const Block: React.FC<BlockProps> = ({
         left: blockX,
         top: blockY
       }}
+      onChange={(e) => {
+        setTextValue(e.target.value);
+      }}
+      value={textValue}
       onClick={(e) => {
         handleClick(e);
       }}
       onBlur={() => {
-        if (noteStatus === NoteStatusEnum.KEYMOD) {
+        if (blockStatus === BlockStatusEnum.SAVE) {
           setNoteStatus!(NoteStatusEnum.EXIT);
         }
       }}
       ref={elementRef}
       readOnly={blockStatus === BlockStatusEnum.SELECT}
       maxLength={KEYWORD_LENGTH_LIMIT}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          if (noteStatus === NoteStatusEnum.KEYADD) {
-            onCreate!({
-              noteId: keyword.noteId,
-              posX: center[0] - screenX,
-              posY: center[1] - screenY,
-              text: keyword.text,
-              parentId: keyword.parentId,
-              status: BlockStatusEnum.EDIT,
-              timestamp: getCurrentTime()
-            });
-          }
-        }
-      }}
+      onKeyDown={handleKeyDown}
     />
   );
 }

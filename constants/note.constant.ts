@@ -15,5 +15,6 @@ export enum NoteStatusEnum {
 export enum BlockStatusEnum {
   UNSELECT=1,
   SELECT,
-  EDIT
+  EDIT,
+  SAVE
 }

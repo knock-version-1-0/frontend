@@ -20,8 +20,9 @@ const Item: React.FC<ItemProps> = ({ value, displayId }) => {
   const { removeItem } = useContext(NoteAppContext);
 
   const [deleteSession, setDeleteSession] = useState<boolean>(false);
+  const [removed, setRemoved] = useState<boolean>(false);
 
-  return (
+  return !removed ? (
     <li>
       <div
         onClick={() => {
@@ -39,8 +40,9 @@ const Item: React.FC<ItemProps> = ({ value, displayId }) => {
             <p className="text-lg font-light">{value.name}</p> :
             <div className="flex items-center bg-red-200 px-2 text-center rounded-sm hover:opacity-70"
               onClick={() => {
-                removeItem(value.displayId)
-                setDeleteSession(false)
+                removeItem(value.displayId);
+                setDeleteSession(false);
+                setRemoved(true);
               }}
             >
               <p className="text-red-500">Delete</p>
@@ -59,7 +61,7 @@ const Item: React.FC<ItemProps> = ({ value, displayId }) => {
         }
       </div>
     </li>
-  );
+  ) : <></>;
 }
 
 export default Item;

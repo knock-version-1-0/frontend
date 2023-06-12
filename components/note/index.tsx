@@ -62,48 +62,31 @@ const Note: React.FC<NoteProps> = ({note}) => {
     }
   }, [noteStatus]);
 
-  const handleCreateKeyword = useCallback((data: KeywordData) => {
-    setNoteStatus(NoteStatusEnum.EXIT);
-    addItem(data);
-  }, []);
-
-  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
-    if (event.key === "Escape") {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
       if (noteStatus === NoteStatusEnum.TITLEMOD) {
-        if (event.nativeEvent.isComposing) return;
+        if (e.nativeEvent.isComposing) return;
         setNoteStatus(NoteStatusEnum.EXIT);
       }
       else if (noteStatus === NoteStatusEnum.KEYMOD) {
-        if (event.nativeEvent.isComposing) return;
+        if (e.nativeEvent.isComposing) return;
         setNoteStatus(NoteStatusEnum.EXIT);
       }
       else {
         setNoteStatus(NoteStatusEnum.EXIT);
       }
     }
-    else if (event.key === "Enter") {
+    else if (e.key === "Enter") {
       if (noteStatus === NoteStatusEnum.EXIT) {
         setNoteStatus(NoteStatusEnum.KEYADD);
       }
       else if (noteStatus === NoteStatusEnum.TITLEMOD) {
-        if (event.nativeEvent.isComposing) return;
+        if (e.nativeEvent.isComposing) return;
         setNoteStatus(NoteStatusEnum.EXIT);
-      }
-      else if (noteStatus === NoteStatusEnum.KEYADD) {
-        setNoteStatus(NoteStatusEnum.EXIT);
-      }
-      else if (noteStatus === NoteStatusEnum.KEYMOD) {
-        if (event.nativeEvent.isComposing) return;
-        if (blockStatus === BlockStatusEnum.SELECT) {
-          setBlockStatus(BlockStatusEnum.EDIT);
-        }
-        else {
-          setNoteStatus(NoteStatusEnum.EXIT);
-        }
       }
     }
-    else if (event.key === 'Tab') {
-      event.preventDefault();
+    else if (e.key === 'Tab') {
+      e.preventDefault();
     }
   }, [noteStatus, setNoteStatus, blockStatus, setBlockStatus]);
 
@@ -143,7 +126,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
                   keyword={ value }
                   screenX={ screenX }
                   screenY={ screenY }
-                  onUpdate={(data: KeywordData) => {}}
+                  onUpdate={(data: KeywordData) => modifyItem(data, value.id as number)}
                   isPhantom={ false }
                 ></Block>
               ))
@@ -156,7 +139,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
               screenX={ screenX }
               screenY={ screenY }
               onUpdate={(data: KeywordData) => {}}
-              onCreate={(data: KeywordData) => handleCreateKeyword(data)}
+              onCreate={(data: KeywordData) => addItem(data)}
               isPhantom={ true }
             ></Block>
           }
