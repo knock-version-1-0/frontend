@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-import { NoteStatusEnum, BlockStatusEnum } from '@/constants/note.constant';
+import { NoteStatusEnum, BlockStatusEnum } from '@/constants/notes.constant';
 
 export interface NoteState {
   noteStatus: NoteStatusEnum;

@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useContext } from "react";
 
-import { NoteContext } from "@/contexts/note.context";
-import { NoteStatusEnum } from "@/constants/note.constant";
+import { NoteContext } from "@/contexts/components/note.context";
+import { NoteStatusEnum } from "@/constants/notes.constant";
 
 import ArrowCursorIcon from '@/components/svg/ArrowCursorIcon';
 import KeywordInitialIcon from '@/components/svg/KeywordInitialIcon';

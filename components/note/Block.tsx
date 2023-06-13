@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef, useContext, useCallback } from "react";
 
-import { NoteContext } from "@/contexts/note.context";
-import { NoteStatusEnum, BlockStatusEnum, KEYWORD_LENGTH_LIMIT } from "@/constants/note.constant";
+import { NoteContext } from "@/contexts/components/note.context";
+import { NoteStatusEnum, BlockStatusEnum, KEYWORD_LENGTH_LIMIT } from "@/constants/notes.constant";
 import { KeywordEntity } from "@/models/notes.model";
 import { KeywordData } from "@/api/data/notes";
 

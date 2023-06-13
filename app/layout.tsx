@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 
 import { fetchPostAuthTokenApi } from '@/api/users.api';
 import { OK } from '@/api/status';
-import { AUTH_TOKEN_KEY } from '@/constants/auth.constant';
+import { AUTH_TOKEN_KEY } from '@/constants/users.constant';
 
 import ClientLayout from './layout.client';
 

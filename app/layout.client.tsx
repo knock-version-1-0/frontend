@@ -2,7 +2,7 @@
 
 import '@/styles/globals.css';
 
-import { AppContext } from '@/contexts/apps.context';
+import { AppContext } from '@/contexts/apps';
 
 interface Props extends React.PropsWithChildren {
   token?: string;

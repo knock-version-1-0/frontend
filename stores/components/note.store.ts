@@ -1,4 +1,4 @@
-import { BlockStatusEnum, NoteStatusEnum } from "@/constants/note.constant"
+import { BlockStatusEnum, NoteStatusEnum } from "@/constants/notes.constant"
 
 export interface NoteStore {
   noteStatus: NoteStatusEnum;

@@ -2,7 +2,7 @@
 
 import { NoteEntity, NoteSummaryEntity } from "@/models/notes.model";
 import { useNoteList } from "@/hooks/apps/notes.hook";
-import { NoteAppContext } from "@/contexts/apps.context";
+import { NoteAppContext } from "@/contexts/apps";
 
 import Layout from "@/components/Layout";
 import NoteList from "@/components/note/NoteList";

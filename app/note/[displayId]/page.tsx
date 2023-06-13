@@ -6,7 +6,7 @@ import { fetchGetNotesApi, fetchGetNoteByDisplayIdApi } from '@/api/notes.api';
 import { NoteEntity, NoteSummaryEntity } from '@/models/notes.model';
 import { OK, NoteDoesNotExist } from '@/api/status';
 import { ApiPayload } from '@/utils/types.util';
-import { AUTH_TOKEN_KEY } from '@/constants/auth.constant';
+import { AUTH_TOKEN_KEY } from '@/constants/users.constant';
 
 import ClientPage from './page.client';
 

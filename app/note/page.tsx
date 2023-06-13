@@ -5,7 +5,7 @@ import { fetchPostAuthTokenApi } from '@/api/users.api';
 import { fetchGetNotesApi } from '@/api/notes.api';
 import { NoteSummaryEntity } from '@/models/notes.model';
 import { OK } from '@/api/status';
-import { AUTH_TOKEN_KEY } from '@/constants/auth.constant';
+import { AUTH_TOKEN_KEY } from '@/constants/users.constant';
 
 import ClientPage from './page.client';
 

@@ -2,7 +2,7 @@
 
 import React, { useCallback, useContext, useState, useRef } from "react";
 
-import { NoteAppContext } from "@/contexts/apps.context";
+import { NoteAppContext } from "@/contexts/apps";
 
 import clsx from "@/utils/clsx.util";
 import CancelIcon from '@mui/icons-material/Cancel';

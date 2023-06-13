@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 
-import { NoteAppContext } from "@/contexts/apps.context";
+import { NoteAppContext } from "@/contexts/apps";
 import { NoteData } from "@/api/data/notes";
 import { StatusChoice } from "@/utils/enums.util";
 

@@ -9,14 +9,14 @@ import React, {
 } from "react";
 
 import { NoteEntity } from "@/models/notes.model";
-import { NoteContext } from "@/contexts/note.context";
-import { NoteAppContext } from "@/contexts/apps.context";
-import { NoteStatusEnum, BlockStatusEnum } from "@/constants/note.constant";
-import { useNoteScreenPosition, useNoteStatus, useBlockStatus } from "@/hooks/note/note.hook";
+import { NoteContext } from "@/contexts/components/note.context";
+import { NoteAppContext } from "@/contexts/apps";
+import { NoteStatusEnum, BlockStatusEnum } from "@/constants/notes.constant";
+import { useNoteScreenPosition, useNoteStatus, useBlockStatus } from "@/hooks/components/note.hook";
 import { KeywordEntity } from "@/models/notes.model";
 import { KeywordData } from "@/api/data/notes";
 import { NoteNameDuplicate } from "@/api/status";
-import { NOTE_NAME_LENGTH_LIMIT } from "@/constants/note.constant";
+import { NOTE_NAME_LENGTH_LIMIT } from "@/constants/notes.constant";
 import { useKeywordList } from "@/hooks/apps/notes.hook";
 
 import Block from "./Block";

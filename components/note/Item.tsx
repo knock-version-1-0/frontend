@@ -3,7 +3,7 @@
 import React, { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { NoteAppContext } from "@/contexts/apps.context";
+import { NoteAppContext } from "@/contexts/apps";
 import { NoteSummaryEntity } from "@/models/notes.model";
 
 import clsx from "@/utils/clsx.util";

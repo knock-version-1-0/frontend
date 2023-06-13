@@ -1,6 +1,6 @@
 "use client";
 
-import { NoteAppContext } from "@/contexts/apps.context";
+import { NoteAppContext } from "@/contexts/apps";
 import { NoteSummaryEntity } from "@/models/notes.model";
 import { useNoteList } from "@/hooks/apps/notes.hook";
 

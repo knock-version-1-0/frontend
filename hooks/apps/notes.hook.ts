@@ -1,7 +1,7 @@
 import { useState, useCallback, useContext, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
-import { AppContext } from "@/contexts/apps.context";
+import { AppContext } from "@/contexts/apps";
 import { NoteSummaryEntity, NoteEntity, KeywordEntity } from "@/models/notes.model";
 import { NoteData, KeywordData } from "@/api/data/notes";
 import { useWebSocket, toMessage } from "@/utils/ws.util";
@@ -12,7 +12,7 @@ import {
   fetchPatchNoteApi,
 } from "@/api/notes.api";
 import { KeywordListAppStore, NoteListAppStore } from "@/stores/apps";
-import { MAX_NOTE_LIST_SIZE } from "@/constants/note.constant";
+import { MAX_NOTE_LIST_SIZE } from "@/constants/notes.constant";
 import { NoteDoesNotExist, NoteNameDuplicate } from "@/api/status";
 import { TRAILING_SLASH } from "@/constants/common.constant";
 import { OK, CREATED, CONNECTED, LOADING } from "@/api/status";
