@@ -37,7 +37,7 @@ const NoteList: React.FC<NoteListProps> = ({ displayId }) => {
             className={clsx(
               "list",
               showScrollbar ? "scrollbar-visible" : "",
-              "h-full pt-2 pl-2 pr-1"
+              "h-full pt-2 pl-3 pr-1"
             )}
           >
             {
