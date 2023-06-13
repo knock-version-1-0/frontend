@@ -104,10 +104,10 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
     const payload = await fetchPostNotesApi(data, token as string);
     setAddLoader(false);
 
-    if (payload.status === NoteNameDuplicate) {
+    if (payload.status !== CREATED) {
       return {
         isSuccess: false,
-        status: NoteNameDuplicate
+        status: payload.status
       }
     }
 

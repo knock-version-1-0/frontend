@@ -1,10 +1,10 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 
-import { NoteAppContext } from "@/contexts/apps";
+import { AppContext, NoteAppContext } from "@/contexts/apps";
 import { NoteData } from "@/api/data/notes";
 import { StatusChoice } from "@/utils/enums.util";
 
@@ -14,6 +14,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 interface SideScreenProps extends React.PropsWithChildren {}
 
@@ -55,6 +56,10 @@ const Navigator = (props: {
   const pathname = usePathname();
 
   const { items, addItem } = useContext(NoteAppContext);
+  const { user } = useContext(AppContext);
+
+  const [profileHover, setProfileHover] = useState<boolean>(false);
+  const [profileClicked, setProfileClicked] = useState<boolean>(false);
 
   enum NavChoice {
     NOTE=1,
@@ -93,8 +98,7 @@ const Navigator = (props: {
         }
         break
       case NavChoice.MY:
-        if (!navPath.my.re.exec(pathname))
-          window.location.replace(navPath.my.path);
+        
         break
     } 
   }
@@ -115,11 +119,35 @@ const Navigator = (props: {
           className='hover:text-black text-etc'
         ></AddIcon>
       </button>
-      <button onClick={()=>handleClick(NavChoice.MY)}>
-        <AccountCircleIcon
-          className={`${navPath.my.re.exec(pathname) ? '' : 'text-etc'} hover:text-black`}
-        ></AccountCircleIcon>
-      </button>
+      <div className="relative flex flex-col items-center"
+        onMouseOut={() => setProfileHover(false)}
+        onMouseOver={() => setProfileHover(true)}
+      >
+        <button
+          onClick={()=>{
+            handleClick(NavChoice.MY);
+          }}
+        >
+          <AccountCircleIcon
+            className='hover:text-black text-etc'
+          ></AccountCircleIcon>
+        </button>
+        {
+          profileHover && (
+            <div className="absolute flex flex-row items-center space-x-1 bottom-6 px-2 bg-zinc-100 rounded-md hover:cursor-default">
+              <div>
+                <p className="text-xs">{ user?.username }</p>
+              </div>
+              <button className="mb-1" onClick={(e) => {
+                e.stopPropagation();
+                router.push('/note/modal');
+              }}>
+                <LogoutIcon className="text-sm hover:text-blue-500"></LogoutIcon>
+              </button>
+            </div>
+          )
+        }
+      </div>
     </div>
   );
 }

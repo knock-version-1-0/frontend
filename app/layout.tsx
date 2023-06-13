@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 
-import { fetchPostAuthTokenApi } from '@/api/users.api';
+import { fetchPostAuthTokenApi, fetchGetUserMeApi } from '@/api/users.api';
 import { OK } from '@/api/status';
 import { AUTH_TOKEN_KEY } from '@/constants/users.constant';
 
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
@@ -33,10 +33,19 @@ export default async function RootLayout({
     }
   }
 
+  let user;
+  if (token) {
+    const payload = await fetchGetUserMeApi(token);
+
+    if (payload.status === OK) {
+      user = payload.data!
+    }
+  }
+
   return (
     <html lang="en">
       <body>
-        <ClientLayout token={ token }>
+        <ClientLayout token={ token } user={ user }>
           {children}
         </ClientLayout>
       </body>

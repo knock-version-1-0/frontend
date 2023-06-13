@@ -9,7 +9,8 @@ import {
 } from "./data/users";
 import {
   AuthTokenEntity,
-  AuthSessionEntity
+  AuthSessionEntity,
+  UserEntity
 } from "@/models/users.model";
 import { TRAILING_SLASH } from "@/constants/common.constant";
 import {
@@ -26,6 +27,21 @@ import {
   OK
 } from "./status";
 import { ApiPayload, ErrorDetail } from "@/utils/types.util";
+
+export const fetchGetUserMeApi = async (token: string): Promise<ApiPayload<UserEntity>> => {
+  try {
+    const res = await AxiosWithJwt(token)
+      .get<ApiPayload<UserEntity> | ErrorDetail>(`users/me${TRAILING_SLASH}`);
+    return res.data as ApiPayload<UserEntity>;
+  } catch (err: unknown) {
+    return getApiErrorPayload<UserEntity>(err, [
+      {
+        statusCode: 401,
+        types: [UserInvalid]
+      }
+    ])
+  }
+}
 
 export const fetchPostAuthTokenApi = async (data: AuthTokenData): Promise<ApiPayload<AuthTokenEntity>> => {
   try {
