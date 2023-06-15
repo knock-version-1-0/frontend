@@ -54,7 +54,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ onCreateKeyword }) => {
         cursor={cursor}
         onCreateKeyword={onCreateKeyword}
       ></Button>
-      <Button
+      {/* <Button
         activeChildClassName="text-knock-main"
         childClassName=""
         icon={CallMadeIcon}
@@ -86,7 +86,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ onCreateKeyword }) => {
         }}
         label={Label.FragmentLine}
         cursor={cursor}
-      ></Button>
+      ></Button> */}
     </div>
   );
 }
