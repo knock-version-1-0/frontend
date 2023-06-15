@@ -1,38 +1,32 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Knock Frontend
 
-## Getting Started
+## Skills
 
-First, run the development server:
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white) ![Next](https://img.shields.io/badge/Next-000000?style=flat-square&logo=nextdotjs&logoColor=white)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+## ERD
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[https://www.erdcloud.com/d/iwavjgkhiMCfbwSPq](https://www.erdcloud.com/d/iwavjgkhiMCfbwSPq)
+<a href="https://www.erdcloud.com/d/iwavjgkhiMCfbwSPq">
+    <img width="100%" alt="ERD" src="https://user-images.githubusercontent.com/82345753/230279648-be3b9384-d17a-46a7-95dc-aec7b259894c.png">
+</a>
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## API document
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+[https://app.swaggerhub.com/apis-docs/jinhyeok15/knock_api/1.0.0#](https://app.swaggerhub.com/apis-docs/jinhyeok15/knock_api/1.0.0#)
+<a href="https://app.swaggerhub.com/apis-docs/jinhyeok15/knock_api/1.0.0#">
+    <img width="100%" alt="swagger" src="https://user-images.githubusercontent.com/82345753/230279427-95f81f89-b5bd-4897-998f-4bc64e3cad7d.png">
+</a>
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Figma
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+[https://www.figma.com/file/MhShAIR9PU5TMyKFEDGbtN/Knock-Figma?type=design&node-id=0%3A1&t=sdE1jPsdUBE39h9R-1](https://www.figma.com/file/MhShAIR9PU5TMyKFEDGbtN/Knock-Figma?type=design&node-id=0%3A1&t=sdE1jPsdUBE39h9R-1)
+<a href="https://www.figma.com/file/MhShAIR9PU5TMyKFEDGbtN/Knock-Figma?type=design&node-id=0%3A1&t=sdE1jPsdUBE39h9R-1">
+    <img width="1428" alt="Figma" src="https://github.com/knock-version-1-0/backend-main/assets/82345753/95d04681-044f-4465-a1cf-43e4c6c95d43">
+</a>
 
-## Learn More
+## Project description
 
-To learn more about Next.js, take a look at the following resources:
+[https://tangible-velvet-8ec.notion.site/86e56bc3eca64e098925de8b2e6736ee?pvs=4](https://tangible-velvet-8ec.notion.site/86e56bc3eca64e098925de8b2e6736ee?pvs=4)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<img width="1440" alt="screen" src="https://github.com/knock-version-1-0/backend-main/assets/82345753/eb604005-dc32-4057-9507-683ede9458b9">
