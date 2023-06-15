@@ -6,9 +6,10 @@ import clsx from "@/utils/clsx.util";
 
 interface ModalProps {
   children: React.ReactNode;
+  onClick?: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ children }) => {
+const Modal: React.FC<ModalProps> = ({ children, onClick }) => {
   const router = useRouter();
 
   return (
@@ -20,7 +21,7 @@ const Modal: React.FC<ModalProps> = ({ children }) => {
       onClick={(e) => {
         e.preventDefault();
         if (e.target !== e.currentTarget) return;
-        router.back()
+        onClick ? onClick() : router.back();
       }}
     >
       <div

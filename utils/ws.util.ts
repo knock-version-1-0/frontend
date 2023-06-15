@@ -14,19 +14,14 @@ export const useWebSocket = <ResponseData>(url: string): {
   useEffect(() => {
     const socket = new WebSocket(`${process.env.NEXT_PUBLIC_WEBSOCKET_PROTOCOL_TYPE}://${process.env.NEXT_PUBLIC_SERVER_URL}${url}`);
 
-    socket.onopen = () => {
-      console.log('WebSocket connection opened');
-    }
+    socket.onopen = () => {}
 
     socket.onmessage = (event) => {
       const data: ApiPayload<ResponseData> = JSON.parse(event.data);
       setPayload(data);
-      console.log('WebSocket message received');
     }
 
-    socket.onclose = () => {
-      console.log('WebSocket connection closed');
-    }
+    socket.onclose = () => {}
 
     socketRef.current = socket;
 
@@ -55,10 +50,11 @@ interface MessageDataOption {
   token?: string
 }
 
-export const toMessage = <T>(data: T, option?: MessageDataOption) => {
+export const toMessage = <T>(method: 'update' | 'create' | 'delete', data: T, option?: MessageDataOption) => {
   return JSON.stringify({
     data: JSON.stringify(data),
     key: option?.key,
-    authorization: `Token ${option?.token}`
+    authorization: `Token ${option?.token}`,
+    method: method
   });
 }

@@ -7,6 +7,4 @@ import { BlockStatusEnum, NoteStatusEnum } from "@/constants/notes.constant";
 export const NoteContext = createContext<NoteStore>({
     noteStatus: NoteStatusEnum.EXIT,
     setNoteStatus: null,
-    blockStatus: BlockStatusEnum.UNSELECT,
-    setBlockStatus: null
 });

@@ -16,5 +16,5 @@ export enum BlockStatusEnum {
   UNSELECT=1,
   SELECT,
   EDIT,
-  SAVE
+  SAFE
 }

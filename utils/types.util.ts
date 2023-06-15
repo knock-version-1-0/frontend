@@ -22,7 +22,7 @@ export interface ItemStore<Item, Data, KeyType> {
     modify?: boolean;
     remove?: boolean;
   }
-  addItem?: (data: Data) => Promise<HookCallbackReturn<Data>> | void;
-  modifyItem?: (data: Data, key: KeyType) => Promise<HookCallbackReturn<Item>> | void;
-  removeItem?: (key: KeyType) => Promise<HookCallbackReturn<Item>> | void;
+  addItem?: (data: Data) => Promise<HookCallbackReturn<Data>> | Promise<void>;
+  modifyItem?: (data: Data, key: KeyType) => Promise<HookCallbackReturn<Item>> | Promise<void>;
+  removeItem?: (key: KeyType) => Promise<HookCallbackReturn<Item>> | Promise<void>;
 }

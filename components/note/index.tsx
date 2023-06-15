@@ -12,7 +12,7 @@ import { NoteEntity } from "@/models/notes.model";
 import { NoteContext } from "@/contexts/components/note.context";
 import { NoteAppContext } from "@/contexts/apps";
 import { NoteStatusEnum, BlockStatusEnum } from "@/constants/notes.constant";
-import { useNoteScreenPosition, useNoteStatus, useBlockStatus } from "@/hooks/components/note.hook";
+import { useNoteScreenPosition, useNoteStatus } from "@/hooks/components/note.hook";
 import { KeywordEntity } from "@/models/notes.model";
 import { KeywordData } from "@/api/data/notes";
 import { NoteNameDuplicate } from "@/api/status";
@@ -35,8 +35,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
 
   const { screenX, screenY } = useNoteScreenPosition(noteElementRef);
   const { noteStatus, setNoteStatus } = useNoteStatus(NoteStatusEnum.EXIT);
-  const { blockStatus, setBlockStatus } = useBlockStatus();
-  const { items: keywords, modifyItem, addItem } = useKeywordList(note.keywords, note.id);
+  const { items: keywords, modifyItem, addItem, removeItem } = useKeywordList(note.keywords, note.id);
 
   const InitKeywordModel: KeywordEntity = {
     noteId: note.id,
@@ -44,7 +43,7 @@ const Note: React.FC<NoteProps> = ({note}) => {
     posY: 0,
     text: '',
     parentId: null,
-    status: BlockStatusEnum.UNSELECT,
+    status: BlockStatusEnum.SELECT,
     timestamp: getCurrentTime()
   }
   const [PhantomKeywordModel, setPhantomKeywordModel] = useState<KeywordEntity>(InitKeywordModel);
@@ -68,10 +67,6 @@ const Note: React.FC<NoteProps> = ({note}) => {
         if (e.nativeEvent.isComposing) return;
         setNoteStatus(NoteStatusEnum.EXIT);
       }
-      else if (noteStatus === NoteStatusEnum.KEYMOD) {
-        if (e.nativeEvent.isComposing) return;
-        setNoteStatus(NoteStatusEnum.EXIT);
-      }
       else {
         setNoteStatus(NoteStatusEnum.EXIT);
       }
@@ -88,14 +83,12 @@ const Note: React.FC<NoteProps> = ({note}) => {
     else if (e.key === 'Tab') {
       e.preventDefault();
     }
-  }, [noteStatus, setNoteStatus, blockStatus, setBlockStatus]);
+  }, [noteStatus, setNoteStatus]);
 
   return (
     <NoteContext.Provider value={{
       noteStatus,
       setNoteStatus,
-      blockStatus,
-      setBlockStatus
     }}>
       <div className="hidden sm:block w-full h-full focus:outline-none bg-zinc-50" ref={noteElementRef}
         onMouseMove={(e) => {
@@ -109,6 +102,10 @@ const Note: React.FC<NoteProps> = ({note}) => {
         }}
         onKeyDown={(e) => {handleKeyDown(e)}}
         tabIndex={0}
+        onClick={(e) => {
+          if (e.target !== e.currentTarget) return;
+          setNoteStatus(NoteStatusEnum.EXIT);
+        }}
       >
         <div className="hidden md:block mx-10">
           <Title note={note}></Title>
@@ -126,7 +123,8 @@ const Note: React.FC<NoteProps> = ({note}) => {
                   keyword={ value }
                   screenX={ screenX }
                   screenY={ screenY }
-                  onUpdate={(data: KeywordData) => modifyItem(data, value.id as number)}
+                  onUpdate={async (data: KeywordData) => await modifyItem(data, value.id as number)}
+                  onDelete={async (key: number) => await removeItem(key)}
                   isPhantom={ false }
                 ></Block>
               ))
@@ -138,8 +136,8 @@ const Note: React.FC<NoteProps> = ({note}) => {
               keyword={ PhantomKeywordModel }
               screenX={ screenX }
               screenY={ screenY }
-              onUpdate={(data: KeywordData) => {}}
-              onCreate={(data: KeywordData) => addItem(data)}
+              onUpdate={async (data: KeywordData) => {}}
+              onCreate={async (data: KeywordData) => await addItem(data)}
               isPhantom={ true }
             ></Block>
           }

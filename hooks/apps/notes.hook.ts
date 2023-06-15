@@ -15,7 +15,7 @@ import { KeywordListAppStore, NoteListAppStore } from "@/stores/apps";
 import { MAX_NOTE_LIST_SIZE } from "@/constants/notes.constant";
 import { NoteDoesNotExist, NoteNameDuplicate } from "@/api/status";
 import { TRAILING_SLASH } from "@/constants/common.constant";
-import { OK, CREATED, CONNECTED, LOADING } from "@/api/status";
+import { OK, CREATED, CONNECTED, LOADING, CREATE, UPDATE, DELETE } from "@/api/status";
 import { StatusChoice } from "@/utils/enums.util";
 
 import { debounce } from "lodash";
@@ -191,50 +191,52 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
   const [items, setItems] = useState<KeywordEntity[]>(init);
 
   const {
-    payload: modifiedItemPayload,
-    sendMessage: sendModifyMessage,
-    clear: clearModifyItemPayload
-  } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/update-keyword${TRAILING_SLASH}`);
-
-  const {
-    payload: addedItemPayload,
-    sendMessage: sendAddMessage,
-    clear: clearAddedItemPayload
-  } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/create-keyword${TRAILING_SLASH}`);
+    payload,
+    sendMessage: sendMessage,
+    clear: clear
+  } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/keyword${TRAILING_SLASH}`);
 
   useEffect(() => {
-    if (modifiedItemPayload.status === OK) {
-      const keyword = modifiedItemPayload.data!
+    if (payload.status === UPDATE) {
+      const keyword = payload.data!;
       setItems(items.map((value) => {
         if (value.id === keyword.id) {
           return keyword
         } else return value
-      }))
-      return clearModifyItemPayload();
+      }));
+      return clear();
     }
-  }, [items, modifiedItemPayload]);
-
-  useEffect(() => {
-    if (addedItemPayload.status === OK) {
-      const keyword = addedItemPayload.data!;
+    if (payload.status === CREATE) {
+      const keyword = payload.data!;
       setItems([...items, keyword]);
-      return clearAddedItemPayload();
+      return clear();
     }
-  }, [items, addedItemPayload]);
+    if (payload.status === DELETE) {
+      const keyword = payload.data!;
+      setItems(items.filter((value) => value.id !== keyword.id));
+      return clear();
+    }
+  }, [items, payload]);
 
   const modifyItem = useCallback(async (data: KeywordData, key: number) => {
-    const message = toMessage(data, { token, key });
-    sendModifyMessage(message);
+    const message = toMessage('update', data, { token, key });
+    sendMessage(message);
   }, [items]);
 
   const addItem = useCallback(async (data: KeywordData) => {
-    const message = toMessage(data, { token });
-    sendAddMessage(message);
+    const message = toMessage('create', data, { token });
+    sendMessage(message);
+  }, [items]);
+
+  const removeItem = useCallback(async (key: number) => {
+    const message = toMessage('delete', {}, { token, key });
+    sendMessage(message);
   }, [items]);
 
   return {
     items,
     modifyItem,
-    addItem
+    addItem,
+    removeItem
   }
 }

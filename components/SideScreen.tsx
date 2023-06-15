@@ -59,7 +59,6 @@ const Navigator = (props: {
   const { user } = useContext(AppContext);
 
   const [profileHover, setProfileHover] = useState<boolean>(false);
-  const [profileClicked, setProfileClicked] = useState<boolean>(false);
 
   enum NavChoice {
     NOTE=1,
