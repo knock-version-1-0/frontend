@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useContext, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 import { NoteAppContext } from "@/contexts/apps";
 import { NoteSummaryEntity } from "@/models/notes.model";
@@ -17,6 +17,7 @@ interface ItemProps {
 
 const Item: React.FC<ItemProps> = ({ value, displayId }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const { removeItem } = useContext(NoteAppContext);
 
   const [deleteSession, setDeleteSession] = useState<boolean>(false);
@@ -26,6 +27,8 @@ const Item: React.FC<ItemProps> = ({ value, displayId }) => {
     <li>
       <div
         onClick={() => {
+          if (pathname === '/tutorial') return;
+
           displayId !== value.displayId &&
             router.push(`/note/${value.displayId}`)
         }}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 
@@ -81,7 +81,14 @@ const Navigator = (props: {
     }
   }
 
-  const handleClick = (choice: NavChoice) => {
+  const handleClick = useCallback((choice: NavChoice) => {
+    if (pathname === '/tutorial') {
+      if (choice === NavChoice.MY) {
+        router.push('/login');
+      }
+      return;
+    }
+    
     switch (choice) {
       case NavChoice.NOTE:
         if (!navPath.note.re.exec(pathname))
@@ -100,7 +107,7 @@ const Navigator = (props: {
         
         break
     } 
-  }
+  }, [pathname]);
 
   return (
     <div className={
@@ -132,7 +139,7 @@ const Navigator = (props: {
           ></AccountCircleIcon>
         </button>
         {
-          profileHover && (
+          (pathname !== '/tutorial') ? profileHover && (
             <div className="absolute flex flex-row items-center space-x-1 bottom-6 px-2 bg-zinc-100 rounded-md hover:cursor-default">
               <div>
                 <p className="text-xs">{ user?.username }</p>
@@ -142,6 +149,15 @@ const Navigator = (props: {
                 router.push('/note/modal');
               }}>
                 <LogoutIcon className="text-sm hover:text-blue-500"></LogoutIcon>
+              </button>
+            </div>
+          ) : (
+            <div className="absolute bottom-6 bg-knock-main rounded-md hover:cursor-default text-white bounce">
+              <button className="mb-1 py-1 w-28" onClick={(e) => {
+                e.stopPropagation();
+                router.push('/login');
+              }}>
+                Login here!
               </button>
             </div>
           )

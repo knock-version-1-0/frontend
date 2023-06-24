@@ -240,3 +240,45 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
     removeItem
   }
 }
+
+export const useTutorialKeywordList = (init: KeywordEntity[], noteId: number): KeywordListAppStore => {
+  const [items, setItems] = useState<KeywordEntity[]>(init);
+  const [maxId, setMaxId] = useState<number>(0);
+
+  useEffect(() => {
+    if (items.length === 0) return;
+    setMaxId(Math.max(...items.map(item => item.id!)));
+  }, [items]);
+
+  const modifyItem = useCallback(async (data: KeywordData, key: number) => {
+    const keyword: KeywordEntity = {
+      id: key,
+      ...data
+    }
+    setItems(items.map((value) => {
+      if (value.id === keyword.id) {
+        return keyword;
+      }
+      return value;
+    }));
+  }, [items]);
+
+  const addItem = useCallback(async (data: KeywordData) => {
+    const keyword: KeywordEntity = {
+      id: maxId + 1,
+      ...data
+    };
+    setItems([...items, keyword]);
+  }, [items, maxId]);
+
+  const removeItem = useCallback(async (key: number) => {
+    setItems(items.filter((value) => value.id !== key));
+  }, [items]);
+
+  return {
+    items,
+    modifyItem,
+    addItem,
+    removeItem
+  }
+}

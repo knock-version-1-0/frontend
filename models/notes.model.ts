@@ -1,4 +1,5 @@
 import { StatusChoice } from "@/utils/enums.util";
+import { generateUUID } from "@/utils";
 
 export interface NoteEntity {
   id: number;
@@ -7,6 +8,15 @@ export interface NoteEntity {
   name: string;
   status: StatusChoice;
   keywords: KeywordEntity[];
+}
+
+export const InitNoteEntity: NoteEntity = {
+  id: 1,
+  displayId: generateUUID(),
+  authorId: 0,
+  name: 'Tutorial',
+  status: StatusChoice.SAVE,
+  keywords: []
 }
 
 export interface KeywordEntity {

@@ -7,6 +7,7 @@ import React, {
   useContext,
   useEffect,
 } from "react";
+import { usePathname } from "next/navigation";
 
 import { NoteEntity } from "@/models/notes.model";
 import { NoteContext } from "@/contexts/components/note.context";
@@ -17,7 +18,7 @@ import { KeywordEntity } from "@/models/notes.model";
 import { KeywordData } from "@/api/data/notes";
 import { NoteNameDuplicate } from "@/api/status";
 import { NOTE_NAME_LENGTH_LIMIT } from "@/constants/notes.constant";
-import { useKeywordList } from "@/hooks/apps/notes.hook";
+import { useKeywordList, useTutorialKeywordList } from "@/hooks/apps/notes.hook";
 
 import Block from "./Block";
 import Toolbar from "./Toolbar";
@@ -31,11 +32,16 @@ interface NoteProps {
 }
 
 const Note: React.FC<NoteProps> = ({note}) => {
+  const pathname = usePathname();
+
   const noteElementRef = useRef<HTMLDivElement>(null);
 
   const { screenX, screenY } = useNoteScreenPosition(noteElementRef);
   const { noteStatus, setNoteStatus } = useNoteStatus(NoteStatusEnum.EXIT);
-  const { items: keywords, modifyItem, addItem, removeItem } = useKeywordList(note.keywords, note.id);
+
+  const { items: keywords, modifyItem, addItem, removeItem } = (pathname !== '/tutorial' ?
+    useKeywordList(note.keywords, note.id) :
+    useTutorialKeywordList(note.keywords, note.id));
 
   const InitKeywordModel: KeywordEntity = {
     noteId: note.id,
@@ -151,6 +157,8 @@ const Note: React.FC<NoteProps> = ({note}) => {
 }
 
 const Title = ({ note }: {note: NoteEntity}): JSX.Element => {
+  const pathname = usePathname();
+
   const { modifyItem } = useContext(NoteAppContext);
   const { noteStatus, setNoteStatus } = useContext(NoteContext);
 
@@ -205,6 +213,7 @@ const Title = ({ note }: {note: NoteEntity}): JSX.Element => {
               setNoteName(e.target.value)
             }}
             maxLength={NOTE_NAME_LENGTH_LIMIT}
+            readOnly={pathname === '/tutorial'}
           />
         </div>
         <ModeEditIcon></ModeEditIcon>
