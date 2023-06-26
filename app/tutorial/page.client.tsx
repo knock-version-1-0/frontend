@@ -6,7 +6,7 @@ import { NoteAppContext } from "@/contexts/apps";
 
 import Layout from "@/components/Layout";
 import NoteList from "@/components/note/NoteList";
-import Note from "@/components/note";
+import TutorialNote from "@/components/note/TutorialNote";
 
 interface Props {
   note: NoteEntity;
@@ -22,7 +22,7 @@ const ClientPage = ({ note, noteItems, displayId }: Props) => {
       <Layout sideScreenBody={(
         <NoteList displayId={displayId}></NoteList>
       )}>
-        <Note note={note}></Note>
+        <TutorialNote note={note}></TutorialNote>
       </Layout>
     </NoteAppContext.Provider>
   );

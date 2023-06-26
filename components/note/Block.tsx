@@ -124,7 +124,13 @@ const Block: React.FC<BlockProps> = ({
   }, [
     textValue,
     keyword,
-    center
+    center,
+    screenX,
+    screenY,
+    onUpdate,
+    onCreate,
+    onDelete,
+    setNoteStatus
   ]);
 
   const handleClick = useCallback(async (e: React.MouseEvent<HTMLInputElement>) => {
@@ -143,7 +149,7 @@ const Block: React.FC<BlockProps> = ({
       setBlockStatus(BlockStatusEnum.EDIT);
       return;
     }
-  }, [isPhantom, blockStatus, handleSubmit]);
+  }, [isPhantom, blockStatus, handleSubmit, setBlockStatus]);
 
   const handleKeyDown = useCallback(async (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {

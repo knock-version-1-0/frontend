@@ -13,7 +13,7 @@ import { NoteStatusEnum, BlockStatusEnum } from "@/constants/notes.constant";
 import { useNoteScreenPosition, useNoteStatus } from "@/hooks/components/note.hook";
 import { KeywordEntity } from "@/models/notes.model";
 import { KeywordData } from "@/api/data/notes";
-import { useKeywordList } from "@/hooks/apps/notes.hook";
+import { useTutorialKeywordList } from "@/hooks/apps/notes.hook";
 
 import Block from "./Block";
 import Toolbar from "./Toolbar";
@@ -24,13 +24,13 @@ interface NoteProps {
   note: NoteEntity;
 }
 
-const Note: React.FC<NoteProps> = ({note}) => {
+const TutorialNote: React.FC<NoteProps> = ({note}) => {
   const noteElementRef = useRef<HTMLDivElement>(null);
 
   const { screenX, screenY } = useNoteScreenPosition(noteElementRef);
   const { noteStatus, setNoteStatus } = useNoteStatus(NoteStatusEnum.EXIT);
 
-  const { items: keywords, modifyItem, addItem, removeItem } = useKeywordList(note.keywords, note.id);
+  const { items: keywords, modifyItem, addItem, removeItem } = useTutorialKeywordList(note.keywords, note.id);
 
   const InitKeywordModel: KeywordEntity = {
     noteId: note.id,
@@ -145,4 +145,4 @@ const Note: React.FC<NoteProps> = ({note}) => {
   );
 }
 
-export default Note;
+export default TutorialNote;

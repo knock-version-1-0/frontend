@@ -80,15 +80,15 @@ const SearchBar = (): JSX.Element => {
 
   const handleClear = () => {
     if (inputRef.current) {
-      inputRef.current.value = ''
-      setName('')
-      search('')
+      inputRef.current.value = '';
+      setName('');
+      search('');
     }
   }
 
   return (
     <div className="flex flex-row">
-      <input className="w-full border drop-shadow mx-2 px-2 py-1 focus:outline-none" value={name} type="text" onChange={handleSearchChange} ref={inputRef} />
+      <input className="w-full border drop-shadow mx-2 px-2 py-1 focus:outline-none" value={name} type="text" onChange={handleSearchChange} ref={inputRef} readOnly />
       <div className="relative right-10 top-2 h-full cursor-pointer" onClick={handleClear}>
         <CancelIcon className="absolute top-0 left-0 w-4 h-4 text-etc z-20"></CancelIcon>
         <CircleIcon className="absolute top-0 left-0 w-4 h-4 z-10"></CircleIcon>
