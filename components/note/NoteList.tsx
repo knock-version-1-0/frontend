@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useContext, useState, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 import { NoteAppContext } from "@/contexts/apps";
 
@@ -67,6 +68,8 @@ const NoteList: React.FC<NoteListProps> = ({ displayId }) => {
 }
 
 const SearchBar = (): JSX.Element => {
+  const pathname = usePathname();
+
   const [name, setName] = useState<string>('');
   const { search } = useContext(NoteAppContext);
 
@@ -88,7 +91,7 @@ const SearchBar = (): JSX.Element => {
 
   return (
     <div className="flex flex-row">
-      <input className="w-full border drop-shadow mx-2 px-2 py-1 focus:outline-none" value={name} type="text" onChange={handleSearchChange} ref={inputRef} readOnly />
+      <input className="w-full border drop-shadow mx-2 px-2 py-1 focus:outline-none" value={name} type="text" onChange={handleSearchChange} ref={inputRef} readOnly={pathname === '/tutorial'} />
       <div className="relative right-10 top-2 h-full cursor-pointer" onClick={handleClear}>
         <CancelIcon className="absolute top-0 left-0 w-4 h-4 text-etc z-20"></CancelIcon>
         <CircleIcon className="absolute top-0 left-0 w-4 h-4 z-10"></CircleIcon>
