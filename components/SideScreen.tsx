@@ -107,7 +107,7 @@ const Navigator = (props: {
         
         break
     } 
-  }, [pathname]);
+  }, [pathname, items]);
 
   return (
     <div className={
