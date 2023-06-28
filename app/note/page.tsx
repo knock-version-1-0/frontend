@@ -2,12 +2,11 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { fetchPostAuthTokenApi } from '@/api/users.api';
-import { fetchGetNotesApi } from '@/api/notes.api';
+import { fetchGetNotesApi, fetchPostNotesApi } from '@/api/notes.api';
 import { NoteSummaryEntity } from '@/models/notes.model';
-import { OK } from '@/api/status';
+import { CREATED, OK } from '@/api/status';
 import { AUTH_TOKEN_KEY } from '@/constants/users.constant';
-
-import ClientPage from './page.client';
+import { StatusChoice } from '@/utils/enums.util';
 
 const NotePage = async () => {
   const refreshToken = cookies().get(AUTH_TOKEN_KEY)?.value;
@@ -25,18 +24,23 @@ const NotePage = async () => {
 
   const token = authPayload.data!.value
 
-  const payload = await fetchGetNotesApi({
+  const notesReadPayload = await fetchGetNotesApi({
     name: '',
     offset: 0
-  }, token)
-  if (payload.status !== OK) { throw Error(payload.status) }
-  const noteItems: NoteSummaryEntity[] = payload.data!
+  }, token);
+  if (notesReadPayload.status !== OK) { throw Error(notesReadPayload.status) }
+  const noteItems: NoteSummaryEntity[] = notesReadPayload.data!
 
   if (noteItems.length !== 0) {
     redirect(`/note/${noteItems[0].displayId}`);
   }
-  
-  return <ClientPage noteItems={ noteItems } />
+
+  const NotesCreatePayload = await fetchPostNotesApi({
+    name: '',
+    status: StatusChoice.SAVE
+  }, token);
+  if (NotesCreatePayload.status !== CREATED) { throw Error(NotesCreatePayload.status) }
+  redirect(`/note/${NotesCreatePayload.data!.displayId}`);
 }
 
 export default NotePage;
