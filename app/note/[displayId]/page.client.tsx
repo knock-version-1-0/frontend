@@ -1,5 +1,8 @@
 "use client";
 
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useEffect } from "react";
+
 import { NoteEntity, NoteSummaryEntity } from "@/models/notes.model";
 import { useNoteList } from "@/hooks/apps/notes.hook";
 import { NoteAppContext } from "@/contexts/apps";
@@ -15,6 +18,22 @@ interface Props {
 }
 
 const ClientPage = ({ note, noteItems, displayId }: Props) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const init = localStorage.getItem('init');
+    if (!init && searchParams.get('init')) {
+      localStorage.setItem('init', 'true');
+      router.replace(pathname);
+    }
+    else if (init) {
+      localStorage.removeItem('init');
+      router.refresh();
+    }
+  });
+
   const noteListAppStore = useNoteList(noteItems);
 
   return (

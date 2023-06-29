@@ -8,5 +8,5 @@ export async function GET(request: Request) {
 
   cookies().set(AUTH_TOKEN_KEY, token, {httpOnly: true});
 
-  redirect('/');
+  redirect('/?init=true');
 }

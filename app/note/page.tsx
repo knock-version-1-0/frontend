@@ -8,7 +8,11 @@ import { CREATED, OK } from '@/api/status';
 import { AUTH_TOKEN_KEY } from '@/constants/users.constant';
 import { StatusChoice } from '@/utils/enums.util';
 
-const NotePage = async () => {
+const NotePage = async ({ searchParams }: {
+  searchParams?: {
+    init?: string;
+  }
+}) => {
   const refreshToken = cookies().get(AUTH_TOKEN_KEY)?.value;
   if (!refreshToken) {
     redirect('/login');
@@ -32,7 +36,7 @@ const NotePage = async () => {
   const noteItems: NoteSummaryEntity[] = notesReadPayload.data!
 
   if (noteItems.length !== 0) {
-    redirect(`/note/${noteItems[0].displayId}`);
+    redirect(searchParams?.init ? `/note/${noteItems[0].displayId}?init=true` : `/note/${noteItems[0].displayId}`);
   }
 
   const NotesCreatePayload = await fetchPostNotesApi({
@@ -40,7 +44,7 @@ const NotePage = async () => {
     status: StatusChoice.SAVE
   }, token);
   if (NotesCreatePayload.status !== CREATED) { throw Error(NotesCreatePayload.status) }
-  redirect(`/note/${NotesCreatePayload.data!.displayId}`);
+  redirect(searchParams?.init ? `/note/${NotesCreatePayload.data!.displayId}?init=true` : `/note/${NotesCreatePayload.data!.displayId}`);
 }
 
 export default NotePage;

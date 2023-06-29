@@ -18,9 +18,9 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = cookies();
-  let token;
-  const refreshToken = cookieStore.get(AUTH_TOKEN_KEY)?.value;
+  let token; let user;
+
+  let refreshToken = cookies().get(AUTH_TOKEN_KEY)?.value;
 
   if (refreshToken) {
     const payload = await fetchPostAuthTokenApi({
@@ -33,7 +33,6 @@ export default async function RootLayout({
     }
   }
 
-  let user;
   if (token) {
     const payload = await fetchGetUserMeApi(token);
 

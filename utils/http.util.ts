@@ -4,7 +4,7 @@ import { ErrorDetail, ApiPayload } from './types.util';
 
 export const Axios = (headers: object = {}) =>
   axios.create({
-    baseURL: `${process.env.NEXT_PUBLIC_HTTP_PROTOCOL_TYPE}://${process.env.NEXT_PUBLIC_SERVER_URL}`,
+    baseURL: `${process.env.NEXT_PUBLIC_HTTP_PROTOCOL_TYPE}://${process.env.NEXT_PUBLIC_SERVER_HOST}`,
     withCredentials: true,
     headers: {
       'Content-type': 'application/json',
@@ -14,7 +14,7 @@ export const Axios = (headers: object = {}) =>
 
 export const AxiosWithJwt = (jwtToken: string, headers: object = {}) =>
   axios.create({
-    baseURL: `${process.env.NEXT_PUBLIC_HTTP_PROTOCOL_TYPE}://${process.env.NEXT_PUBLIC_SERVER_URL}`,
+    baseURL: `${process.env.NEXT_PUBLIC_HTTP_PROTOCOL_TYPE}://${process.env.NEXT_PUBLIC_SERVER_HOST}`,
     withCredentials: true,
     headers: {
       'Content-type': 'application/json',

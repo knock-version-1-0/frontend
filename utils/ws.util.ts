@@ -12,7 +12,7 @@ export const useWebSocket = <ResponseData>(url: string): {
   const [payload, setPayload] = useState<ApiPayload<ResponseData>>({ status: LOADING });
 
   useEffect(() => {
-    const socket = new WebSocket(`${process.env.NEXT_PUBLIC_WEBSOCKET_PROTOCOL_TYPE}://${process.env.NEXT_PUBLIC_SERVER_URL}${url}`);
+    const socket = new WebSocket(`${process.env.NEXT_PUBLIC_WEBSOCKET_PROTOCOL_TYPE}://${process.env.NEXT_PUBLIC_SERVER_HOST}${url}`);
 
     socket.onopen = () => {}
 

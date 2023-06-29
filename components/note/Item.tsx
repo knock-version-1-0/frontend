@@ -53,12 +53,20 @@ const Item: React.FC<ItemProps> = ({ value, displayId }) => {
         }
         {
           displayId === value.displayId && (!deleteSession ? (
-            <DeleteIcon className="w-5 h-5 hover:text-etc"
+            <DeleteIcon className="hover:text-etc"
               onClick={() => { setDeleteSession(true) }}
+              style={{
+                width: 20,
+                height: 20
+              }}
             ></DeleteIcon>
           ) : (
-            <CloseIcon className="w-5 h-5 hover:text-etc"
+            <CloseIcon className="hover:text-etc"
               onClick={() => { setDeleteSession(false) }}
+              style={{
+                width: 20,
+                height: 20
+              }}
             ></CloseIcon>
           ))
         }

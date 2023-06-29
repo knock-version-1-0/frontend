@@ -148,7 +148,11 @@ const Navigator = (props: {
                 e.stopPropagation();
                 router.push('/note/modal');
               }}>
-                <LogoutIcon className="text-sm hover:text-blue-500"></LogoutIcon>
+                <LogoutIcon className="hover:text-blue-500"
+                  style={{
+                    fontSize: 14
+                  }}
+                ></LogoutIcon>
               </button>
             </div>
           ) : (
