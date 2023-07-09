@@ -70,7 +70,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
         }
       }
     }
-  }, [offset, items]);
+  }, [offset, items, token]);
 
   const search = useCallback(debounce(async (name: string) => {
     setOffset(0);
@@ -97,7 +97,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
         }
       }
     }
-  }, 250), [items]);
+  }, 250), [items, token]);
   
   const addItem = useCallback(async (data: NoteData) => {
     setAddLoader(true);
@@ -123,7 +123,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
       status: payload.status,
       data: payload.data
     }
-  }, [items]);
+  }, [items, token]);
 
   const modifyItem = useCallback(async (data: NoteData, key: string) => {
     setModifyLoader(true);
@@ -153,7 +153,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
       status: payload.status,
       data: payload.data
     }
-  }, [items]);
+  }, [items, token]);
 
   const removeItem = useCallback(async (key: string) => {
     setRemoveLoader(true);
@@ -166,7 +166,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
       isSuccess: true,
       status: OK
     }
-  }, [items]);
+  }, [items, token]);
 
   return {
     items,
@@ -221,17 +221,17 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
   const modifyItem = useCallback(async (data: KeywordData, key: number) => {
     const message = toMessage('update', data, { token, key });
     sendMessage(message);
-  }, [items]);
+  }, [items, token]);
 
   const addItem = useCallback(async (data: KeywordData) => {
     const message = toMessage('create', data, { token });
     sendMessage(message);
-  }, [items]);
+  }, [items, token]);
 
   const removeItem = useCallback(async (key: number) => {
     const message = toMessage('delete', {}, { token, key });
     sendMessage(message);
-  }, [items]);
+  }, [items, token]);
 
   return {
     items,

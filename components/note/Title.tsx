@@ -23,7 +23,7 @@ const Title = ({ note }: { note: NoteEntity }): JSX.Element => {
   const pathname = usePathname();
 
   const { modifyItem } = useContext(NoteAppContext);
-  const { noteStatus, setNoteStatus } = useContext(NoteContext);
+  const { setNoteStatus } = useContext(NoteContext);
 
   const [noteName, setNoteName] = useState<string>(note.name);
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
@@ -41,10 +41,6 @@ const Title = ({ note }: { note: NoteEntity }): JSX.Element => {
 
   const titleElementRef = useRef<HTMLInputElement>(null);
 
-  const handleBlur = useCallback(async () => {
-    await submitNoteTitle(noteName)
-  }, [noteItem, noteName, noteStatus]);
-
   const submitNoteTitle = useCallback(async (name: string) => {
     const hookReturn = await modifyItem({
       name: name
@@ -58,6 +54,10 @@ const Title = ({ note }: { note: NoteEntity }): JSX.Element => {
       setIsDuplicate(true);
     }
   }, [noteItem]);
+
+  const handleBlur = useCallback(async () => {
+    await submitNoteTitle(noteName)
+  }, [noteName, submitNoteTitle]);
 
   return (
     <>
