@@ -91,7 +91,7 @@ const SearchBar = (): JSX.Element => {
 
   return (
     <div className="flex flex-row">
-      <input className="w-full border drop-shadow mx-2 px-2 py-1 focus:outline-none" value={name} type="text" onChange={handleSearchChange} ref={inputRef} readOnly={pathname === '/tutorial'} />
+      <input className="w-full border drop-shadow mx-2 px-2 py-1 focus:outline-none" value={name} type="text" onChange={handleSearchChange} ref={inputRef} />
       <div className="relative right-10 top-2 h-full cursor-pointer" onClick={handleClear}>
         <CancelIcon className="text-etc z-20"
           style={{

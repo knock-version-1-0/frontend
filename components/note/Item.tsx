@@ -27,8 +27,6 @@ const Item: React.FC<ItemProps> = ({ value, displayId }) => {
     <li>
       <div
         onClick={() => {
-          if (pathname === '/tutorial') return;
-
           displayId !== value.displayId &&
             router.push(`/note/${value.displayId}`)
         }}

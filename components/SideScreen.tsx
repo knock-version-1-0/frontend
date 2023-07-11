@@ -19,6 +19,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 interface SideScreenProps extends React.PropsWithChildren {}
 
 const SideScreen: React.FC<SideScreenProps> = (props) => {
+  const pathname = usePathname();
+
   return (
     <div>
       <div className="relative w-[360px] sm:w-[320px] h-full bg-white">
@@ -26,7 +28,10 @@ const SideScreen: React.FC<SideScreenProps> = (props) => {
         <div className="w-full h-full pt-20 pb-28">
           {props.children}
         </div>
-        <Navigator className="px-8 border-t"></Navigator>
+        {
+          pathname !== '/tutorial' &&
+          <Navigator className="px-8 border-t"></Navigator>
+        }
       </div>
     </div>
   );
@@ -78,17 +83,16 @@ const Navigator = (props: {
     my: {
       re: new RegExp('^/my'),
       path: '/my'
+    },
+    login: {
+      re: new RegExp('^/login'),
+      path: '/login'
     }
   }
 
   const handleClick = useCallback((choice: NavChoice) => {
-    if (pathname === '/tutorial') {
-      if (choice === NavChoice.MY) {
-        router.push('/login');
-      }
-      return;
-    }
-    
+    if (navPath.login.re.exec(pathname)) { return }
+
     switch (choice) {
       case NavChoice.NOTE:
         if (!navPath.note.re.exec(pathname))
@@ -117,7 +121,7 @@ const Navigator = (props: {
       )}>
       <button onClick={()=>handleClick(NavChoice.NOTE)}>
         <DriveFileRenameOutlineIcon
-          className={`${navPath.note.re.exec(pathname) ? '' : 'text-etc'}`}
+          className={`${navPath.note.re.exec(pathname) ? '' : 'text-etc'} hover:text-black`}
         ></DriveFileRenameOutlineIcon>
       </button>
       <button onClick={()=>handleClick(NavChoice.ADD)}>
@@ -139,10 +143,10 @@ const Navigator = (props: {
           ></AccountCircleIcon>
         </button>
         {
-          (pathname !== '/tutorial') ? profileHover && (
+          profileHover && user && (
             <div className="absolute flex flex-row items-center space-x-1 bottom-6 px-2 bg-zinc-100 rounded-md hover:cursor-default">
               <div>
-                <p className="text-xs">{ user?.username }</p>
+                <p className="text-xs">{ user.username }</p>
               </div>
               <button className="mb-1" onClick={(e) => {
                 e.stopPropagation();
@@ -153,15 +157,6 @@ const Navigator = (props: {
                     fontSize: 14
                   }}
                 ></LogoutIcon>
-              </button>
-            </div>
-          ) : (
-            <div className="absolute bottom-6 bg-knock-main rounded-md hover:cursor-default text-white bounce">
-              <button className="mb-1 py-1 w-28" onClick={(e) => {
-                e.stopPropagation();
-                router.push('/login');
-              }}>
-                Login here!
               </button>
             </div>
           )
