@@ -10,11 +10,11 @@ import React, {
 import { usePathname } from "next/navigation";
 
 import { NoteEntity } from "@/models/notes.model";
-import { NoteContext } from "@/contexts/components/note.context";
 import { NoteAppContext } from "@/contexts/apps";
 import { NoteStatusEnum } from "@/constants/notes.constant";
 import { NoteNameDuplicate } from "@/api/status";
 import { NOTE_NAME_LENGTH_LIMIT } from "@/constants/notes.constant";
+import { NoteContext } from "@/contexts/components/note.context";
 
 import Info from "../Info";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -23,17 +23,12 @@ const Title = ({ note }: { note: NoteEntity }): JSX.Element => {
   const pathname = usePathname();
 
   const { modifyItem } = useContext(NoteAppContext);
-  const { setNoteStatus } = useContext(NoteContext);
+  const { toNoteStatusOf } = useContext(NoteContext);
 
   const [noteName, setNoteName] = useState<string>(note.name);
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
 
   const [noteItem, setNoteItem] = useState<NoteEntity>(note);
-
-  useEffect(() => {
-    setNoteName(note.name)
-    setNoteItem(note)
-  }, [note]);
 
   useEffect(() => {
     setIsDuplicate(false)
@@ -53,11 +48,23 @@ const Title = ({ note }: { note: NoteEntity }): JSX.Element => {
     } else if (hookReturn.status === NoteNameDuplicate) {
       setIsDuplicate(true);
     }
-  }, [noteItem]);
 
-  const handleBlur = useCallback(async () => {
-    await submitNoteTitle(noteName)
-  }, [noteName, submitNoteTitle]);
+    titleElementRef.current?.blur();
+    toNoteStatusOf!(NoteStatusEnum.EXIT);
+  }, [noteItem, modifyItem, toNoteStatusOf]);
+
+  const handleKeyDown = useCallback(async (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      e.stopPropagation();
+      if (e.nativeEvent.isComposing) return;
+      await submitNoteTitle(noteName);
+    }
+    else if (e.key === "Enter") {
+      e.stopPropagation();
+      if (e.nativeEvent.isComposing) return;
+      await submitNoteTitle(noteName);
+    }
+  }, [submitNoteTitle, noteName]);
 
   return (
     <>
@@ -70,8 +77,8 @@ const Title = ({ note }: { note: NoteEntity }): JSX.Element => {
           <input className="w-full text-2xl outline-none bg-transparent"
             ref={titleElementRef}
             value={noteName}
-            onBlur={handleBlur}
-            onFocus={() => { setNoteStatus!(NoteStatusEnum.TITLEMOD) }}
+            onKeyDown={handleKeyDown}
+            onClick={() => { toNoteStatusOf!(NoteStatusEnum.TITLEMOD) }}
             onChange={(e) => {
               setNoteName(e.target.value)
             }}

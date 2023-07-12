@@ -4,7 +4,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 import { NoteEntity, NoteSummaryEntity } from "@/models/notes.model";
-import { useNoteList } from "@/hooks/apps/notes.hook";
+import { useNoteList, useKeywordList } from "@/hooks/apps/notes.hook";
 import { NoteAppContext } from "@/contexts/apps";
 
 import Layout from "@/components/Layout";
@@ -35,13 +35,14 @@ const ClientPage = ({ note, noteItems, displayId }: Props) => {
   });
 
   const noteListAppStore = useNoteList(noteItems);
+  const keywordListAppStore = useKeywordList(note.keywords, note.id);
 
   return (
     <NoteAppContext.Provider value={ noteListAppStore }>
       <Layout sideScreenBody={(
         <NoteList displayId={ displayId }></NoteList>
       )}>
-        <Note note={ note }></Note>
+        <Note note={ note } keywordStore={keywordListAppStore}></Note>
       </Layout>
     </NoteAppContext.Provider>
   );

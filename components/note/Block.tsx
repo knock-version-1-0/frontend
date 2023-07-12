@@ -18,6 +18,7 @@ interface BlockProps {
   onUpdate: (data: KeywordData) => Promise<void>;
   onCreate?: (data: KeywordData) => Promise<void>;
   onDelete?: (key: number) => Promise<void>;
+  onClick?: () => void;
   isPhantom: boolean;
 }
 
@@ -28,10 +29,11 @@ const Block: React.FC<BlockProps> = ({
   onUpdate,
   onCreate,
   onDelete,
+  onClick,
   isPhantom,
 }) => {
-  const { noteStatus, setNoteStatus } = useContext(NoteContext);
-  const { blockStatus, setBlockStatus } = useBlockStatus();
+  const { noteStatus, toNoteStatusOf } = useContext(NoteContext);
+  const { blockStatus } = useBlockStatus(keyword);
 
   const elementRef = useRef<HTMLInputElement>(null);
   isPhantom && elementRef.current?.focus();
@@ -43,18 +45,17 @@ const Block: React.FC<BlockProps> = ({
 
   const [textValue, setTextValue] = useState<string>(keyword.text);
 
-  useEffect(() => {
-    if (keyword.status === BlockStatusEnum.EDIT) {
-      setBlockStatus(BlockStatusEnum.EDIT);
-      setNoteStatus!(NoteStatusEnum.KEYMOD);
-    }
-  }, [keyword]);
+  const [clickCount, setClickCount] = useState<number>(0);
 
   useEffect(() => {
-    if (noteStatus === NoteStatusEnum.KEYMOD) {
+    if (blockStatus === BlockStatusEnum.EDIT) {
       elementRef.current?.focus();
     }
-  }, [noteStatus]);
+    else if (blockStatus === BlockStatusEnum.UNSELECT) {
+      setClickCount(0);
+      elementRef.current?.blur();
+    }
+  }, [blockStatus, setClickCount]);
 
   useEffect(() => {
     if (keyword && screenX !== undefined && screenY !== undefined) {
@@ -90,7 +91,7 @@ const Block: React.FC<BlockProps> = ({
     );
   }, [screenX, screenY, keyword]);
 
-  const handleSubmit = useCallback(async (handleType: 'update' | 'create' | 'delete', status: BlockStatusEnum) => {
+  const handleSubmit = useCallback(async (handleType: 'update' | 'create' | 'delete', status: BlockStatusEnum, init?: Boolean) => {
     switch(handleType)
     {
       case 'update':
@@ -120,7 +121,10 @@ const Block: React.FC<BlockProps> = ({
       default:
         break;
     }
-    setNoteStatus!(NoteStatusEnum.EXIT);
+
+    if (!init){
+      toNoteStatusOf!(NoteStatusEnum.EXIT);
+    }
   }, [
     textValue,
     keyword,
@@ -130,26 +134,22 @@ const Block: React.FC<BlockProps> = ({
     onUpdate,
     onCreate,
     onDelete,
-    setNoteStatus
+    toNoteStatusOf,
   ]);
 
   const handleClick = useCallback(async (e: React.MouseEvent<HTMLInputElement>) => {
     e.preventDefault();
 
     if (isPhantom) {
-      await handleSubmit('create', BlockStatusEnum.EDIT);
+      await handleSubmit('create', BlockStatusEnum.UNSELECT);
       return;
     }
 
-    if (blockStatus === BlockStatusEnum.UNSELECT) {
-      setBlockStatus(BlockStatusEnum.SELECT);
+    if (clickCount === 1) {
+      setClickCount(2);
       return;
     }
-    if (blockStatus === BlockStatusEnum.SELECT) {
-      setBlockStatus(BlockStatusEnum.EDIT);
-      return;
-    }
-  }, [isPhantom, blockStatus, handleSubmit, setBlockStatus]);
+  }, [isPhantom, clickCount, setClickCount, handleSubmit]);
 
   const handleKeyDown = useCallback(async (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -157,51 +157,45 @@ const Block: React.FC<BlockProps> = ({
         e.stopPropagation();
 
         if (e.nativeEvent.isComposing) return;
-        elementRef.current?.blur();
+        await handleSubmit('update', BlockStatusEnum.UNSELECT);
         return;
       }
     }
-    if (e.key === 'Enter') {
+    else if (e.key === 'Enter') {
       e.stopPropagation();
       e.preventDefault();
 
       if (isPhantom) {
-        await handleSubmit('create', BlockStatusEnum.EDIT);
+        await handleSubmit('create', BlockStatusEnum.UNSELECT);
         return;
       }
 
-      if (blockStatus === BlockStatusEnum.SELECT) {
-        setBlockStatus(BlockStatusEnum.EDIT);
+      if (clickCount === 1) {
+        setClickCount(2);
         return;
       }
       
-      if (blockStatus === BlockStatusEnum.EDIT) {
+      if (clickCount === 2) {
         if (e.nativeEvent.isComposing) return;
-        elementRef.current?.blur();
+        await handleSubmit('update', BlockStatusEnum.UNSELECT);
+        setClickCount(0);
         return;
       }
     }
-    if (e.key === 'Backspace' || e.key === 'Delete') {
-      if (blockStatus === BlockStatusEnum.SELECT) {
+    else if (e.key === 'Backspace' || e.key === 'Delete') {
+      if (clickCount === 1) {
         e.stopPropagation();
         e.preventDefault();
         await handleSubmit('delete', BlockStatusEnum.UNSELECT);
         return;
       }
     }
-  }, [isPhantom, blockStatus, noteStatus, handleSubmit]);
-
-  const handleBlur = useCallback(async () => {
-    if (blockStatus === BlockStatusEnum.EDIT) {
-      await handleSubmit('update', BlockStatusEnum.UNSELECT);
-    }
-    setBlockStatus(BlockStatusEnum.UNSELECT);
-  }, [blockStatus, handleSubmit]);
+  }, [isPhantom, clickCount, setClickCount, noteStatus, handleSubmit]);
 
   return (
     <input type="text" className={clsx(
       "absolute w-48 h-[30px] text-center focus:outline-knock-sub border border-knock-main",
-      (blockStatus !== BlockStatusEnum.EDIT) ? "cursor-default" : "",
+      (clickCount < 2) ? "cursor-default" : "",
       (blockX === 0 && blockY === 0) ? "hidden" : ""
     )} style={isPhantom ? {
         left: center[0],
@@ -216,16 +210,14 @@ const Block: React.FC<BlockProps> = ({
       value={textValue}
       onClick={(e) => {
         e.preventDefault();
+        if (clickCount === 0) {
+          onClick && onClick();
+          setClickCount(1);
+        }
         handleClick(e);
       }}
-      onFocus={() => {
-        if (noteStatus !== NoteStatusEnum.KEYADD && noteStatus !== NoteStatusEnum.KEYMOD) {
-          setNoteStatus!(NoteStatusEnum.KEYMOD);
-        }
-      }}
-      onBlur={handleBlur}
       ref={elementRef}
-      readOnly={blockStatus !== BlockStatusEnum.EDIT}
+      readOnly={clickCount < 2}
       maxLength={KEYWORD_LENGTH_LIMIT}
       onKeyDown={handleKeyDown}
     />
