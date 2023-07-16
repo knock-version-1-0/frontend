@@ -25,7 +25,7 @@ enum Label {
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({ onCreateKeyword }) => {
-  const { setNoteStatus } = useContext(NoteContext);
+  const { toNoteStatusOf } = useContext(NoteContext);
 
   const [cursor, setCursor] = useState<number>(0);
   
@@ -37,7 +37,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ onCreateKeyword }) => {
         icon={ArrowCursorIcon}
         setFocus={(status: NoteStatusEnum) => {
           setCursor(Label.ArrowCursor);
-          setNoteStatus!(status);
+          toNoteStatusOf!(status);
         }}
         label={Label.ArrowCursor}
         cursor={cursor}
@@ -48,7 +48,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ onCreateKeyword }) => {
         icon={KeywordInitialIcon}
         setFocus={(status: NoteStatusEnum) => {
           setCursor(Label.KeywordInitial);
-          setNoteStatus!(status);
+          toNoteStatusOf!(status);
         }}
         label={Label.KeywordInitial}
         cursor={cursor}
@@ -121,7 +121,7 @@ const Button: React.FC<ButtonProps> = (props) => {
     else if ((noteStatus === NoteStatusEnum.KEYADD) && label === Label.KeywordInitial) {
       setFocus(noteStatus);
     }
-  }, [noteStatus, label]);
+  }, [noteStatus, label, setFocus]);
 
   return (
     <div className={

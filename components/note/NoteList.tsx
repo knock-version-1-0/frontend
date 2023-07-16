@@ -68,8 +68,6 @@ const NoteList: React.FC<NoteListProps> = ({ displayId }) => {
 }
 
 const SearchBar = (): JSX.Element => {
-  const pathname = usePathname();
-
   const [name, setName] = useState<string>('');
   const { search } = useContext(NoteAppContext);
 

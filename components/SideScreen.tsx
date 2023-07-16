@@ -54,6 +54,31 @@ const Header = (props: {
   )
 }
 
+enum NavChoice {
+  NOTE=1,
+  ADD,
+  MY
+}
+
+const navPath = {
+  note: {
+    re: new RegExp('^/note'),
+    path: '/note'
+  },
+  home: {
+    re: new RegExp('^/$'),
+    path: '/'
+  },
+  my: {
+    re: new RegExp('^/my'),
+    path: '/my'
+  },
+  login: {
+    re: new RegExp('^/login'),
+    path: '/login'
+  }
+}
+
 const Navigator = (props: {
   className?: string;
 }): JSX.Element => {
@@ -64,31 +89,6 @@ const Navigator = (props: {
   const { user } = useContext(AppContext);
 
   const [profileHover, setProfileHover] = useState<boolean>(false);
-
-  enum NavChoice {
-    NOTE=1,
-    ADD,
-    MY
-  }
-
-  const navPath = {
-    note: {
-      re: new RegExp('^/note'),
-      path: '/note'
-    },
-    home: {
-      re: new RegExp('^/$'),
-      path: '/'
-    },
-    my: {
-      re: new RegExp('^/my'),
-      path: '/my'
-    },
-    login: {
-      re: new RegExp('^/login'),
-      path: '/login'
-    }
-  }
 
   const handleClick = useCallback((choice: NavChoice) => {
     if (navPath.login.re.exec(pathname)) { return }
@@ -111,7 +111,7 @@ const Navigator = (props: {
         
         break
     } 
-  }, [pathname, items]);
+  }, [pathname, items, addItem]);
 
   return (
     <div className={

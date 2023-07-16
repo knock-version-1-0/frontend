@@ -3,12 +3,11 @@
 import { useRouter } from "next/navigation";
 
 import { NoteEntity, NoteSummaryEntity } from "@/models/notes.model";
-import { useNoteList } from "@/hooks/apps/notes.hook";
+import { useNoteList, useTutorialKeywordList } from "@/hooks/apps/notes.hook";
 import { NoteAppContext } from "@/contexts/apps";
 
 import Layout from "@/components/Layout";
-import NoteList from "@/components/note/NoteList";
-import TutorialNote from "@/components/note/TutorialNote";
+import Note from "@/components/note";
 
 interface Props {
   note: NoteEntity;
@@ -20,6 +19,7 @@ const ClientPage = ({ note, noteItems, displayId }: Props) => {
   const router = useRouter();
 
   const noteListAppStore = useNoteList(noteItems);
+  const keywordListAppStore = useTutorialKeywordList(note.keywords, note.id);
 
   return (
     <NoteAppContext.Provider value={noteListAppStore}>
@@ -34,7 +34,7 @@ const ClientPage = ({ note, noteItems, displayId }: Props) => {
           </button>
         </div>
       )}>
-        <TutorialNote note={note}></TutorialNote>
+        <Note note={note} keywordStore={keywordListAppStore}></Note>
       </Layout>
     </NoteAppContext.Provider>
   );

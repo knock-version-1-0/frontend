@@ -17,7 +17,7 @@ interface ItemProps {
 
 const Item: React.FC<ItemProps> = ({ value, displayId }) => {
   const router = useRouter();
-  const pathname = usePathname();
+
   const { removeItem } = useContext(NoteAppContext);
 
   const [deleteSession, setDeleteSession] = useState<boolean>(false);
@@ -44,6 +44,7 @@ const Item: React.FC<ItemProps> = ({ value, displayId }) => {
                 removeItem(value.displayId);
                 setDeleteSession(false);
                 setRemoved(true);
+                router.push('/note');
               }}
             >
               <p className="text-red-500">Delete</p>
