@@ -1,5 +1,4 @@
 import { useState, useCallback, useContext, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 
 import { AppContext } from "@/contexts/apps";
 import { NoteSummaryEntity, NoteEntity, KeywordEntity } from "@/models/notes.model";
@@ -21,7 +20,6 @@ import { StatusChoice } from "@/utils/enums.util";
 import { debounce } from "lodash";
 
 export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
-  const router = useRouter();
   const { token } = useContext(AppContext);
 
   const [items, setItems] = useState<NoteSummaryEntity[]>(init);
@@ -111,13 +109,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
       }
     }
 
-    const note: NoteEntity = payload.data!;
-    router.push(`/note/${note.displayId}`);
-    setItems([{
-      displayId: note.displayId,
-      name: note.name
-    }, ...items]);
-
+    window.location.replace('/note');
     return {
       isSuccess: true,
       status: payload.status,
@@ -160,8 +152,7 @@ export const useNoteList = (init: NoteSummaryEntity[]): NoteListAppStore => {
     await fetchDeleteNoteApi(key, token as string);
     setRemoveLoader(false);
 
-    router.push('/note');
-
+    window.location.replace('/note');
     return {
       isSuccess: true,
       status: OK
@@ -192,8 +183,8 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
 
   const {
     payload,
-    sendMessage: sendMessage,
-    clear: clear
+    sendMessage,
+    clear
   } = useWebSocket<KeywordEntity>(`/ws/notes/${noteId}/keyword${TRAILING_SLASH}`);
 
   useEffect(() => {

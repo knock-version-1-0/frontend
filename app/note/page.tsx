@@ -33,10 +33,10 @@ const NotePage = async ({ searchParams }: {
     offset: 0
   }, token);
   if (notesReadPayload.status !== OK) { throw Error(notesReadPayload.status) }
-  const noteItems: NoteSummaryEntity[] = notesReadPayload.data!
+  const noteList: NoteSummaryEntity[] = notesReadPayload.data!
 
-  if (noteItems.length !== 0) {
-    redirect(searchParams?.init ? `/note/${noteItems[0].displayId}?init=true` : `/note/${noteItems[0].displayId}`);
+  if (noteList.length !== 0) {
+    redirect(searchParams?.init ? `/note/${noteList[0].displayId}?init=true` : `/note/${noteList[0].displayId}`);
   }
 
   const NotesCreatePayload = await fetchPostNotesApi({

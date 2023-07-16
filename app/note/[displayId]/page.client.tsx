@@ -13,11 +13,11 @@ import Note from "@/components/note";
 
 interface Props {
   note: NoteEntity;
-  noteItems: NoteSummaryEntity[];
+  noteList: NoteSummaryEntity[];
   displayId: string;
 }
 
-const ClientPage = ({ note, noteItems, displayId }: Props) => {
+const ClientPage = ({ note, noteList, displayId }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -34,7 +34,7 @@ const ClientPage = ({ note, noteItems, displayId }: Props) => {
     }
   });
 
-  const noteListAppStore = useNoteList(noteItems);
+  const noteListAppStore = useNoteList(noteList);
   const keywordListAppStore = useKeywordList(note.keywords, note.id);
 
   return (

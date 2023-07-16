@@ -32,7 +32,7 @@ const NoteSideScreenPage = async ({ params }: { params: { displayId: string } })
   }, token);
   if (payload.status === NoteDoesNotExist) { notFound(); }
   if (payload.status === DatabaseError) { throw Error(payload.status); }
-  const noteItems: NoteSummaryEntity[] = payload.data!;
+  const noteList: NoteSummaryEntity[] = payload.data!;
 
   const notePayload: ApiPayload<NoteEntity> = await fetchGetNoteByDisplayIdApi(params.displayId as string, token);
   if (notePayload.status === NoteDoesNotExist) {
@@ -41,8 +41,7 @@ const NoteSideScreenPage = async ({ params }: { params: { displayId: string } })
     throw Error(notePayload.status);
   }
   const note: NoteEntity = notePayload.data!;
-
-  return <ClientPage noteItems={ noteItems } note={ note } displayId={ params.displayId } />;
+  return <ClientPage noteList={ noteList } note={ note } displayId={ params.displayId } />;
 }
 
 export default NoteSideScreenPage;
