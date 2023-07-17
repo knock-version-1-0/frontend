@@ -25,7 +25,6 @@ import { getCurrentTime } from "@/utils";
 
 interface NoteProps {
   note: NoteEntity;
-  keywordStore: KeywordListAppStore;
 }
 
 const Note: React.FC<NoteProps> = ({note}) => {
@@ -59,10 +58,10 @@ const Note: React.FC<NoteProps> = ({note}) => {
 
   const { items: keywords, modifyItem, addItem, removeItem } = useContext(KeywordAppContext);
 
-  const keywordEventWrapper = async (callback: () => Promise<void>) => {
+  const keywordEventWrapper = useCallback(async (callback: () => Promise<void>) => {
     await callback();
     toNoteStatusOf(NoteStatusEnum.EXIT);
-  }
+  }, [toNoteStatusOf]);
 
   const InitKeywordModel: KeywordEntity = {
     noteId: note.id,
