@@ -181,6 +181,11 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
 
   const [items, setItems] = useState<KeywordEntity[]>(init);
 
+  const [readLoader, setReadLoader] = useState<boolean>(false);
+  const [addLoader, setAddLoader] = useState<boolean>(false);
+  const [modifyLoader, setModifyLoader] = useState<boolean>(false);
+  const [removeLoader, setRemoveLoader] = useState<boolean>(false);
+
   const {
     payload,
     sendMessage,
@@ -211,29 +216,50 @@ export const useKeywordList = (init: KeywordEntity[], noteId: number): KeywordLi
 
   const modifyItem = useCallback(async (data: KeywordData, key: number) => {
     const message = toMessage('update', data, { token, key });
+
+    setModifyLoader(true);
     sendMessage(message);
+    setModifyLoader(false);
   }, [items, token]);
 
   const addItem = useCallback(async (data: KeywordData) => {
     const message = toMessage('create', data, { token });
+
+    setAddLoader(true);
     sendMessage(message);
+    setAddLoader(false);
   }, [items, token]);
 
   const removeItem = useCallback(async (key: number) => {
     const message = toMessage('delete', {}, { token, key });
+
+    setRemoveLoader(true);
     sendMessage(message);
+    setRemoveLoader(false);
   }, [items, token]);
 
   return {
     items,
     modifyItem,
     addItem,
-    removeItem
+    removeItem,
+    loader: {
+      read: readLoader,
+      add: addLoader,
+      modify: modifyLoader,
+      remove: removeLoader
+    }
   }
 }
 
 export const useTutorialKeywordList = (init: KeywordEntity[], noteId: number): KeywordListAppStore => {
   const [items, setItems] = useState<KeywordEntity[]>(init);
+
+  const [readLoader, setReadLoader] = useState<boolean>(false);
+  const [addLoader, setAddLoader] = useState<boolean>(false);
+  const [modifyLoader, setModifyLoader] = useState<boolean>(false);
+  const [removeLoader, setRemoveLoader] = useState<boolean>(false);
+
   const [maxId, setMaxId] = useState<number>(0);
 
   useEffect(() => {
@@ -246,12 +272,14 @@ export const useTutorialKeywordList = (init: KeywordEntity[], noteId: number): K
       id: key,
       ...data
     }
+    setModifyLoader(true);
     setItems(items.map((value) => {
       if (value.id === keyword.id) {
         return keyword;
       }
       return value;
     }));
+    setModifyLoader(false);
   }, [items]);
 
   const addItem = useCallback(async (data: KeywordData) => {
@@ -259,17 +287,27 @@ export const useTutorialKeywordList = (init: KeywordEntity[], noteId: number): K
       id: maxId + 1,
       ...data
     };
+    setAddLoader(true);
     setItems([...items, keyword]);
+    setAddLoader(false);
   }, [items, maxId]);
 
   const removeItem = useCallback(async (key: number) => {
+    setRemoveLoader(true);
     setItems(items.filter((value) => value.id !== key));
+    setRemoveLoader(false);
   }, [items]);
 
   return {
     items,
     modifyItem,
     addItem,
-    removeItem
+    removeItem,
+    loader: {
+      read: readLoader,
+      add: addLoader,
+      modify: modifyLoader,
+      remove: removeLoader
+    }
   }
 }

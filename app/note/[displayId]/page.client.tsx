@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 import { NoteEntity, NoteSummaryEntity } from "@/models/notes.model";
 import { useNoteList, useKeywordList } from "@/hooks/apps/notes.hook";
-import { NoteAppContext } from "@/contexts/apps";
+import { NoteAppContext, KeywordAppContext } from "@/contexts/apps";
 
 import Layout from "@/components/Layout";
 import NoteList from "@/components/note/NoteList";
@@ -42,7 +42,9 @@ const ClientPage = ({ note, noteList, displayId }: Props) => {
       <Layout sideScreenBody={(
         <NoteList displayId={ displayId }></NoteList>
       )}>
-        <Note note={ note } keywordStore={keywordListAppStore}></Note>
+        <KeywordAppContext.Provider value={ keywordListAppStore }>
+          <Note note={ note }></Note>
+        </KeywordAppContext.Provider>
       </Layout>
     </NoteAppContext.Provider>
   );

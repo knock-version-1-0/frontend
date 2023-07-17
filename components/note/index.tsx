@@ -5,6 +5,8 @@ import React, {
   useRef,
   useState,
   useEffect,
+  useContext,
+  useMemo,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -14,7 +16,7 @@ import { NoteStatusEnum, BlockStatusEnum } from "@/constants/notes.constant";
 import { useNoteScreenPosition, useNoteStatus } from "@/hooks/components/note.hook";
 import { KeywordEntity } from "@/models/notes.model";
 import { KeywordData } from "@/api/data/notes";
-import { KeywordListAppStore } from "@/stores/apps";
+import { KeywordAppContext } from "@/contexts/apps";
 
 import Block from "./Block";
 import Toolbar from "./Toolbar";
@@ -26,28 +28,15 @@ interface NoteProps {
   keywordStore: KeywordListAppStore;
 }
 
-const Note: React.FC<NoteProps> = ({note, keywordStore}) => {
+const Note: React.FC<NoteProps> = ({note}) => {
   const router = useRouter();
   const pathname = usePathname();
 
   const noteElementRef = useRef<HTMLDivElement>(null);
 
   const { screenX, screenY } = useNoteScreenPosition(noteElementRef);
+
   const { noteStatus, setNoteStatus, toNoteStatusOf, toBlockIdOf } = useNoteStatus(NoteStatusEnum.EXIT);
-
-  const { items: keywords, modifyItem, addItem, removeItem } = keywordStore;
-
-  const InitKeywordModel: KeywordEntity = {
-    noteId: note.id,
-    posX: 0,
-    posY: 0,
-    text: '',
-    parentId: null,
-    status: BlockStatusEnum.SELECT,
-    timestamp: getCurrentTime()
-  }
-  const [phantomKeywordModel, setPhantomKeywordModel] = useState<KeywordEntity>(InitKeywordModel);
-
   useEffect(() => {
     if (noteStatus === NoteStatusEnum.EXIT) {
       noteElementRef.current?.focus();
@@ -67,6 +56,45 @@ const Note: React.FC<NoteProps> = ({note, keywordStore}) => {
       e.preventDefault();
     }
   }, [noteStatus, toNoteStatusOf]);
+
+  const { items: keywords, modifyItem, addItem, removeItem } = useContext(KeywordAppContext);
+
+  const keywordEventWrapper = async (callback: () => Promise<void>) => {
+    await callback();
+    toNoteStatusOf(NoteStatusEnum.EXIT);
+  }
+
+  const InitKeywordModel: KeywordEntity = {
+    noteId: note.id,
+    posX: 0,
+    posY: 0,
+    text: '',
+    parentId: null,
+    status: BlockStatusEnum.SELECT,
+    timestamp: getCurrentTime()
+  }
+  const [phantomKeywordModel, setPhantomKeywordModel] = useState<KeywordEntity>(InitKeywordModel);
+
+  const blockElements: React.ReactNode = useMemo(() => keywords.map((value, index) => (
+    <Block
+      key={ index }
+      keyword={ value }
+      screenX={ screenX }
+      screenY={ screenY }
+      onUpdate={(data: KeywordData) => keywordEventWrapper(() => modifyItem(data, value.id as number))}
+      onDelete={(key: number) => keywordEventWrapper(() => removeItem(key))}
+      onClick={() => {toBlockIdOf(value.id!)}}
+      isPhantom={ false }
+    ></Block>
+  )), [
+    keywords,
+    screenX,
+    screenY,
+    keywordEventWrapper,
+    modifyItem,
+    removeItem,
+    toBlockIdOf
+  ]);
 
   return (
     <NoteContext.Provider value={{
@@ -100,20 +128,7 @@ const Note: React.FC<NoteProps> = ({note, keywordStore}) => {
                 <p>Press [Enter] to create</p>
                 <p>keyword</p>
               </div>
-            )) : (
-              keywords.map((value, index) => (
-                <Block
-                  key={ index }
-                  keyword={ value }
-                  screenX={ screenX }
-                  screenY={ screenY }
-                  onUpdate={async (data: KeywordData) => await modifyItem(data, value.id as number)}
-                  onDelete={async (key: number) => await removeItem(key)}
-                  onClick={() => {toBlockIdOf(value.id!)}}
-                  isPhantom={ false }
-                ></Block>
-              ))
-            )
+            )) : blockElements
           }
           {
             noteStatus === NoteStatusEnum.KEYADD &&
@@ -122,7 +137,7 @@ const Note: React.FC<NoteProps> = ({note, keywordStore}) => {
               screenX={ screenX }
               screenY={ screenY }
               onUpdate={async (data: KeywordData) => {}}
-              onCreate={async (data: KeywordData) => await addItem(data)}
+              onCreate={(data: KeywordData) => keywordEventWrapper(() => addItem(data))}
               isPhantom={ true }
             ></Block>
           }
