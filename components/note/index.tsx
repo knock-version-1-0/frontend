@@ -25,6 +25,7 @@ import { getCurrentTime } from "@/utils";
 
 interface NoteProps {
   note: NoteEntity;
+  keywordStore: KeywordListAppStore;
 }
 
 const Note: React.FC<NoteProps> = ({note}) => {
