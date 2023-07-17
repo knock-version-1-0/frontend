@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 import { NoteEntity, NoteSummaryEntity } from "@/models/notes.model";
 import { useNoteList, useTutorialKeywordList } from "@/hooks/apps/notes.hook";
-import { NoteAppContext } from "@/contexts/apps";
+import { NoteAppContext, KeywordAppContext } from "@/contexts/apps";
 
 import Layout from "@/components/Layout";
 import Note from "@/components/note";
@@ -22,7 +22,7 @@ const ClientPage = ({ note, noteItems, displayId }: Props) => {
   const keywordListAppStore = useTutorialKeywordList(note.keywords, note.id);
 
   return (
-    <NoteAppContext.Provider value={noteListAppStore}>
+    <NoteAppContext.Provider value={ noteListAppStore }>
       <Layout sideScreenBody={(
         <div className="h-full flex flex-col justify-center items-center space-y-6 px-4">
           <p className="text-etc text-xl font-light">Do you want more?</p>
@@ -34,7 +34,9 @@ const ClientPage = ({ note, noteItems, displayId }: Props) => {
           </button>
         </div>
       )}>
-        <Note note={note} keywordStore={keywordListAppStore}></Note>
+        <KeywordAppContext.Provider value={ keywordListAppStore }>
+          <Note note={note}></Note>
+        </KeywordAppContext.Provider>
       </Layout>
     </NoteAppContext.Provider>
   );

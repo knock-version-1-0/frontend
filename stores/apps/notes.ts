@@ -34,7 +34,15 @@ export const InitNoteListAppStore: NoteListAppStore = {
 }
 
 export interface KeywordListAppStore extends ItemStore<KeywordEntity, KeywordData, number> {
+  items: KeywordEntity[];
   addItem: (data: KeywordData) => Promise<void>;
   modifyItem: (data: KeywordData, key: number) => Promise<void>;
   removeItem: (key: number) => Promise<void>;
+}
+
+export const InitKeywordListAppStore: KeywordListAppStore = {
+  items: [],
+  addItem: (data: KeywordData) => Promise.resolve(),
+  modifyItem: (data: NoteData, key: number) => Promise.resolve(),
+  removeItem: (key: number) => Promise.resolve()
 }

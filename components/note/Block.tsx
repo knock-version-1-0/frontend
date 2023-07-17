@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback, useContext } from "react";
+import React, { useState, useEffect, useRef, useCallback, useContext, useMemo } from "react";
 
 import { BlockStatusEnum, KEYWORD_LENGTH_LIMIT, NoteStatusEnum } from "@/constants/notes.constant";
 import { KeywordEntity } from "@/models/notes.model";
@@ -32,18 +32,25 @@ const Block: React.FC<BlockProps> = ({
   onClick,
   isPhantom,
 }) => {
-  const { noteStatus, toNoteStatusOf } = useContext(NoteContext);
+  const elementRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    isPhantom && elementRef.current?.focus();
+  });
+
+  const { noteStatus } = useContext(NoteContext);
   const { blockStatus } = useBlockStatus(keyword);
 
-  const elementRef = useRef<HTMLInputElement>(null);
-  isPhantom && elementRef.current?.focus();
-
-  const [blockX, setBlockX] = useState<number>(0);
-  const [blockY, setBlockY] = useState<number>(0);
+  const blockX = useMemo(() => (screenX !== undefined) ? screenX + keyword.posX : 0, [keyword, screenX]);
+  const blockY = useMemo(() => (screenY !== undefined) ? screenY + keyword.posY : 0, [keyword, screenY]);
 
   const [center, setCenter] = useState<Array<number>>([0, 0]);
 
   const [textValue, setTextValue] = useState<string>(keyword.text);
+
+  useEffect(() => {
+    setTextValue(keyword.text);
+  }, [keyword]);
 
   const [clickCount, setClickCount] = useState<number>(0);
 
@@ -58,11 +65,6 @@ const Block: React.FC<BlockProps> = ({
   }, [blockStatus, setClickCount]);
 
   useEffect(() => {
-    if (keyword && screenX !== undefined && screenY !== undefined) {
-      setBlockX(screenX + keyword.posX);
-      setBlockY(screenY + keyword.posY);
-    }
-
     const height = elementRef.current?.offsetHeight ?? 0;
     const width = elementRef.current?.offsetWidth ?? 0;
 
@@ -91,11 +93,11 @@ const Block: React.FC<BlockProps> = ({
     );
   }, [screenX, screenY, keyword]);
 
-  const handleSubmit = useCallback(async (handleType: 'update' | 'create' | 'delete', status: BlockStatusEnum, init?: Boolean) => {
+  const handleSubmit = useCallback((handleType: 'update' | 'create' | 'delete', status: BlockStatusEnum) => {
     switch(handleType)
     {
       case 'update':
-        await onUpdate!({
+        onUpdate!({
           noteId: keyword.noteId,
           posX: keyword.posX,
           posY: keyword.posY,
@@ -106,7 +108,7 @@ const Block: React.FC<BlockProps> = ({
         });
         break;
       case 'create':
-        await onCreate!({
+        onCreate!({
           noteId: keyword.noteId,
           posX: center[0] - screenX,
           posY: center[1] - screenY,
@@ -117,13 +119,9 @@ const Block: React.FC<BlockProps> = ({
         });
         break;
       case 'delete':
-        await onDelete!(keyword.id!);
+        onDelete!(keyword.id!);
       default:
         break;
-    }
-
-    if (!init){
-      toNoteStatusOf!(NoteStatusEnum.EXIT);
     }
   }, [
     textValue,
@@ -134,14 +132,13 @@ const Block: React.FC<BlockProps> = ({
     onUpdate,
     onCreate,
     onDelete,
-    toNoteStatusOf,
   ]);
 
-  const handleClick = useCallback(async (e: React.MouseEvent<HTMLInputElement>) => {
+  const handleClick = useCallback((e: React.MouseEvent<HTMLInputElement>) => {
     e.preventDefault();
 
     if (isPhantom) {
-      await handleSubmit('create', BlockStatusEnum.UNSELECT);
+      handleSubmit('create', BlockStatusEnum.UNSELECT);
       return;
     }
 
@@ -151,13 +148,13 @@ const Block: React.FC<BlockProps> = ({
     }
   }, [isPhantom, clickCount, setClickCount, handleSubmit]);
 
-  const handleKeyDown = useCallback(async (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
       if (noteStatus === NoteStatusEnum.KEYMOD) {
         e.stopPropagation();
 
         if (e.nativeEvent.isComposing) return;
-        await handleSubmit('update', BlockStatusEnum.UNSELECT);
+        handleSubmit('update', BlockStatusEnum.UNSELECT);
         return;
       }
     }
@@ -166,7 +163,7 @@ const Block: React.FC<BlockProps> = ({
       e.preventDefault();
 
       if (isPhantom) {
-        await handleSubmit('create', BlockStatusEnum.UNSELECT);
+        handleSubmit('create', BlockStatusEnum.UNSELECT);
         return;
       }
 
@@ -177,7 +174,7 @@ const Block: React.FC<BlockProps> = ({
       
       if (clickCount === 2) {
         if (e.nativeEvent.isComposing) return;
-        await handleSubmit('update', BlockStatusEnum.UNSELECT);
+        handleSubmit('update', BlockStatusEnum.UNSELECT);
         setClickCount(0);
         return;
       }
@@ -186,7 +183,7 @@ const Block: React.FC<BlockProps> = ({
       if (clickCount === 1) {
         e.stopPropagation();
         e.preventDefault();
-        await handleSubmit('delete', BlockStatusEnum.UNSELECT);
+        handleSubmit('delete', BlockStatusEnum.UNSELECT);
         return;
       }
     }
@@ -196,7 +193,7 @@ const Block: React.FC<BlockProps> = ({
     <input type="text" className={clsx(
       "absolute w-48 h-[30px] text-center focus:outline-knock-sub border border-knock-main",
       (clickCount < 2) ? "cursor-default" : "",
-      (blockX === 0 && blockY === 0) ? "hidden" : ""
+      (!!screenX && !!screenY) ? "" : "hidden"
     )} style={isPhantom ? {
         left: center[0],
         top: center[1]
